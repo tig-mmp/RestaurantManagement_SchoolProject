@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-class orders extends Model
+
+class Item extends Model
 {
-     use Notifiable;
+	use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -14,6 +16,6 @@ class orders extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'state', 'item_id','meal_id','responsible_cook_id','start','end',
+        'id', 'name', 'type','description','photo_url','price',
     ];
 }
