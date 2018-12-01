@@ -17,12 +17,14 @@ import store from './stores/global-store';
 const menu = Vue.component('menu-restaurant', require('./components/menuRestaurant.vue'));
 const login = Vue.component('login', require('./components/login.vue'));
 const logout = Vue.component('logout', require('./components/logout.vue'));
+const manager = Vue.component('manager', require('./components/manager.vue'));
 
 const routes = [
     { path: '/', redirect: '/menu' },
     { path: '/menu', component: menu },
     { path: '/login', component: login, name: 'login'},
     { path: '/logout', component: logout, name: 'logout'},
+	{ path: '/manager', component: manager, name: 'manager'},
 ];
 
 const router = new VueRouter({
