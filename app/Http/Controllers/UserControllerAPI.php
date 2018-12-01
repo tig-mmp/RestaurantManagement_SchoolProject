@@ -31,9 +31,9 @@ class UserControllerAPI extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'name' => 'required|min:3',
                 'email' => 'required|email|unique:users,email',
-                'age' => 'integer|between:18,75',
+                'age' => 'integer',
                 'password' => 'min:3'
             ]);
         $user = new User();
@@ -46,9 +46,10 @@ class UserControllerAPI extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'name' => 'required|min:3',
                 'email' => 'required|email|unique:users,email,'.$id,
-                'age' => 'integer|between:18,75'
+                'age' => 'integer',
+                'password' => 'min:3'
             ]);
         $user = User::findOrFail($id);
         $user->password = Hash::make("123");
