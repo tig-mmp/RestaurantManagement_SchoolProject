@@ -52,6 +52,7 @@
                         this.typeofmsg = "alert-success";
                         this.message = "User authenticated correctly";
                         this.showMessage = true;
+                        this.$router.push('/logout');
                     })
                     .catch(error => {
                         this.$store.commit('clearUserAndToken');

@@ -18,23 +18,32 @@ const menu = Vue.component('menu-restaurant', require('./components/menuRestaura
 const login = Vue.component('login', require('./components/login.vue'));
 const logout = Vue.component('logout', require('./components/logout.vue'));
 const manager = Vue.component('manager', require('./components/manager.vue'));
+const profile = Vue.component('profile', require('./components/profile.vue'));
 
 const routes = [
     { path: '/', redirect: '/menu' },
-    { path: '/menu', component: menu },
+    { path: '/menu', component: menu, name: 'menu'},
     { path: '/login', component: login, name: 'login'},
     { path: '/logout', component: logout, name: 'logout'},
-	{ path: '/manager', component: manager, name: 'manager'},
+    { path: '/manager', component: manager, name: 'manager'},
+	{ path: '/profile', component: profile, name: 'profile'},
 ];
 
 const router = new VueRouter({
-  routes:routes
+    mode: 'history',
+    routes:routes
 });
 
 router.beforeEach((to, from, next) => {
-    if ((to.name == 'profile') || (to.name == 'logout')) {
-        if (!store.state.user) {
-            next("/login");
+    if (!store.state.user) {
+        if ((to.name == 'profile') || (to.name == 'logout') || (to.name == 'manager')) {
+            next("/menu");
+            return; 
+        }
+    }
+    if (store.state.user) {
+        if (to.name == 'login') {
+            next("/menu");
             return;
         }
     }
