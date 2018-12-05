@@ -32,13 +32,13 @@ class UserControllerAPI extends Controller
     {
         $request->validate([
                 'name' => 'required|min:3',
-                'email' => 'required|email|unique:users,email',
-                'age' => 'integer',
-                'password' => 'min:3'
+                'username' => 'required|min:3',
+                'email' => 'required|email|unique:users,email'
             ]);
         $user = new User();
         $user->fill($request->all());
-        $user->password = Hash::make($user->password);
+        $user->password = "a";
+        //$user->password = Hash::make($user->password);
         $user->save();
         return response()->json(new UserResource($user), 201);
     }
@@ -47,12 +47,12 @@ class UserControllerAPI extends Controller
     {
         $request->validate([
                 'name' => 'required|min:3',
+                'username' => 'required|email|unique:users,username,'.$id,
                 'email' => 'required|email|unique:users,email,'.$id,
-                'age' => 'integer',
                 'password' => 'min:3'
             ]);
         $user = User::findOrFail($id);
-        $user->password = Hash::make("123");
+        $user->password = Hash::make($user->password);
         $user->update($request->all());
         return new UserResource($user);
     }

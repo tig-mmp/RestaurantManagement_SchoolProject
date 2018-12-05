@@ -14,7 +14,8 @@
 			    <router-link to="/menu" class="nav-item nav-link active">
 			    	Menu
 			    </router-link>
-			    <router-link to="/manager" v-show="this.$store.state.user && this.$store.state.user.type == 'manager'" class="nav-item nav-link">
+                <router-link to="/createUser" class="nav-item nav-link">createUser</router-link>
+                <router-link to="/manager" v-show="this.$store.state.user && this.$store.state.user.type == 'manager'" class="nav-item nav-link">
 			    	Manager
 			    </router-link>
 			    <router-link to="/login"  v-show="!this.$store.state.user" class="nav-item nav-link">
@@ -38,8 +39,12 @@
                         	<p class="text-left">
                             	<router-link to="/profile" v-show="this.$store.state.user" class="btn btn-primary btn-block btn-sm">
 			    				<i class="fas fa-cog"></i>
-							    	Profile Setings
+							    	Show Profile
 							    </router-link>
+								<router-link to="/profile/edit" v-show="this.$store.state.user" class="btn btn-primary btn-block btn-sm">
+									<i class="fas fa-cog"></i>
+									Profile Setings
+								</router-link>
                             	<router-link to="/logout" v-show="this.$store.state.user" class="btn btn-secondary btn-block btn-sm">
 			    				<i class="fas fa-sign-out-alt"></i>
 							    	Logout
