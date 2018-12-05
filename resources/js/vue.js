@@ -19,8 +19,8 @@ const login = Vue.component('login', require('./components/login.vue'));
 const logout = Vue.component('logout', require('./components/logout.vue'));
 const manager = Vue.component('manager', require('./components/manager.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
-const profileEdit = Vue.component('profileEdit', require('./components/profileEdit.vue'));
-
+const editProfile = Vue.component('editProfile', require('./components/editProfile.vue'));
+const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
 
 import createUser from './components/createUser.vue';
 
@@ -31,7 +31,8 @@ const routes = [
     { path: '/logout', component: logout, name: 'logout'},
     { path: '/manager', component: manager, name: 'manager'},
 	{ path: '/profile', component: profile, name: 'profile'},
-    { path: '/profile/edit', component: profileEdit, name: 'profileEdit'},
+    { path: '/editProfile', component: editProfile, name: 'editProfile'},
+    { path: '/editPassword', component: editPassword, name: 'editPassword'},
     { path: '/createUser', component: createUser, name: 'createUser'},
 ];
 

@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
 use App\StoreUserRequest;
-use Hash;
 
 class UserControllerAPI extends Controller
 {
@@ -32,13 +32,12 @@ class UserControllerAPI extends Controller
     {
         $request->validate([
                 'name' => 'required|min:3',
-                'username' => 'required|min:3',
+                'username' => 'required|min:3|unique:users,username',
                 'email' => 'required|email|unique:users,email'
             ]);
         $user = new User();
         $user->fill($request->all());
         $user->password = "a";
-        //$user->password = Hash::make($user->password);
         $user->save();
         return response()->json(new UserResource($user), 201);
     }
@@ -47,14 +46,41 @@ class UserControllerAPI extends Controller
     {
         $request->validate([
                 'name' => 'required|min:3',
-                'username' => 'required|email|unique:users,username,'.$id,
-                'email' => 'required|email|unique:users,email,'.$id,
-                'password' => 'min:3'
+                'username' => 'required|unique:users,username,'.$id,
+                'email' => 'required|email|unique:users,email,'.$id
             ]);
         $user = User::findOrFail($id);
-        $user->password = Hash::make($user->password);
         $user->update($request->all());
         return new UserResource($user);
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        /*if (!Hash::check($request['old_password'], $user->password)){
+            new UserResource($user);
+        }*/
+        $request->validate([
+            'password' => 'min:3|confirmed'
+        ]);
+        $user->password = Hash::make($request->get('password'));
+        $user->update($request->all());
+        return new UserResource($user);
+    }
+
+    public function creteUser(Request $request){
+        /*$request->validate([
+            'name' => 'required|min:3',
+            'username' => 'required|min:3|unique:users,username',
+            'email' => 'required|email|unique:users,email'
+        ]);*/
+        $user = new User();
+        $user->fill($request->all());
+        $user->password = "a";
+        $user->password = Hash::make($user->password);
+        $user->save();
+        $user->update($request->all());
+        return response()->json(new UserResource($user), 201);
     }
 
     public function destroy($id)

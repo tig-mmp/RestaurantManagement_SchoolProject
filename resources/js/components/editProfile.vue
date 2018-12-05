@@ -23,28 +23,7 @@
                     placeholder="Email address"/>
         </div>
         <div class="form-group">
-            <label for="old_password">Email</label>
-            <input
-                    type="password" class="form-control"
-                    name="old_password" id="old_password"
-                    placeholder="Old password" required/>
-        </div>
-        <div class="form-group">
-            <label for="password">Email</label>
-            <input
-                    type="password" class="form-control"
-                    name="password" id="password"
-                    placeholder="New password" required/>
-        </div>
-        <div class="form-group">
-            <label for="passwordConfirm">Email</label>
-            <input
-                    type="password" class="form-control"
-                    name="password_confirmation" id="passwordConfirm"
-                    placeholder="Password Confirmation" required/>
-        </div>
-        <div class="form-group">
-            <a class="btn btn-primary" v-on:click.prevent="saveUser()">Save</a>
+            <a class="btn btn-primary" v-on:click.prevent="savePassword()">Save</a>
             <a class="btn btn-light" v-on:click.prevent="cancelEdit()">Cancel</a>
         </div>
     </div>
@@ -54,24 +33,15 @@
     module.exports={
         data: function(){
             return {
-                user: {
-                    id:"",
-                    name:"",
-                    username:"",
-                    email:"",
-                    type:"",
-                    old_password:"",
-                    password:"",
-                    password_confirmation:"",
-                },
+                user: [],
             }
         },
         methods: {
-            saveUser() {
-                axios.put('api/users/'+this.user.id, this.user)
+            savePassword() {
+                console.log(this.user);
+                axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
-                        Object.assign(this.user, response.data.data);
-                        this.$emit('user-saved', this.user)
+                        this.$store.commit('setUser',response.data.data);
                     });
             },
             cancelEdit: function(){

@@ -36,16 +36,20 @@
                         	<p class="text-left small" v-if="this.$store.state.user">
                         		@{{this.$store.state.user.email}}
                         	</p>
-                        	<p class="text-left">
-                            	<router-link to="/profile" v-show="this.$store.state.user" class="btn btn-primary btn-block btn-sm">
+                        	<p class="text-left" v-show="this.$store.state.user">
+                            	<router-link to="/profile" class="btn btn-primary btn-block btn-sm">
 			    				<i class="fas fa-cog"></i>
 							    	Show Profile
 							    </router-link>
-								<router-link to="/profile/edit" v-show="this.$store.state.user" class="btn btn-primary btn-block btn-sm">
+								<router-link to="/editProfile" class="btn btn-primary btn-block btn-sm">
 									<i class="fas fa-cog"></i>
 									Profile Setings
 								</router-link>
-                            	<router-link to="/logout" v-show="this.$store.state.user" class="btn btn-secondary btn-block btn-sm">
+								<router-link to="/editPassword" class="btn btn-primary btn-block btn-sm">
+									<i class="fas fa-cog"></i>
+									Edit password
+								</router-link>
+                            	<router-link to="/logout" class="btn btn-secondary btn-block btn-sm">
 			    				<i class="fas fa-sign-out-alt"></i>
 							    	Logout
 							    </router-link>

@@ -26,8 +26,8 @@ class StoreUserRequest extends Reqsuest
     {
         return [
             'name' => 'required|string|max:255|regex:/^[a-zA-Z ]+$/',
+            'username' => 'required|string|text|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:3|confirmed',
             'photo_url' => ['nullable', 'image']
         ];
     }
