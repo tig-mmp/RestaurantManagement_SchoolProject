@@ -37,7 +37,7 @@ class UserControllerAPI extends Controller
             ]);
         $user = new User();
         $user->fill($request->all());
-        $user->password = "a";
+        $user->password = Hash::make($request->password);
         $user->save();
         return response()->json(new UserResource($user), 201);
     }
@@ -63,7 +63,8 @@ class UserControllerAPI extends Controller
         $request->validate([
             'password' => 'min:3|confirmed'
         ]);
-        $user->password = Hash::make($request->get('password'));
+        $user->password = $request->get('password');
+        $user->password = Hash::make($user->password);
         $user->update($request->all());
         return new UserResource($user);
     }

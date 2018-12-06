@@ -1,14 +1,34 @@
 <template>
-    <div>
+    <div class="jumbotron">
         <form autocomplete="off" @submit.prevent="register" method="post">
-
-
-            <v-text-field v-model="user.name" label="Name" required></v-text-field>
-            <v-text-field v-model="user.username" label="Username" required></v-text-field>
-            <v-text-field v-model="user.email" label="Email" required></v-text-field>
-
-            <v-select v-model="select" :items="items" required></v-select>
-
+            <h2>Edit User</h2>
+            <div class="form-group">
+                <label for="inputName">Name</label>
+                <input
+                        type="text" class="form-control" v-model="user.name"
+                        name="name" id="inputName" required
+                        placeholder="name"/>
+            </div>
+            <div class="form-group">
+                <label for="inputUsername">Username</label>
+                <input
+                        type="text" class="form-control" v-model="user.username"
+                        name="name" id="inputUsername" required
+                        placeholder="username"/>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail">Email</label>
+                <input
+                        type="email" class="form-control" v-model="user.email"
+                        name="email" id="inputEmail" required
+                        placeholder="Email address"/>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select v-model="select">
+                    <option v-for="type in types" :value="type">{{type}}</option>
+                </select>
+            </div>
             <button id="submit" type="submit" class="btn btn-default" v-on:click.prevent="register">Submit</button>
         </form>
     </div>
@@ -23,10 +43,10 @@
                     username:"",
                     password:"",
                     email:"",
-                    items:"",
+                    types:"",
                 },
-                select: null,
-                items: [
+                select: "manager",//para não começar vazio
+                types: [
                     "manager",
                     "waiter",
                     "cook",
