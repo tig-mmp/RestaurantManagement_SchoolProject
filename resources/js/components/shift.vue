@@ -28,9 +28,11 @@
                 if (shift === 1){
                     this.user.shift_active = 0;
                     this.user.last_shift_end = this.changeDateFormat(new Date());
+                    this.$socket.emit('user_enter', response.data.data);
                 } else {
                     this.user.shift_active = 1;
                     this.user.last_shift_start = this.changeDateFormat(new Date());
+                    this.$socket.emit('user_exit', this.$store.state.user);
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{

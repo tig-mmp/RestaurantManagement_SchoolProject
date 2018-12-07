@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\User;
 use App\StoreUserRequest;
+use Illuminate\Support\Facades\Mail;
 
 class UserControllerAPI extends Controller
 {
@@ -70,20 +71,19 @@ class UserControllerAPI extends Controller
     }
 
     public function creteUser(Request $request){
-        /*$request->validate([
+        $request->validate([
             'name' => 'required|min:3',
             'username' => 'required|min:3|unique:users,username',
             'email' => 'required|email|unique:users,email'
-        ]);*/
+        ]);
         $user = new User();
         $user->fill($request->all());
         $user->password = "a";
-        $user->password = Hash::make($user->password);
         $user->save();
-        $user->update($request->all());
+        //send mail
+
         return response()->json(new UserResource($user), 201);
     }
-
     public function destroy($id)
     {
         $user = User::findOrFail($id);

@@ -15,11 +15,15 @@ use Illuminate\Http\Request;
 
 //US1
 Route::get('items', 'ItemsControllerAPI@index');
+
+Auth::routes(['verify' => true]);
+
+
+//Route::put('users/{id}/password', 'UserControllerAPI@updatePassword');
 //US3
 Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
-
 //US4
 Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@updatePassword');
 //US5

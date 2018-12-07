@@ -45,7 +45,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (!store.state.user) {
-        if ((to.name == 'profile') || (to.name == 'logout') || (to.name == 'manager')) {
+        if ((to.name == 'profile') || (to.name == 'logout') || (to.name == 'manager') || (to.name == 'shift')) {
             next("/menu");
             return; 
         }
@@ -59,11 +59,39 @@ router.beforeEach((to, from, next) => {
     next();
 });
 
+/*
+    no webSsocketServer:
+    socket.on('msg_from_worker_to_managers', function (msg, userInfo) {
+		if (userInfo !== undefined) {
+			io.sockets.to('manager').emit('msg_from_server_managers', userInfo.name +': "' + msg + '"');
+		}
+	});
+*/
+
 const app = new Vue({
 	router,
     store,
+    data:{
+        msgManagersText: "",
+        msgManagersTextArea: "",
+    },
     created() {
         this.$store.commit('loadTokenAndUserFromSession');
+    },
+    methods:{
+        sendManagersMsg: function(){
+            if (this.$store.state.user === null) {
+                this.$toasted.error('User is not logged in!');
+            } else {
+                this.$socket.emit('msg_from_worker_to_managers', this.msgManagersText, this.$store.state.user);
+            }
+            this.msgManagersText = "";
+        },
+    },
+    sockets: {
+        msg_from_server_managers(dataFromServer){
+            this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea ;
+        },
     },
     mounted() {
         
