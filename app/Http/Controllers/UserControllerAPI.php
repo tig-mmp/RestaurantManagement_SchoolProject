@@ -47,7 +47,7 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3',
                 'username' => 'required|unique:users,username,'.$id,
-                'email' => 'required|email|unique:users,email,'.$id
+                //'email' => 'required|email|unique:users,email,'.$id
             ]);
         $user = User::findOrFail($id);
         $user->update($request->all());

@@ -25,8 +25,7 @@ Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@upd
 //US5
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 
-
-Route::post('users/create', 'UserControllerAPI@creteUser');
+Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@creteUser');
 
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');

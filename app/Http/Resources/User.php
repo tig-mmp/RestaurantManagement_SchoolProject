@@ -22,6 +22,9 @@ class User extends Resource
             'type' => $this->type,
             'blocked' => $this->blocked,
             'photo_url' => $this->photo_url,
+            'shift_active' => $this->shift_active,
+            'last_shift_start' => $this->last_shift_start,
+            'last_shift_end' => $this->last_shift_end
         ];
     }
 }

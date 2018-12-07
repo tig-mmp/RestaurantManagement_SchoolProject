@@ -22,6 +22,7 @@
 			    	<i class="fas fa-sign-in-alt"></i> 
 			    	Login
 			    </router-link>
+                <router-link to="/shift" v-if="this.$store.state.user" class="nav-item nav-link">shift</router-link>
 			    <div v-show="this.$store.state.user" class="dropdown show">
 		  			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		    			<img src="imgProfiles/7MF36ilEs1VraVma.jpg" width="40" height="40">

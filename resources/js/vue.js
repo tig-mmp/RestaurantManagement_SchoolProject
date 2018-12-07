@@ -21,6 +21,7 @@ const manager = Vue.component('manager', require('./components/manager.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
 const editProfile = Vue.component('editProfile', require('./components/editProfile.vue'));
 const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
+const shift = Vue.component('shift', require('./components/shift.vue'));
 
 import createUser from './components/createUser.vue';
 
@@ -34,6 +35,7 @@ const routes = [
     { path: '/editProfile', component: editProfile, name: 'editProfile'},
     { path: '/editPassword', component: editPassword, name: 'editPassword'},
     { path: '/createUser', component: createUser, name: 'createUser'},
+    { path: '/shift', component: shift, name: 'shift'},
 ];
 
 const router = new VueRouter({
