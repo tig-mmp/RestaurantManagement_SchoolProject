@@ -14,7 +14,8 @@
                     type="text" class="form-control" v-model="user.username"
                     name="name" id="inputUsername"
                     placeholder="username"/>
-        </div><!--
+        </div>
+        <!--
         <div class="form-group">
             <label for="inputEmail">Email</label>
             <input
@@ -23,7 +24,12 @@
                     placeholder="Email address"/>
         </div>-->
         <div class="form-group">
-            <a class="btn btn-primary" v-on:click.prevent="savePassword()">Save</a>
+            <label>File
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+            </label>
+        </div>
+        <div class="form-group">
+            <a class="btn btn-primary" v-on:click.prevent="save()">Save</a>
             <a class="btn btn-light" v-on:click.prevent="cancelEdit()">Cancel</a>
         </div>
     </div>
@@ -34,25 +40,44 @@
         data: function(){
             return {
                 user: [],
+                file: ''
             }
         },
         methods: {
-            savePassword() {
-                console.log(this.user);
+            save() {
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
                         this.$store.commit('setUser',response.data.data);
                     });
+                let formData = new FormData();
+                formData.append('file', this.file);
+                axios.post( 'api/users/'+this.user.id+'/uploadFile',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                ).then(function(){
+                    //this.$store.commit('setUser',response.data.data);
+                })
+                .catch(function(){
+                    console.log('FAILURE!!');
+                });
             },
             cancelEdit: function(){
                 axios.get('api/users/'+this.user.id)
                     .then(response=>{
                         Object.assign(this.user, response.data.data);
                         this.$emit('user-canceled', this.user);
+                        this.file = "";
                     });
             },getInformationFromLoggedUser() {
                 this.user = this.$store.state.user;
             },
+            handleFileUpload(){
+                this.file = this.$refs.file.files[0];
+            }
         },
         mounted() {
             this.getInformationFromLoggedUser();

@@ -24,9 +24,11 @@
 			    </router-link>
                 <router-link to="/shift" v-if="this.$store.state.user" class="nav-item nav-link">shift</router-link>
 			    <div v-show="this.$store.state.user" class="dropdown show">
-		  			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		    			<img src="imgProfiles/7MF36ilEs1VraVma.jpg" width="40" height="40">
-		  			</a>
+					<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<div v-if="this.$store.state.user && (this.$store.state.user.photo_url !== undefined || this.$store.state.user.photo_url !== null)">
+							<img :src="'imgProfiles/'+ this.$store.state.user.photo_url" width="40" height="40">
+						</div>
+					</a>
   					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                         <div class="col-lg-13 p-4">
                         	<p class="text-left">

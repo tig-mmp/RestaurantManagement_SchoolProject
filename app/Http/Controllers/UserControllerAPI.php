@@ -55,6 +55,18 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
+    public function uploadFile(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        if ($request->file('file') != null) {
+            $filename = basename($request->file('file')->store('public/profiles'));
+            return "asd";
+            $user->photo_url = $filename;
+            $user->update($request->all());
+        }
+        return new UserResource($user);
+    }
+
     public function updatePassword(Request $request, $id)
     {
         $user = User::findOrFail($id);

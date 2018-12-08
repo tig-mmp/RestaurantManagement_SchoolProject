@@ -28,6 +28,7 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@updatePassword');
 //US5
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
+Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
 
 Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@creteUser');
 

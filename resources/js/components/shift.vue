@@ -1,43 +1,53 @@
 <template>
     <div class="jumbotron">
         <div v-if="user.shift_active === 0">
-            <a class="btn btn-primary" v-on:click.prevent="setShift(0)">Start shift</a>
+            You're not working
+            <a class="btn btn-primary" v-on:click.prevent="setShift()">Start shift</a>
             <div>Last shift ended: {{user.last_shift_start}}</div>
             <div>Time past: {{this.differenceEnd}}</div>
         </div>
         <div v-else>
-            <a class="btn btn-primary" v-on:click.prevent="setShift(1)">End shift</a>
+            You're working
+            <a class="btn btn-primary" v-on:click.prevent="setShift()">End shift</a>
             <div>Last shift started: {{user.last_shift_end}}</div>
             <div>Time past: {{this.differenceStart}}</div>
+
+            <!--<manager-chat :user="this.user" :msgManagersText="this.msgManagersText" :msgManagersTextArea="this.msgManagersTextArea"></manager-chat>-->
 
 
         </div>
     </div>
 </template>
 <script type="text/javascript">
-    module.exports={
+    import managerChat from './managerChat.vue';
+
+    export default {
+        components: {
+            'manager-chat': managerChat,
+        },
         data: function(){
             return {
                 user: [],
                 differenceStart: "",
-                differenceEnd: ""
+                differenceEnd: "",
+                msgManagersText: "",
+                msgManagersTextArea: ""
             }
         },
         methods: {
-            setShift(shift) {
-                if (shift === 1){
+            setShift() {
+                if (this.user.shift_active === 1){
                     this.user.shift_active = 0;
                     this.user.last_shift_end = this.changeDateFormat(new Date());
-                    this.$socket.emit('user_enter', response.data.data);
+                    this.$socket.emit('user_enter', this.user);
                 } else {
                     this.user.shift_active = 1;
                     this.user.last_shift_start = this.changeDateFormat(new Date());
-                    this.$socket.emit('user_exit', this.$store.state.user);
+                    this.$socket.emit('user_exit', this.user);
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
                         this.$store.commit('setUser',response.data.data);
-                        this.updateDate();
                     });
             },
             getInformationFromLoggedUser() {
@@ -57,16 +67,24 @@
             },
             updateDate(){
                 let atual = new Date();
-                let end = new Date(this.user.last_shift_end);
-                let start = new Date(this.user.last_shift_start);
-                this.differenceEnd = this.differenceDate(atual, end);
-                this.differenceStart = this.differenceDate(atual, start);
-            }
+                if (this.user.shift_active === 0){
+                    let end = new Date(this.user.last_shift_end);
+                    this.differenceEnd = this.differenceDate(atual, end);
+                } else{
+                    let start = new Date(this.user.last_shift_start);
+                    this.differenceStart = this.differenceDate(atual, start);
+                }
+            },
+
         },
         mounted() {
             this.getInformationFromLoggedUser();
-            this.updateDate();
-        }
+            this.$nextTick(function () {
+                window.setInterval(() => {
+                    this.updateDate()
+                },1000);
+            });
+        },
     }
 </script>
 

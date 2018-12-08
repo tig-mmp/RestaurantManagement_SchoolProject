@@ -15,6 +15,8 @@ class IsCashier
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if ($request->user() && $request->user()->type == "cashier")
+            return $next($request);
+        throw new AccessDeniedHttpException('Unauthorized.');
     }
 }

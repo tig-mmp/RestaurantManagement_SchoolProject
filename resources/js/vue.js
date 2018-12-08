@@ -12,6 +12,12 @@ window.Vue = require('vue');
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+import VueSocketio from 'vue-socket.io';
+Vue.use(new VueSocketio({
+    debug: true,
+    connection: 'http://127.0.0.1:8080' //TODO
+}));
+
 import store from './stores/global-store';
 
 const menu = Vue.component('menu-restaurant', require('./components/menuRestaurant.vue'));
@@ -22,6 +28,7 @@ const profile = Vue.component('profile', require('./components/profile.vue'));
 const editProfile = Vue.component('editProfile', require('./components/editProfile.vue'));
 const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
 const shift = Vue.component('shift', require('./components/shift.vue'));
+
 
 import createUser from './components/createUser.vue';
 
@@ -37,6 +44,7 @@ const routes = [
     { path: '/createUser', component: createUser, name: 'createUser'},
     { path: '/shift', component: shift, name: 'shift'},
 ];
+
 
 const router = new VueRouter({
     mode: 'history',
@@ -59,38 +67,20 @@ router.beforeEach((to, from, next) => {
     next();
 });
 
-/*
-    no webSsocketServer:
-    socket.on('msg_from_worker_to_managers', function (msg, userInfo) {
-		if (userInfo !== undefined) {
-			io.sockets.to('manager').emit('msg_from_server_managers', userInfo.name +': "' + msg + '"');
-		}
-	});
-*/
-
 const app = new Vue({
 	router,
     store,
     data:{
-        msgManagersText: "",
-        msgManagersTextArea: "",
     },
     created() {
         this.$store.commit('loadTokenAndUserFromSession');
     },
     methods:{
-        sendManagersMsg: function(){
-            if (this.$store.state.user === null) {
-                this.$toasted.error('User is not logged in!');
-            } else {
-                this.$socket.emit('msg_from_worker_to_managers', this.msgManagersText, this.$store.state.user);
-            }
-            this.msgManagersText = "";
-        },
+
     },
     sockets: {
         msg_from_server_managers(dataFromServer){
-            this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea ;
+            this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea;
         },
     },
     mounted() {

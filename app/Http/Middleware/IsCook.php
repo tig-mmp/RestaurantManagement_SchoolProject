@@ -15,6 +15,8 @@ class IsCook
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if ($request->user() && $request->user()->type == "cook")
+            return $next($request);
+        throw new AccessDeniedHttpException('Unauthorized.');
     }
 }
