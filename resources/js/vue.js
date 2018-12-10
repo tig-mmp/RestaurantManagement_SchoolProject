@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://127.0.0.1:8080' //TODO
+    connection: 'http://127.0.0.0:8080' //TODO
 }));
 
 import store from './stores/global-store';
@@ -28,6 +28,7 @@ const profile = Vue.component('profile', require('./components/profile.vue'));
 const editProfile = Vue.component('editProfile', require('./components/editProfile.vue'));
 const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
 const shift = Vue.component('shift', require('./components/shift.vue'));
+const navbar = Vue.component('navbar', require('./components/navbar.vue'));
 
 
 import createUser from './components/createUser.vue';
