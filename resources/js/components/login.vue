@@ -52,6 +52,9 @@
                         this.typeofmsg = "alert-success";
                         this.message = "User authenticated correctly";
                         this.showMessage = true;
+                        if (this.$store.state.user.shift_active === 1){
+                            this.$socket.emit('user_enter', this.$store.state.user);
+                        }
                         this.$router.push('/logout');
                     })
                     .catch(error => {

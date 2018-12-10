@@ -48,11 +48,13 @@ io.on('connection', function (socket) {
     
 	socket.on('user_enter', function (user) {
 	if (user !== undefined && user !== null)
+		console.log(user.name + ' joined ' + user.type);
 		socket.join(user.type);
 		loggedUsers.addUserInfo(user, socket.id);
 	});
 	socket.on('user_exit', function (user) {
 		if (user !== undefined && user !== null)
+			console.log(user.name + ' exit ' + user.type);
 			socket.leave(user.type);
 			loggedUsers.removeUserInfoByID(user.id);
 	});

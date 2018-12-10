@@ -1,8 +1,8 @@
 <template>
     <div class="jumbotron">
         Mesage to managers:
-        <input type="text" id="inputGlobal" class="inputchat" v-model="msgManagersText" @keypress.enter="this.sendManagersMsg">
-        <div v-if="this.user.type == 'manager'">
+        <input type="text" id="inputGlobal" class="inputchat" v-model="msgManagersText" @keypress.enter="sendManagersMsg">
+        <div v-if="this.user.type === 'manager'">
             chat to managers:
             <input type="text" id="inputDepartment" class="inputchat" v-model="msgManagersTextArea" @keypress.enter="sendDepMsg">
         </div>
@@ -10,8 +10,13 @@
 </template>
 
 <script type="text/javascript">
+    //US8
     module.exports={
-        props: ['user', 'msgManagersText', 'msgManagersTextArea'],
+        data: function(){
+            return {
+                user: [],msgManagersText:'',msgManagersTextArea:''
+            }
+        },
         methods: {
             getInformationFromLoggedUser() {
                 this.user = this.$store.state.user;
@@ -27,6 +32,7 @@
 
         },
         mounted() {
+            console.log(this.user);
             this.getInformationFromLoggedUser();
         },
         sockets: {

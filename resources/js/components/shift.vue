@@ -12,7 +12,7 @@
             <div>Last shift started: {{user.last_shift_end}}</div>
             <div>Time past: {{this.differenceStart}}</div>
 
-            <!--<manager-chat :user="this.user" :msgManagersText="this.msgManagersText" :msgManagersTextArea="this.msgManagersTextArea"></manager-chat>-->
+            <manager-chat></manager-chat>
 
 
         </div>
@@ -30,8 +30,6 @@
                 user: [],
                 differenceStart: "",
                 differenceEnd: "",
-                msgManagersText: "",
-                msgManagersTextArea: ""
             }
         },
         methods: {
@@ -39,11 +37,11 @@
                 if (this.user.shift_active === 1){
                     this.user.shift_active = 0;
                     this.user.last_shift_end = this.changeDateFormat(new Date());
-                    this.$socket.emit('user_enter', this.user);
+                    this.$socket.emit('user_exit', this.user);
                 } else {
                     this.user.shift_active = 1;
                     this.user.last_shift_start = this.changeDateFormat(new Date());
-                    this.$socket.emit('user_exit', this.user);
+                    this.$socket.emit('user_enter', this.user);
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
@@ -75,7 +73,6 @@
                     this.differenceStart = this.differenceDate(atual, start);
                 }
             },
-
         },
         mounted() {
             this.getInformationFromLoggedUser();

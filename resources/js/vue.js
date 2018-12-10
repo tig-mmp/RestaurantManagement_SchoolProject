@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://127.0.0.0:8080' //TODO
+    connection: 'http://127.0.0.1:8080' //TODO
 }));
 
 import store from './stores/global-store';

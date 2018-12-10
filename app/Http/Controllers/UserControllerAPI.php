@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -58,12 +59,14 @@ class UserControllerAPI extends Controller
     public function uploadFile(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        if ($request->file('file') != null) {
-            $filename = basename($request->file('file')->store('public/profiles'));
-            return "asd";
-            $user->photo_url = $filename;
-            $user->update($request->all());
-        }
+        $filename = basename($request->file('file')->store('public/profiles'));
+        $user->photo_url = $filename;
+        $user->save();
+
+        $photo = $request->file('file')->hashName();
+        $request->file('file')->store('profiles', 'public');
+        $user->photo_url = $photo;
+        $user->save();
         return new UserResource($user);
     }
 

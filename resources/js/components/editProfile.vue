@@ -1,6 +1,6 @@
 <template>
     <div class="jumbotron">
-        <h2>Edit User</h2>
+        <h2>Edit User {{user.email}}</h2>
         <div class="form-group">
             <label for="inputName">Name</label>
             <input
@@ -15,14 +15,6 @@
                     name="name" id="inputUsername"
                     placeholder="username"/>
         </div>
-        <!--
-        <div class="form-group">
-            <label for="inputEmail">Email</label>
-            <input
-                    type="email" class="form-control" v-model="user.email"
-                    name="email" id="inputEmail"
-                    placeholder="Email address"/>
-        </div>-->
         <div class="form-group">
             <label>File
                 <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
@@ -45,25 +37,26 @@
         },
         methods: {
             save() {
+                if (this.file !== ''){
+                    let formData = new FormData();
+                    formData.append('file', this.file);
+                    axios.post( 'api/users/'+this.user.id+'/uploadFile',
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    ).then(function(){
+                    })
+                        .catch(function(){
+                            console.log('FAILURE!!');
+                        });
+                }
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
                         this.$store.commit('setUser',response.data.data);
                     });
-                let formData = new FormData();
-                formData.append('file', this.file);
-                axios.post( 'api/users/'+this.user.id+'/uploadFile',
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                ).then(function(){
-                    //this.$store.commit('setUser',response.data.data);
-                })
-                .catch(function(){
-                    console.log('FAILURE!!');
-                });
             },
             cancelEdit: function(){
                 axios.get('api/users/'+this.user.id)
