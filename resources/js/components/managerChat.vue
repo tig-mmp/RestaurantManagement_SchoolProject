@@ -38,6 +38,11 @@
         sockets: {
             msg_from_server_managers(dataFromServer){
                 this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea;
+                let toast = this.$toasted.show(dataFromServer, {
+                    theme: "outline",
+                    position: "top-center",
+                    duration : null
+                });
             },
         },
     }

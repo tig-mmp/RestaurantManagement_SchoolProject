@@ -17,7 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'type', 'blocked', 'photo_url', 'shift_active', 'last_shift_start', 'last_shift_end'
+        'id', 'name', 'username', 'email', 'password', 'type', 'blocked', 'photo_url', 'shift_active', 'last_shift_start', 'last_shift_end'
     ];
 
     /**
@@ -31,5 +31,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function findForPassport($identifier) {
         return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
+    }
+
+    public function meal(){
+        return $this->belongsToMany(Meal::class, 'responsible_waiter_id','id');
+    }
+
+    public function order(){
+        return $this->belongsToMany(Order::class, 'responsible_cook_id','id');
     }
 }

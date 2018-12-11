@@ -61,7 +61,7 @@ io.on('connection', function (socket) {
 
 	socket.on('msg_from_worker_to_managers', function (msg, userInfo) {
 		if (userInfo !== undefined) {
-			io.sockets.to('manager').emit('msg_from_server_managers', userInfo.name +': "' + msg + '"');
+			io.sockets.to('manager').emit('msg_from_server_managers', msg, userInfo);
 		}
 	});
 	

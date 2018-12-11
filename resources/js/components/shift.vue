@@ -14,7 +14,6 @@
 
             <manager-chat></manager-chat>
 
-
         </div>
     </div>
 </template>
@@ -29,7 +28,7 @@
             return {
                 user: [],
                 differenceStart: "",
-                differenceEnd: "",
+                differenceEnd: ""
             }
         },
         methods: {

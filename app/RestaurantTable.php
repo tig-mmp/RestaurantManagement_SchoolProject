@@ -16,4 +16,8 @@ class RestaurantTable extends Model
     protected $fillable = [
         'id'
     ];
+
+    public function meal(){
+        return $this->belongsToMany(Meal::class, 'table_number','id');
+    }
 }

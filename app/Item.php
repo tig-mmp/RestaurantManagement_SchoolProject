@@ -18,4 +18,12 @@ class Item extends Model
     protected $fillable = [
         'id', 'name', 'type','description','photo_url','price',
     ];
+
+    public function invoiceItem(){
+        return $this->belongsToMany(InvoiceItem::class, 'item_id','id');
+    }
+
+    public function order(){
+        return $this->belongsToMany(Order::class, 'item_id','id');
+    }
 }
