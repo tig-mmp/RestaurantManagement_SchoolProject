@@ -38,7 +38,7 @@
         sockets: {
             msg_from_server_managers(dataFromServer){
                 this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea;
-                let toast = this.$toasted.show(dataFromServer, {
+                let toast = this.$toasted.show(dataFromServer[0], {
                     theme: "outline",
                     position: "top-center",
                     duration : null

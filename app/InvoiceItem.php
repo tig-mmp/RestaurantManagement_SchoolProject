@@ -9,6 +9,7 @@ class InvoiceItem extends Model
 {
 	use Notifiable;
 
+    protected $table = 'invoice_items';
     /**
      * The attributes that are mass assignable.
      *

@@ -13,17 +13,21 @@
             <div>Time past: {{this.differenceStart}}</div>
 
             <manager-chat></manager-chat>
+            <cook v-if="this.user.type === 'cook'"></cook>
 
         </div>
     </div>
 </template>
 <script type="text/javascript">
     import managerChat from './managerChat.vue';
+    import orders from './orders.vue';
 
     export default {
         components: {
             'manager-chat': managerChat,
+            'cook': orders,
         },
+
         data: function(){
             return {
                 user: [],

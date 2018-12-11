@@ -47,7 +47,8 @@
                                 'Content-Type': 'multipart/form-data'
                             }
                         }
-                    ).then(function(){
+                    ).then(response=>{
+                        this.$store.commit('setUser',response.data.data);
                     })
                         .catch(function(){
                             console.log('FAILURE!!');
@@ -65,7 +66,8 @@
                         this.$emit('user-canceled', this.user);
                         this.file = "";
                     });
-            },getInformationFromLoggedUser() {
+            },
+            getInformationFromLoggedUser() {
                 this.user = this.$store.state.user;
             },
             handleFileUpload(){

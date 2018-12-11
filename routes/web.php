@@ -12,4 +12,4 @@
 */
 Route::get('/','VueController@index');
 Route::get('{path}','VueController@index')->where('path', '([A-z\d-\/_.]+)?');
-
+Route::get('/changePassword','LoginControllerAPI@changePassword');

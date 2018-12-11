@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
+use App\Order;
 use App\User;
 use App\StoreUserRequest;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserControllerAPI extends Controller
 {
@@ -48,24 +50,30 @@ class UserControllerAPI extends Controller
     {
         $request->validate([
                 'name' => 'required|min:3',
-                'username' => 'required|unique:users,username,'.$id,
-                //'email' => 'required|email|unique:users,email,'.$id
+                'username' => 'required|unique:users,username,'.$id
             ]);
         $user = User::findOrFail($id);
-        $user->update($request->all());
+        $user->fill([
+            'name' => $request->name,
+            'username' => $request->username
+        ]);
+        $user->save();
         return new UserResource($user);
     }
 
     public function uploadFile(Request $request, $id)
     {
+        $request->validate([
+            'file' => 'image',
+        ]);
         $user = User::findOrFail($id);
+        if($user->profile_photo != null){
+            Storage::delete("public/profiles/{$user->profile_photo}");
+        }
         $filename = basename($request->file('file')->store('public/profiles'));
-        $user->photo_url = $filename;
-        $user->save();
-
-        $photo = $request->file('file')->hashName();
-        $request->file('file')->store('profiles', 'public');
-        $user->photo_url = $photo;
+        $user->fill([
+            'photo_url' => $filename,
+        ]);
         $user->save();
         return new UserResource($user);
     }
@@ -85,7 +93,7 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    public function creteUser(Request $request){
+    public function createUser(Request $request){
         $request->validate([
             'name' => 'required|min:3',
             'username' => 'required|min:3|unique:users,username',
@@ -96,24 +104,36 @@ class UserControllerAPI extends Controller
         $user->password = "a";
         $user->save();
         //send mail
+        /*
+        Mail::send('emails.reminder', ['user' => $user], function ($m) use ($user) {
+            $m->from('hello@app.com', 'Your Application');
 
+            $m->to($user->email)->subject('Your Reminder!');
+        });*/
         return response()->json(new UserResource($user), 201);
     }
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
         return response()->json(null, 204);
     }
-    public function emailAvailable(Request $request)
+
+    public function orders(Request $request, $id)
     {
-        $totalEmail = 1;
-        if ($request->has('email') && $request->has('id')) {
-            $totalEmail = DB::table('users')->where('email', '=', $request->email)->where('id', '<>', $request->id)->count();
-        } else if ($request->has('email')) {
-            $totalEmail = DB::table('users')->where('email', '=', $request->email)->count();
-        }
-        return response()->json($totalEmail == 0);
+        $query = DB::table('orders')
+            ->join('users', 'orders.responsible_cook_id', '=', 'users.id')
+            ->join('meals', 'orders.meal_id', '=', 'meals.id')
+            ->join('items', 'orders.item_id', '=', 'items.id')
+            ->select( 'orders.id as id', 'orders.state', 'orders.item_id', 'orders.meal_id',
+                'orders.start', 'orders.end', 'items.name', 'meals.table_number')
+            ->where('users.id', '=', $id)
+            ->whereIn('orders.state', ['in preparation', 'confirmed'])
+            ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
+            ->orderBy('orders.start', 'desc')
+            ->paginate(25);
+        return $query;
     }
 
     public function myProfile(Request $request)

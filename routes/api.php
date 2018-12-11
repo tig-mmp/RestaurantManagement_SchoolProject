@@ -30,10 +30,13 @@ Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@upd
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
 
-Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@creteUser');
+Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@createUser');
 
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');
+
+//US9
+Route::get('users/{id}/orders', 'UserControllerAPI@orders');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

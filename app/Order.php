@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Order extends Model
 {
@@ -13,6 +14,8 @@ class Order extends Model
      *
      * @var array
      */
+    protected $table = 'orders';
+
     protected $fillable = [
         'id', 'state', 'item_id','meal_id','responsible_cook_id','start','end',
     ];
