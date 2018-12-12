@@ -32,9 +32,9 @@ const editProfile = Vue.component('editProfile', require('./components/editProfi
 const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
 const shift = Vue.component('shift', require('./components/shift.vue'));
 const navbar = Vue.component('navbar', require('./components/navbar.vue'));
+const createMeal = Vue.component('createMeal', require('./components/createMeal.vue'));
+const createUser = Vue.component('createUser', require('./components/createUser.vue'));
 
-
-import createUser from './components/createUser.vue';
 
 const routes = [
     { path: '/', redirect: '/menu' },
@@ -47,6 +47,7 @@ const routes = [
     { path: '/editPassword', component: editPassword, name: 'editPassword'},
     { path: '/createUser', component: createUser, name: 'createUser'},
     { path: '/shift', component: shift, name: 'shift'},
+    { path: '/createMeal', component: createMeal, name: 'createMeal'},
 ];
 
 

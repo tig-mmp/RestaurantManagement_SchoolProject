@@ -30,20 +30,6 @@ class UserControllerAPI extends Controller
         return new UserResource(User::find($id));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-                'name' => 'required|min:3',
-                'username' => 'required|min:3|unique:users,username',
-                'email' => 'required|email|unique:users,email'
-            ]);
-        $user = new User();
-        $user->fill($request->all());
-        $user->password = Hash::make($request->password);
-        $user->save();
-        return response()->json(new UserResource($user), 201);
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -91,7 +77,7 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 
-    public function createUser(Request $request){
+    public function store(Request $request){
         $request->validate([
             'name' => 'required|min:3',
             'username' => 'required|min:3|unique:users,username',

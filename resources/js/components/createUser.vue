@@ -56,6 +56,7 @@
         },
         methods: {
             register:function(){
+                this.user.type = this.select;
                 axios.post('/api/users/create', this.user)
                     .then(response=>{
                         console.log(response.data.data);

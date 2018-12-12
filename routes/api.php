@@ -30,7 +30,7 @@ Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@upd
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
 
-Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@createUser');
+Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@store');
 
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');
@@ -39,6 +39,10 @@ Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy')
 Route::get('users/{id}/orders', 'UserControllerAPI@orders');
 //US11
 Route::middleware('auth:api', 'cook')->put('order/{id}', 'OrderControllerAPI@update');
+
+//US12
+Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControllerAPI@mesasLivres');
+Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI@store');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

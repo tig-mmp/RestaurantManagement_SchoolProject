@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class RestaurantTable extends Model
 {
@@ -13,11 +14,14 @@ class RestaurantTable extends Model
      *
      * @var array
      */
+
+    protected $table = 'restaurant_tables';
+
     protected $fillable = [
-        'id'
+        'table_number'
     ];
 
     public function meal(){
-        return $this->belongsToMany(Meal::class, 'table_number','id');
+        return $this->belongsToMany(Meal::class, 'table_number','table_number');
     }
 }
