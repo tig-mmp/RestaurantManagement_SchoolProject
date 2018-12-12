@@ -55,9 +55,9 @@
                         });
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
-                    .then(response=>{
-                        this.$store.commit('setUser',response.data.data);
-                    });
+                .then(response=>{
+                    this.$store.commit('setUser',response.data.data);
+                });
             },
             cancelEdit: function(){
                 axios.get('api/users/'+this.user.id)

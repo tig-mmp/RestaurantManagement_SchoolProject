@@ -1,7 +1,7 @@
 <template>
     <div class="jumbotron">
         <form autocomplete="off" @submit.prevent="register" method="post">
-            <h2>Edit User</h2>
+            <h2>Create User</h2>
             <div class="form-group">
                 <label for="inputName">Name</label>
                 <input

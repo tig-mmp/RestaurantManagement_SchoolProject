@@ -65,6 +65,17 @@ io.on('connection', function (socket) {
 			io.sockets.to('manager').emit('msg_from_server_managers', mensage, userInfo);
 		}
 	});
+
+	socket.on('order', function (destUserId) {
+		let userInfo = loggedUsers.userInfoByID(destUserId);
+		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
+		if (socket_id === null) {
+			socket.emit('privateMessage_unavailable', destUserId);
+		} else {
+			io.to(socket_id).emit('updateOrder', destUserId);
+			socket.emit('updateOrder', destUserId);
+		}
+	});
 	
     // Emit message to the same cliente 
     //socket.emit('my_active_games_changed');

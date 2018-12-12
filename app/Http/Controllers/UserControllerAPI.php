@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
-use App\Order;
 use App\User;
-use App\StoreUserRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -126,8 +124,8 @@ class UserControllerAPI extends Controller
             ->join('users', 'orders.responsible_cook_id', '=', 'users.id')
             ->join('meals', 'orders.meal_id', '=', 'meals.id')
             ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select( 'orders.id as id', 'orders.state', 'orders.item_id', 'orders.meal_id',
-                'orders.start', 'orders.end', 'items.name', 'meals.table_number')
+            ->select( 'orders.id as id', 'orders.state',
+                'orders.start', 'items.name', 'meals.table_number')
             ->where('users.id', '=', $id)
             ->whereIn('orders.state', ['in preparation', 'confirmed'])
             ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
