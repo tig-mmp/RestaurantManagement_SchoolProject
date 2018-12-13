@@ -118,6 +118,22 @@ class UserControllerAPI extends Controller
         return $query;
     }
 
+    public function invoices(Request $request, $id)
+    {
+        $query = App\Flight::where('state', 'not paid')->get();
+        /*$query = DB::table('meals')
+            ->join('items', 'orders.item_id', '=', 'items.id')
+            ->select( 'orders.id', 'orders.state',
+                'orders.start', 'items.name', 'meals.table_number')
+            ->where('users.id', '=', $id)
+            ->whereIn('orders.state', ['in preparation', 'confirmed'])
+            ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
+            ->orderBy('orders.start', 'desc')
+            ->paginate(25);*/
+        return $query;
+    }
+
+
     public function meals(Request $request, $id)
     {
         $query = DB::table('meals')
