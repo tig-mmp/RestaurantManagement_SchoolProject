@@ -62,7 +62,7 @@
                 this.user = this.$store.state.user;
             },
             changeDateFormat(d){
-                return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+(d.getDay()+2)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+                return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+(d.getDay()+9)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
             },
             differenceDate(date1, date2){
                 let timeDiff = Math.abs(date1.getTime() - date2.getTime());

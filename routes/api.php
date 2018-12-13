@@ -45,6 +45,9 @@ Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControll
 Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI@store');
 //US13
 Route::get('users/{id}/meals', 'UserControllerAPI@meals');
+Route::get('dishes', 'ItemsControllerAPI@dishes');
+Route::get('drinks', 'ItemsControllerAPI@drinks');
+Route::post('orders/create', 'OrderControllerAPI@store');
 //US22
 //Route::get('invoices',)
 
