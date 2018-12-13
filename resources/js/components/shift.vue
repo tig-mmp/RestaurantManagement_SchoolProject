@@ -13,9 +13,11 @@
             <div>Time past: {{this.differenceStart}}</div>
 
             <manager-chat></manager-chat>
-            <cook v-show="this.user.type === 'cook'"></cook>
-            <create-meal> v-show="this.$store.state.user && this.$store.state.user.type === 'waiter'
+            <cook v-if="this.user.type === 'cook'"></cook>
+            <create-meal v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
 						&& this.$store.state.user.shift_active === 1">Create Meal</create-meal>
+            <meals v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
+                && this.$store.state.user.shift_active === 1">Create Meal</meals>
         </div>
     </div>
 </template>
@@ -23,12 +25,14 @@
     import managerChat from './managerChat.vue';
     import orders from './orders.vue';
     import createMeal from './createMeal.vue';
+    import meals from './meals.vue';
 
     export default {
         components: {
             'manager-chat': managerChat,
             'cook': orders,
             'create-meal': createMeal,
+            'meals': meals,
         },
 
         data: function(){

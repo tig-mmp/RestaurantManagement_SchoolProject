@@ -37,10 +37,7 @@ class UserControllerAPI extends Controller
                 'username' => 'required|unique:users,username,'.$id
             ]);
         $user = User::findOrFail($id);
-        $user->fill([
-            'name' => $request->name,
-            'username' => $request->username
-        ]);
+        $user->fill($request->all());
         $user->save();
         return new UserResource($user);
     }
@@ -71,9 +68,10 @@ class UserControllerAPI extends Controller
         $request->validate([
             'password' => 'min:3|confirmed'
         ]);
-        $user->password = $request->get('password');
-        $user->password = Hash::make($user->password);
-        $user->update($request->all());
+        $user->fill([
+            'password' => Hash::make($user->password)
+        ]);
+        $user->save();
         return new UserResource($user);
     }
 
@@ -85,7 +83,7 @@ class UserControllerAPI extends Controller
         ]);
         $user = new User();
         $user->fill($request->all());
-        $user->password = "a";
+        $user->fill(['password' => 'a']);
         $user->save();
         //send mail
         /*
@@ -110,12 +108,22 @@ class UserControllerAPI extends Controller
             ->join('users', 'orders.responsible_cook_id', '=', 'users.id')
             ->join('meals', 'orders.meal_id', '=', 'meals.id')
             ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select( 'orders.id as id', 'orders.state',
+            ->select( 'orders.id', 'orders.state',
                 'orders.start', 'items.name', 'meals.table_number')
             ->where('users.id', '=', $id)
             ->whereIn('orders.state', ['in preparation', 'confirmed'])
             ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
             ->orderBy('orders.start', 'desc')
+            ->paginate(25);
+        return $query;
+    }
+
+    public function meals(Request $request, $id)
+    {
+        $query = DB::table('meals')
+            ->join('users', 'responsible_waiter_id', '=', 'users.id')
+            ->where('responsible_waiter_id', '=', $id)
+            ->where('meals.state', '=', 'active')
             ->paginate(25);
         return $query;
     }

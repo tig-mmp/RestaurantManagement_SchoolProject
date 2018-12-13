@@ -39,11 +39,11 @@ Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy')
 Route::get('users/{id}/orders', 'UserControllerAPI@orders');
 //US11
 Route::middleware('auth:api', 'cook')->put('order/{id}', 'OrderControllerAPI@update');
-
 //US12
 Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControllerAPI@mesasLivres');
 Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI@store');
-
+//US13
+Route::get('users/{id}/meals', 'UserControllerAPI@meals');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

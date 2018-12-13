@@ -1,5 +1,5 @@
 <template>
-    <div class="jumbotron">
+    <div>
         Mesage to managers:
         <input type="text" id="inputGlobal" class="inputchat" v-model="msgManagersText" @keypress.enter="sendManagersMsg">
         <div v-if="this.user.type === 'manager'">

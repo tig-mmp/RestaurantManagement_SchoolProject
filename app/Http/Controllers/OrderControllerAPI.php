@@ -15,11 +15,6 @@ use Illuminate\Http\Request;
 class OrderControllerAPI
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([

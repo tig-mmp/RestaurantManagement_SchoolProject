@@ -9,7 +9,7 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
-        <tbody> <!--v-bind:bind:backgrounds="[order.state === 'confirmed' ? 'bg-red' : 'bg-green']"-->
+        <tbody>
         <tr class="color-box" v-for="order in orders" :key="order.id"
             v-bind:style="[order.state === 'confirmed' ? {'background-color' : 'Crimson'} : {'background-color' : 'LightSkyBlue'}]">
             <td>{{order.start}}</td>
@@ -33,8 +33,6 @@
         },
         methods: {
             prepare(id, state){
-                console.log(id);
-                console.log(state);
                 axios.put('/api/order/'+id, {'state':state})
                     .then(response=>{
                         console.log(response);
