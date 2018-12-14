@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Meal;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
@@ -10,10 +10,8 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 use App\User;
-use App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -40,8 +38,16 @@ class UserControllerAPI extends Controller
                 'username' => 'required|unique:users,username,'.$id
             ]);
         $user = User::findOrFail($id);
+        $old_shift = $user->shift_active;
         $user->fill($request->all());
+        if ($old_shift === 1 && $request->get('shift_active') === 0) {
+            $user->fill(['last_shift_end' => Carbon::now()]);
+        }
+        if ($old_shift === 0 && $request->get('shift_active') === 1) {
+            $user->fill(['last_shift_start' => Carbon::now()]);
+        }
         $user->save();
+        $user = User::findOrFail($id);
         return new UserResource($user);
     }
 
@@ -121,9 +127,9 @@ class UserControllerAPI extends Controller
         return $query;
     }
 
-    public function invoices(Request $request)
+    public function invoices(Request $request, $id)
     {
-        $query = Meal::where('state', 'not paid')->get();
+        $query = App\Flight::where('state', 'not paid')->get();
         /*$query = DB::table('meals')
             ->join('items', 'orders.item_id', '=', 'items.id')
             ->select( 'orders.id', 'orders.state',

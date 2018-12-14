@@ -49,23 +49,19 @@
             setShift() {
                 if (this.user.shift_active === 1){
                     this.user.shift_active = 0;
-                    this.user.last_shift_end = this.changeDateFormat(new Date());
                     this.$socket.emit('user_exit', this.user);
                 } else {
                     this.user.shift_active = 1;
-                    this.user.last_shift_start = this.changeDateFormat(new Date());
                     this.$socket.emit('user_enter', this.user);
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                     .then(response=>{
                         this.$store.commit('setUser',response.data.data);
+                        this.getInformationFromLoggedUser();
                     });
             },
             getInformationFromLoggedUser() {
                 this.user = this.$store.state.user;
-            },
-            changeDateFormat(d){
-                return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+(d.getDay()+9)+" "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
             },
             differenceDate(date1, date2){
                 let timeDiff = Math.abs(date1.getTime() - date2.getTime());
