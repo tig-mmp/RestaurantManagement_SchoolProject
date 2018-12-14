@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderControllerAPI
 {
@@ -28,5 +29,15 @@ class OrderControllerAPI
         return new OrderResource($order);
     }
 
+    public function store(Request $request){
+        $order = new Order();
+        $order->fill($request->all());
+        $order->fill([
+            'state' => 'pending',
+            'start' => Carbon::now()
+        ]);
+        $order->save();
+        return response()->json(new OrderResource($order), 201);
+    }
 
 }

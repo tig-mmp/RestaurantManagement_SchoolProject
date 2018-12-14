@@ -143,6 +143,7 @@ class UserControllerAPI extends Controller
             ->join('users', 'responsible_waiter_id', '=', 'users.id')
             ->where('responsible_waiter_id', '=', $id)
             ->where('meals.state', '=', 'active')
+            ->select('meals.id', 'meals.start', 'meals.state', 'meals.table_number')
             ->paginate(25);
         return $query;
     }
