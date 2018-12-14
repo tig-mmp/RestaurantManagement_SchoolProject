@@ -18,6 +18,7 @@
 						&& this.$store.state.user.shift_active === 1">Create Meal</create-meal>
             <meals v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
                 && this.$store.state.user.shift_active === 1">Create Meal</meals>
+            <cashier v-if="this.user.type === 'cashier'"></cashier>
         </div>
     </div>
 </template>
@@ -26,6 +27,7 @@
     import orders from './orders.vue';
     import createMeal from './createMeal.vue';
     import meals from './meals.vue';
+    import cashier from './cashier.vue';
 
     export default {
         components: {
@@ -33,6 +35,7 @@
             'cook': orders,
             'create-meal': createMeal,
             'meals': meals,
+            'cashier':cashier,
         },
 
         data: function(){

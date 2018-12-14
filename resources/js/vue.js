@@ -34,6 +34,7 @@ const shift = Vue.component('shift', require('./components/shift.vue'));
 const navbar = Vue.component('navbar', require('./components/navbar.vue'));
 const createMeal = Vue.component('createMeal', require('./components/createMeal.vue'));
 const createUser = Vue.component('createUser', require('./components/createUser.vue'));
+const cashier = Vue.component('cashier', require('./components/cashier.vue'));
 
 
 const routes = [
@@ -48,6 +49,7 @@ const routes = [
     { path: '/createUser', component: createUser, name: 'createUser'},
     { path: '/shift', component: shift, name: 'shift'},
     { path: '/createMeal', component: createMeal, name: 'createMeal'},
+    { path: '/cashier', component: cashier, name: 'cashier'},
 ];
 
 

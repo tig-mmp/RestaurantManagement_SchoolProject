@@ -46,7 +46,7 @@ Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI
 //US13
 Route::get('users/{id}/meals', 'UserControllerAPI@meals');
 //US22
-//Route::get('invoices',)
+Route::get('cashier','UserControllerAPI@invoices');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

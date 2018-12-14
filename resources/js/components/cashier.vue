@@ -29,7 +29,7 @@
         methods: {
 
             getMealsNotPaid(){
-                axios.get( 'api/users/cashier').
+                axios.get('api/cashier').
                 then(response=>{
                     this.meals = response.data.data;
                 })

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Meal;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
@@ -9,8 +10,10 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 use App\User;
+use App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -118,9 +121,9 @@ class UserControllerAPI extends Controller
         return $query;
     }
 
-    public function invoices(Request $request, $id)
+    public function invoices(Request $request)
     {
-        $query = App\Flight::where('state', 'not paid')->get();
+        $query = Meal::where('state', 'not paid')->get();
         /*$query = DB::table('meals')
             ->join('items', 'orders.item_id', '=', 'items.id')
             ->select( 'orders.id', 'orders.state',
