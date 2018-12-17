@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderItem as OrderItemResource;
+use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\Meal as MealResource;
+use App\Meal;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -12,6 +16,7 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Order;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,13 +46,12 @@ class UserControllerAPI extends Controller
         $old_shift = $user->shift_active;
         $user->fill($request->all());
         if ($old_shift === 1 && $request->get('shift_active') === 0) {
-            $user->fill(['last_shift_end' => Carbon::now()]);
+            $user->fill(['last_shift_end' => Carbon::now()->toDateTimeString(),]);
         }
         if ($old_shift === 0 && $request->get('shift_active') === 1) {
-            $user->fill(['last_shift_start' => Carbon::now()]);
+            $user->fill(['last_shift_start' => Carbon::now()->toDateTimeString(),]);
         }
         $user->save();
-        $user = User::findOrFail($id);
         return new UserResource($user);
     }
 
@@ -111,20 +115,24 @@ class UserControllerAPI extends Controller
         return response()->json(null, 204);
     }
 
-    public function orders(Request $request, $id)
+    //waiter
+    public function cookOrders(Request $request, $id)
     {
-        $query = DB::table('orders')
-            ->join('users', 'orders.responsible_cook_id', '=', 'users.id')
-            ->join('meals', 'orders.meal_id', '=', 'meals.id')
-            ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select( 'orders.id', 'orders.state',
-                'orders.start', 'items.name', 'meals.table_number')
-            ->where('users.id', '=', $id)
-            ->whereIn('orders.state', ['in preparation', 'confirmed'])
-            ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
-            ->orderBy('orders.start', 'desc')
-            ->paginate(25);
-        return $query;
+        return OrderItemResource::collection(Order::where('responsible_cook_id', $id)
+            ->whereIn('state', ['in preparation', 'confirmed'])
+            ->orderByRaw("FIELD(state, 'in prepatation', 'confirmed')")->orderBy('start', 'desc')->get());
+    }
+
+    public function meals(Request $request, $id)
+    {
+        return MealResource::collection(Meal::where('responsible_waiter_id', '=', $id)->where('state', 'active')->get());
+    }
+
+    public function waiterOrders(Request $request, $id)
+    {
+        return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
+            ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
+            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.start')->get());
     }
 
     public function invoices(Request $request, $id)
@@ -139,18 +147,6 @@ class UserControllerAPI extends Controller
             ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
             ->orderBy('orders.start', 'desc')
             ->paginate(25);*/
-        return $query;
-    }
-
-
-    public function meals(Request $request, $id)
-    {
-        $query = DB::table('meals')
-            ->join('users', 'responsible_waiter_id', '=', 'users.id')
-            ->where('responsible_waiter_id', '=', $id)
-            ->where('meals.state', '=', 'active')
-            ->select('meals.id', 'meals.start', 'meals.state', 'meals.table_number')
-            ->paginate(25);
         return $query;
     }
 

@@ -14,9 +14,9 @@
 
             <manager-chat></manager-chat>
             <cook v-if="this.user.type === 'cook'"></cook>
-            <create-meal v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
+            <create-meal @meal-created="updateMeals" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
 						&& this.$store.state.user.shift_active === 1">Create Meal</create-meal>
-            <meals v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
+            <meals :newMeal="meal" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
                 && this.$store.state.user.shift_active === 1">Create Meal</meals>
             <cashier v-if="this.user.type === 'cashier'"></cashier>
         </div>
@@ -42,7 +42,8 @@
             return {
                 user: [],
                 differenceStart: "",
-                differenceEnd: ""
+                differenceEnd: "",
+                meal: ''
             }
         },
         methods: {
@@ -82,6 +83,9 @@
                     this.differenceStart = this.differenceDate(atual, start);
                 }
             },
+            updateMeals(e){
+                this.meal = e;
+            }
         },
         mounted() {
             this.getInformationFromLoggedUser();

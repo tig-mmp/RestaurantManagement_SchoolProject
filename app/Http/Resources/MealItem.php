@@ -22,7 +22,7 @@ class Meal extends Resource
             'start' => $this->start,
             'end' => $this->end,
             'responsible_waiter_id' => $this->responsible_waiter_id,
-            'total_price_preview' => $this->total_price_preview
+            'total_price_preview' => $this->total_price_preview,
         ];
     }
 }

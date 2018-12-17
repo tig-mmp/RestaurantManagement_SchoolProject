@@ -10,9 +10,6 @@
             </div>
             <button id="submit" type="submit" class="btn btn-default" v-on:click.prevent="register">Submit</button>
         </form>
-
-
-
     </div>
 </template>
 
@@ -28,6 +25,7 @@
             register: function () {
                 axios.post('/api/meals/create', {table_number: this.select, 'id': this.$store.state.user.id})
                 .then(response => {
+                    this.$emit('meal-created', response.data);
                 });
             },
             getMesasLivres() {

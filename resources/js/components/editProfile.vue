@@ -50,9 +50,9 @@
                     ).then(response=>{
                         this.$store.commit('setUser',response.data.data);
                     })
-                        .catch(function(){
-                            console.log('FAILURE!!');
-                        });
+                    .catch(function(){
+                        console.log('FAILURE!!');
+                    });
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                 .then(response=>{
