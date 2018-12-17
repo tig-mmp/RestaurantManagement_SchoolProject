@@ -18,7 +18,7 @@ Vue.use(Toasted);
 import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://127.0.0.1:8080' //TODO
+    connection: 'http://198.196.10.10:8080' //TODO
 }));
 
 import store from './stores/global-store';
@@ -42,7 +42,11 @@ const routes = [
     { path: '/menu', component: menu, name: 'menu'},
     { path: '/login', component: login, name: 'login'},
     { path: '/logout', component: logout, name: 'logout'},
-    { path: '/manager', component: manager, name: 'manager'},
+    { path: '/manager', component: manager, name: 'manager',
+        children:[
+            { path:'createUser', component: createUser, name: 'createUserChildren'},
+        ]
+    },
 	{ path: '/profile', component: profile, name: 'profile'},
     { path: '/editProfile', component: editProfile, name: 'editProfile'},
     { path: '/editPassword', component: editPassword, name: 'editPassword'},
@@ -54,17 +58,18 @@ const routes = [
 
 
 const router = new VueRouter({
-    mode: 'history',
+    //mode: 'history',
     routes:routes
 });
 
 router.beforeEach((to, from, next) => {
-    if (!store.state.user) {
-        if ((to.name == 'profile') || (to.name == 'logout') || (to.name == 'manager') || (to.name == 'shift')) {
+    if ((to.name == 'profile') || (to.name == 'logout') || (to.name == 'manager') || (to.name == 'shift')) {
+        if (!store.state.user) {
             next("/menu");
             return; 
-        }
+        }       
     }
+    
     if (store.state.user) {
         if (to.name == 'login') {
             next("/menu");
