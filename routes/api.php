@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 //US1
 Route::get('items', 'ItemsControllerAPI@index');
 
+
+
 Auth::routes(['verify' => true]);
 
 
@@ -52,10 +54,19 @@ Route::post('orders/create', 'OrderControllerAPI@store');
 Route::get('cashier','UserControllerAPI@invoices');
 
 
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 	
-Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI@index');
+//Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI@index');
+
+
+
 
 
 });
+
+//US28
+//Route::get('managers', 'ManagerControllerAPI@itemsDataTable');
+
+Route::middleware('auth:api', 'manager')->get('managers','ManagerControllerAPI@itemsDataTable');

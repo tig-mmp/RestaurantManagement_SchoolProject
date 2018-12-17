@@ -2,14 +2,9 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Item;
-class ManagerControllerAPI extends Controller
+class ProjectController extends Controller
 {
-    /*public function index()
-    {
-        return Item::all();
-    }*/
-
-    public function itemsDataTable(Request $request)
+    public function index(Request $request)
     {
         $columns = ['name', 'type', 'price'];
         $length = $request->input('length');
