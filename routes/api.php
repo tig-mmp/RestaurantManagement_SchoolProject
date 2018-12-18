@@ -16,8 +16,6 @@ use Illuminate\Http\Request;
 //US1
 Route::get('items', 'ItemsControllerAPI@index');
 
-
-
 Auth::routes(['verify' => true]);
 
 
@@ -31,12 +29,6 @@ Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@upd
 //US5
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
-
-Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@store');
-
-Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
-Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');
-
 //US9
 Route::/*middleware('auth:api','cook')->*/get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
@@ -51,23 +43,20 @@ Route::middleware('auth:api', 'waiter')->get('drinks', 'ItemsControllerAPI@drink
 Route::middleware('auth:api', 'waiter')->post('orders/create', 'OrderControllerAPI@store');
 //US14
 Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/orders', 'UserControllerAPI@waiterOrders');
+//US15
+Route::middleware('auth:api', 'waiter')->delete('orders/{id}', 'OrderControllerAPI@destroy');
 //US22
 Route::get('cashier','UserControllerAPI@invoices');
 
 
+Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@store');
+Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
+Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 	
-//Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI@index');
-
-
-
+Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI@index');
 
 
 });
-
-//US28
-//Route::get('managers', 'ManagerControllerAPI@itemsDataTable');
-
-Route::middleware('auth:api', 'manager')->get('managers','ManagerControllerAPI@itemsDataTable');

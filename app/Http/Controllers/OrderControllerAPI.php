@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OrderItem as OrderItemResource;
+use App\Http\Resources\Order as OrderResource;
 use App\Order;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -38,6 +39,13 @@ class OrderControllerAPI
         ]);
         $order->save();
         return response()->json(new OrderItemResource($order), 201);
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
+        return response()->json(null, 204);
     }
 
 }

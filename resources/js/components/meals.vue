@@ -80,10 +80,8 @@
                     <td>{{order.name}}</td>
                     <td>{{order.state}}</td>
                     <td>{{order.table_number}}</td>
-                    <td><!--
-                        <a v-show="order.state === 'pending'" class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'prepared')">Confirm</a>
-                        <a v-show="order.state === 'confirmed'" class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'in preparation')">Start preparing</a>
-                        -->
+                    <td>
+                        <a v-show="issetButton(order.id)" class="btn btn-sm btn-success" v-on:click.prevent="deleteOrder(order.id)">Cancel</a>
                     </td>
                 </tr>
                 </tbody>
@@ -101,40 +99,58 @@
                 mealId: '',
                 dishes: [],
                 drinks: [],
-                orders: []
+                orders: [],
+                deleteButton: []
             }
         },
         methods: {
+            getMeals(){
+                axios.get('api/users/'+this.$store.state.user.id+'/meals').then(response=>{
+                    this.meals = response.data.data;
+                });
+            },
             startOrder(id){
                 this.create = true;
                 this.mealId = id;
-            },
-            getMeals(){
-                axios.get( 'api/users/'+this.$store.state.user.id+'/meals').
-                then(response=>{
-                    this.meals = response.data.data;
-                })
-            },
-            createOrder(id){
-                axios.post('/api/orders/create', {'item_id': id, 'meal_id': this.mealId, 'responsible_cook_id': this.$store.state.user.id})
-                    .then(response=>{
-                        this.orders.push(response.data);
-                    });
             },
             closeOrder(){
                 this.create = false;
                 this.mealId = null;
             },
-            getOrders(){
-                axios.get('api/users/waiter/'+this.$store.state.user.id+'/orders').
-                then(response=>{
-                    this.orders = response.data.data;
-                })
+            createOrder(id){
+                axios.post('/api/orders/create', {'item_id': id, 'meal_id': this.mealId, 'responsible_cook_id': this.$store.state.user.id})
+                    .then(response=>{
+                        this.orders.push(response.data);
+                        this.deleteButton.push(response.data.id);
+                        this.timeoutButton(response.data.id);
+                    });
+            },
+            deleteOrder(id){
+                axios.delete('/api/orders/' + id)
+                .then(function (response) {})
+                .catch(function (error) {
+                    console.log(error);
+                });
+                this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
+                this.hideButton(id);
+            },
+            hideButton(id){
+                this.deleteButton.splice(this.deleteButton.findIndex(v => v.id === id), 1);
+            },
+            timeoutButton: function(id){
+                setTimeout(() => {
+                    this.hideButton(id);
+                }, 5000)
+            },
+            issetButton(id){
+                return this.deleteButton.find(function(val){return val === id;});
             }
         },
         mounted() {
             this.getMeals();
-            this.getOrders();
+            axios.get('api/users/waiter/'+this.$store.state.user.id+'/orders').then(response=>{
+                this.orders = response.data.data;
+            });
             axios.get('api/dishes').then(response=>{this.dishes = response.data.data;});
             axios.get('api/drinks').then(response=>{this.drinks = response.data.data;});
         },
@@ -144,15 +160,12 @@
                 this.getMeals();
             },
         },
+        computed: {
+
+        },
         watch: {
             newMeal: function (meal) {
                 this.meals.push(meal);
-            },
-            deleteButton() {
-                setTimeout(() => {
-                    console.log("asd");
-                    this.alert = 'Now you have a message';
-                }, 500);
             }
         }
     }
