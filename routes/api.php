@@ -32,7 +32,7 @@ Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@
 //US9
 Route::/*middleware('auth:api','cook')->*/get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
-Route::middleware('auth:api', 'cook')->put('order/{id}', 'OrderControllerAPI@update');
+Route::middleware('auth:api')->put('order/{id}', 'OrderControllerAPI@update');
 //US12
 Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControllerAPI@mesasLivres');
 Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI@store');
@@ -42,9 +42,11 @@ Route::middleware('auth:api', 'waiter')->get('dishes', 'ItemsControllerAPI@dishe
 Route::middleware('auth:api', 'waiter')->get('drinks', 'ItemsControllerAPI@drinks');
 Route::middleware('auth:api', 'waiter')->post('orders/create', 'OrderControllerAPI@store');
 //US14
-Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/orders', 'UserControllerAPI@waiterOrders');
+Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/pendingOrders', 'UserControllerAPI@waiterPendingOrders');
 //US15
 Route::middleware('auth:api', 'waiter')->delete('orders/{id}', 'OrderControllerAPI@destroy');
+//US14
+Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/preparedOrders', 'UserControllerAPI@waiterPreparedOrders');
 //US22
 Route::get('cashier','UserControllerAPI@invoices');
 
@@ -57,6 +59,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 	
 Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI@index');
-
+    Route::middleware('auth:api', 'manager')->get('managers','ManagerControllerAPI@itemsDataTable');
 
 });

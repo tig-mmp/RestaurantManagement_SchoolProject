@@ -122,7 +122,7 @@
                     .then(response=>{
                         this.orders.push(response.data);
                         this.deleteButton.push(response.data.id);
-                        this.timeoutButton(response.data.id);
+                        this.timeoutOrder(response.data.id);
                     });
             },
             deleteOrder(id){
@@ -137,10 +137,19 @@
             hideButton(id){
                 this.deleteButton.splice(this.deleteButton.findIndex(v => v.id === id), 1);
             },
-            timeoutButton: function(id){
+            timeoutOrder: function(id){
                 setTimeout(() => {
                     this.hideButton(id);
+                    this.confirmOrder(id);
                 }, 5000)
+            },
+            confirmOrder(id){
+                axios.put('/api/order/'+id, {'state' : 'confirmed'})
+                    .then(response=>{
+                        this.$socket.emit('orderConfirmed', response.data.data);
+                        this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
+                        this.orders.push(response.data.data);
+                    });
             },
             issetButton(id){
                 return this.deleteButton.find(function(val){return val === id;});
@@ -148,20 +157,11 @@
         },
         mounted() {
             this.getMeals();
-            axios.get('api/users/waiter/'+this.$store.state.user.id+'/orders').then(response=>{
+            axios.get('api/users/waiter/'+this.$store.state.user.id+'/pendingOrders').then(response=>{
                 this.orders = response.data.data;
             });
             axios.get('api/dishes').then(response=>{this.dishes = response.data.data;});
             axios.get('api/drinks').then(response=>{this.drinks = response.data.data;});
-        },
-        sockets: {
-            updateMeals(){
-                console.log("updating");
-                this.getMeals();
-            },
-        },
-        computed: {
-
         },
         watch: {
             newMeal: function (meal) {
