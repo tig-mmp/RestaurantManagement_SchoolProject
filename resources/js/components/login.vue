@@ -43,27 +43,27 @@
             login() {
                 this.showMessage = false;
                 axios.post('api/login', this.user)
-                    .then(response => {
-                        this.$store.commit('setToken',response.data.access_token);
-                        return axios.get('api/users/me');
-                    })
-                    .then(response => {
-                        this.$store.commit('setUser',response.data.data);
-                        this.typeofmsg = "alert-success";
-                        this.message = "User authenticated correctly";
-                        this.showMessage = true;
-                        if (this.$store.state.user.shift_active === 1){
-                            this.$socket.emit('user_enter', this.$store.state.user);
-                        }
-                        this.$router.push('/logout');
-                    })
-                    .catch(error => {
-                        this.$store.commit('clearUserAndToken');
-                        this.typeofmsg = "alert-danger";
-                        this.message = "Invalid credentials";
-                        this.showMessage = true;
-                        console.log(error);
-                    })
+                .then(response => {
+                    this.$store.commit('setToken',response.data.access_token);
+                    return axios.get('api/users/me');
+                })
+                .then(response => {
+                    this.$store.commit('setUser',response.data.data);
+                    this.typeofmsg = "alert-success";
+                    this.message = "User authenticated correctly";
+                    this.showMessage = true;
+                    if (this.$store.state.user.shift_active === 1){
+                        this.$socket.emit('user_enter', this.$store.state.user);
+                    }
+                    this.$router.push('/logout');
+                })
+                .catch(error => {
+                    this.$store.commit('clearUserAndToken');
+                    this.typeofmsg = "alert-danger";
+                    this.message = "Invalid credentials";
+                    this.showMessage = true;
+                    console.log(error);
+                })
             }
         },
     }

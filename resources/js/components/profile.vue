@@ -7,10 +7,8 @@
             <div>username: {{user.username}}</div>
             <div>email: {{user.email}}</div>
             <div>type: {{user.type}}</div>
-
         </div>
     </div>
-
 </template>
 
 <script type="text/javascript">

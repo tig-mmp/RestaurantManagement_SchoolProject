@@ -29,7 +29,6 @@
                 }
                 this.msgManagersText = "";
             },
-
         },
         mounted() {
             console.log(this.user);

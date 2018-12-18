@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Order;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -26,7 +26,7 @@ class OrderControllerAPI
             'state' => $request->state,
         ]);
         $order->save();
-        return new OrderResource($order);
+        return new OrderItemResource($order);
     }
 
     public function store(Request $request){
@@ -37,7 +37,7 @@ class OrderControllerAPI
             'start' => Carbon::now()
         ]);
         $order->save();
-        return response()->json(new OrderResource($order), 201);
+        return response()->json(new OrderItemResource($order), 201);
     }
 
 }

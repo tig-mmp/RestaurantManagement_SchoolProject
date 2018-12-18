@@ -20,11 +20,11 @@ class Order extends Model
         'id', 'state', 'item_id','meal_id','responsible_cook_id','start','end',
     ];
 
-    public function meals(){
+    public function meal(){
         return $this->hasOne(Meal::class, 'id', 'meal_id');
     }
 
-    public function items(){
+    public function item(){
         return $this->hasOne(Item::class, 'id', 'item_id');
     }
 

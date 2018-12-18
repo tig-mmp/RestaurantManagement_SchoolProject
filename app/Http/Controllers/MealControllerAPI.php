@@ -24,7 +24,7 @@ class MealControllerAPI
         $meal->fill([
             'state' => 'active',
             'table_number' => $request->get('table_number'),
-            'start' => Carbon::now(),
+            'start' => Carbon::now()->toDateTimeString(),
             'responsible_waiter_id' => $request->get('id'),
             'total_price_preview' => 0
         ]);
