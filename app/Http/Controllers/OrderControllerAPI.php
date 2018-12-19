@@ -21,7 +21,7 @@ class OrderControllerAPI
     {
         $order = Order::findOrFail($id);
         $order->fill($request->all());
-        if ($order->state === 'delivered'){
+        if ($order->state === 'delivered' || $order->state === 'not delivered'){
             $order->fill(['end' => Carbon::now()->toDateTimeString()]);
         }
         $order->save();
