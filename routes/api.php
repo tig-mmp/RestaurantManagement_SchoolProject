@@ -60,3 +60,8 @@ Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI
 
 
 });
+
+
+// US28
+Route::middleware(['auth:api', 'manager'])->get('manager','ManagerControllerAPI@itemsDataTable');
+Route::middleware(['auth:api', 'manager'])->delete('manager/{id}', 'ManagerControllerAPI@destroy');

@@ -17,3 +17,11 @@ body{
 	background:white;
 }
 
+
+@media (min-width: 576px){
+	.managerLeftMenu{
+		min-height:90vh;
+		min-width:30vh !important;
+	}
+} 
+

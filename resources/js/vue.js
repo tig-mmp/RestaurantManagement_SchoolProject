@@ -18,7 +18,7 @@ Vue.use(Toasted);
 import VueSocketio from 'vue-socket.io';
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://198.196.10.10:8080' //TODO
+    connection: 'http://192.168.10.10:8080' //TODO
 }));
 
 import store from './stores/global-store';
@@ -35,6 +35,7 @@ const navbar = Vue.component('navbar', require('./components/navbar.vue'));
 const createMeal = Vue.component('createMeal', require('./components/createMeal.vue'));
 const createUser = Vue.component('createUser', require('./components/createUser.vue'));
 const cashier = Vue.component('cashier', require('./components/cashier.vue'));
+const managerItemList = Vue.component('managerItemList', require('./components/Manager/managerItemList.vue'));
 
 
 const routes = [
@@ -44,7 +45,7 @@ const routes = [
     { path: '/logout', component: logout, name: 'logout'},
     { path: '/manager', component: manager, name: 'manager',
         children:[
-            { path:'createUser', component: createUser, name: 'createUserChildren'},
+            { path:'managerItemList', component: managerItemList, name: 'managerItemList'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},

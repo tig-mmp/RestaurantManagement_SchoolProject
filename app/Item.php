@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Item extends Model
@@ -15,6 +16,8 @@ class Item extends Model
      *
      * @var array
      */
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'id', 'name', 'type','description','photo_url','price',
     ];
