@@ -26,6 +26,7 @@ class OrderItem extends Resource
             'state' => $this->state,
             'meal_id' => $this->meal_id,
             'table_number' => $this->meal->table->table_number,
+            'waiter_id' => $this->meal->responsible_waiter_id,
         ];
     }
 }

@@ -19,13 +19,11 @@ class OrderControllerAPI
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'state' => 'required|min:3',
-        ]);
         $order = Order::findOrFail($id);
-        $order->fill([
-            'state' => $request->state,
-        ]);
+        $order->fill($request->all());
+        if ($order->state === 'delivered'){
+            $order->fill(['end' => Carbon::now()->toDateTimeString()]);
+        }
         $order->save();
         return new OrderItemResource($order);
     }
@@ -34,6 +32,7 @@ class OrderControllerAPI
         $order = new Order();
         $order->fill($request->all());
         $order->fill([
+            'responsible_cook_id' => null,
             'state' => 'pending',
             'start' => Carbon::now()
         ]);

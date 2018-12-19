@@ -14,28 +14,30 @@
 
             <manager-chat></manager-chat>
             <cook v-if="this.user.type === 'cook'"></cook>
-            <create-meal @meal-created="updateMeals" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
-						&& this.$store.state.user.shift_active === 1">Create Meal</create-meal>
-            <meals :newMeal="meal" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'
-                && this.$store.state.user.shift_active === 1">Create Meal</meals>
+            <create-meal @meal-created="updateMeals" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'">
+                Create Meal</create-meal>
+            <meals :newMeal="meal" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'">Create Meal</meals>
+            <orders-prepared v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'"></orders-prepared>
             <cashier v-if="this.user.type === 'cashier'"></cashier>
         </div>
     </div>
 </template>
 <script type="text/javascript">
     import managerChat from './managerChat.vue';
-    import orders from './orders.vue';
-    import createMeal from './createMeal.vue';
-    import meals from './meals.vue';
+    import cook from './cook.vue';
+    import createMeal from './waiter/createMeal.vue';
+    import meals from './waiter/meals.vue';
     import cashier from './cashier.vue';
+    import ordersPrepared from './waiter/ordersPrepared.vue';
 
     export default {
         components: {
             'manager-chat': managerChat,
-            'cook': orders,
+            'cook': cook,
             'create-meal': createMeal,
             'meals': meals,
-            'cashier':cashier,
+            'cashier': cashier,
+            'orders-prepared': ordersPrepared,
         },
 
         data: function(){

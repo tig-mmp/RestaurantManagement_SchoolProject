@@ -66,14 +66,18 @@ io.on('connection', function (socket) {
 		}
 	});
 
-	socket.on('order', function (destUserId) {
+
+	socket.on('orderConfirmed', function (order) {
+		io.sockets.to('cook').emit('updateConfirmedOrder', order);
+	});
+
+	socket.on('orderPrepared', function (order, destUserId) {
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
-		if (socket_id === null) {
-			socket.emit('privateMessage_unavailable', destUserId);
-		} else {
-			io.to(socket_id).emit('updateOrder', destUserId);
-			socket.emit('updateOrder', destUserId);
+		if (socket_id !== null) {
+			console.log(userInfo);
+			console.log(order);
+			io.to(socket_id).emit('orderPreparedUpdate', order);
 		}
 	});
 	

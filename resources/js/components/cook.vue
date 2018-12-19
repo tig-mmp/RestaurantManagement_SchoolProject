@@ -35,13 +35,15 @@
         },
         methods: {
             prepare(id, state){
-                axios.put('/api/order/'+id, {'state':state})
+                axios.put('/api/order/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
                 .then(response=>{
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     if (response.data.data.state === 'in preparation'){
                         this.orders.push(response.data.data);
+                        this.sortOrders();
+                    } else{
+                        this.$socket.emit('orderPrepared', response.data.data, response.data.data.waiter_id);
                     }
-                    this.sortOrders();
                 });
             },
             getOrders(){
@@ -63,9 +65,9 @@
             this.getOrders();
         },
         sockets: {
-            updateOrder(){
-                console.log("updating");
-                this.getOrders();
+            updateConfirmedOrder(order){
+                this.orders.push(order);
+                this.sortOrders();
             },
         },
     }

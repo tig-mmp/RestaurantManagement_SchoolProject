@@ -118,8 +118,9 @@ class UserControllerAPI extends Controller
     //waiter
     public function cookOrders(Request $request, $id)
     {
-        return OrderItemResource::collection(Order::where('responsible_cook_id', $id)
-            ->whereIn('state', ['in preparation', 'confirmed'])
+        return OrderItemResource::collection(Order::where('state', 'confirmed')
+            ->orWhere('responsible_cook_id', $id)
+            ->where('state', 'in preparation')
             ->orderByRaw("FIELD(state, 'in prepatation', 'confirmed')")->orderBy('start', 'desc')->get());
     }
 
@@ -128,11 +129,18 @@ class UserControllerAPI extends Controller
         return MealResource::collection(Meal::where('responsible_waiter_id', '=', $id)->where('state', 'active')->get());
     }
 
-    public function waiterOrders(Request $request, $id)
+    public function waiterPendingOrders(Request $request, $id)
     {
         return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
             ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.start')->get());
+            ->whereIn('orders.state', ['pending', 'confirmed'])->get());
+    }
+
+    public function waiterPreparedOrders(Request $request, $id)
+    {
+        return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
+            ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
+            ->where('orders.state', 'prepared')->orderBy('orders.start')->get());
     }
 
     public function invoices(Request $request, $id)
