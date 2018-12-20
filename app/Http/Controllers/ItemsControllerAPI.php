@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\Item as ItemResource;
 use App\Item;
 use Illuminate\Support\Facades\DB;
 
@@ -15,11 +16,11 @@ class ItemsControllerAPI extends Controller
 
     public function dishes()
     {
-        return DB::table('items')->where('type', 'dish')->paginate(25);
+        return ItemResource::collection(Item::where('type', 'dish')->get());
     }
 
     public function drinks()
     {
-        return DB::table('items')->where('type', 'drink')->paginate(25);
+        return ItemResource::collection(Item::where('type', 'drink')->get());
     }
 }

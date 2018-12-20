@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h3>Prepared orders</h3>
         <table class="table">
             <thead>
             <tr>
@@ -11,8 +12,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="color-box" v-for="order in orders" :key="order.id"
-                v-bind:style="[order.state === 'confirmed' ? {'background-color' : 'Crimson'} : {'background-color' : 'LightSkyBlue'}]">
+            <tr class="color-box" v-for="order in orders" :key="order.id">
                 <img :src="'/imgItems/' + order.photo_url" class="rounded-circle border border-warning" width="25" height="25" >
                 <td>{{order.name}}</td>
                 <td>{{order.state}}</td>

@@ -19,7 +19,7 @@
                 <td>{{order.state}}</td>
                 <td>{{order.table_number}}</td>
                 <td>
-                    <a v-show="order.state === 'in preparation'" class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'prepared')">Prepared</a>
+                    <a class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'prepared')">Prepared</a>
                     <a v-show="order.state === 'confirmed'" class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'in preparation')">Start preparing</a>
                 </td>
             </tr>
