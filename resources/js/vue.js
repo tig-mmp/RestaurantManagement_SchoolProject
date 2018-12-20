@@ -23,6 +23,7 @@ Vue.use(new VueSocketio({
 
 import store from './stores/global-store';
 
+
 const menu = Vue.component('menu-restaurant', require('./components/menuRestaurant.vue'));
 const login = Vue.component('login', require('./components/login.vue'));
 const logout = Vue.component('logout', require('./components/logout.vue'));
@@ -35,6 +36,8 @@ const navbar = Vue.component('navbar', require('./components/navbar.vue'));
 const createUser = Vue.component('createUser', require('./components/createUser.vue'));
 const cashier = Vue.component('cashier', require('./components/cashier.vue'));
 const managerItemList = Vue.component('managerItemList', require('./components/Manager/managerItemList.vue'));
+const editItem = Vue.component('editItem', require('./components/Manager/editItem.vue'));
+const createItem = Vue.component('createItem', require('./components/Manager/createItem.vue'));
 
 
 const routes = [
@@ -45,6 +48,8 @@ const routes = [
     { path: '/manager', component: manager, name: 'manager',
         children:[
             { path:'managerItemList', component: managerItemList, name: 'managerItemList'},
+            { path:'editItem', component: editItem, name: 'editItem'},
+            { path:'createItem', component: createItem, name: 'createItem'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},
@@ -77,6 +82,8 @@ router.beforeEach((to, from, next) => {
     }
     next();
 });
+
+
 
 const app = new Vue({
 	router,

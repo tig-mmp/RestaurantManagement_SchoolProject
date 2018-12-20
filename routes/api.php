@@ -29,6 +29,7 @@ Route::middleware('auth:api')->put('users/{id}/password', 'UserControllerAPI@upd
 //US5
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
+
 //US9
 Route::/*middleware('auth:api','cook')->*/get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
@@ -66,4 +67,7 @@ Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI
 
 // US28
 Route::middleware(['auth:api', 'manager'])->get('manager','ManagerControllerAPI@itemsDataTable');
-Route::middleware(['auth:api', 'manager'])->delete('manager/{id}', 'ManagerControllerAPI@destroy');
+Route::middleware(['auth:api', 'manager'])->delete('manager/managerItemList/{id}', 'ManagerControllerAPI@destroy');
+Route::middleware(['auth:api', 'manager'])->post('manager/editItem/{id}/uploadFile', 'ManagerControllerAPI@uploadFile');
+Route::middleware(['auth:api', 'manager'])->put('manager/editItem/{id}', 'ManagerControllerAPI@update');
+Route::middleware(['auth:api', 'manager'])->post('manager/createItem', 'ManagerControllerAPI@store');

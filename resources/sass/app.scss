@@ -17,10 +17,13 @@ body{
 	background:white;
 }
 
+.is-20{
+	font-size:20px;
+}
 
 @media (min-width: 576px){
 	.managerLeftMenu{
-		min-height:90vh;
+		min-height:93vh;
 		min-width:30vh !important;
 	}
 } 

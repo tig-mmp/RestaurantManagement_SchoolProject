@@ -1,16 +1,20 @@
 <template>
-	<div class="container">
-		<h1>Vue Tables</h1>
-        <div>
-			<div class="tableFilters">
-				<input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getItems()">
+	<div >
+		<h1>Items</h1>
+        <div class="container-fluid">
+        	<div class="row">
+				<div class="col-sm-9">
+					<input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getItems()">
 
-				<div class="control">
-					<select class="custom-select col-sm-1" v-model="tableData.length" @change="getItems()">
-		                <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
-		            </select>
-
-		        </div>
+					<div class="control">
+						<select class="custom-select col-sm-1" v-model="tableData.length" @change="getItems()">
+			                <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
+			            </select>
+			        </div>
+			    </div>
+			    <div class="col-sm-3" style="text-align: right;">
+			    	<a class="btn btn-sm btn-primary font-weight-bold" title="Edit" v-on:click.prevent="createItem()"><i class="fas fa-plus is-20"></i> Create Item</a>
+			    </div>
 		    </div>
 			<datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" 
 			@sort="sortBy">
@@ -21,8 +25,8 @@
 						<td>{{item.price}}</td>
 						<td><img :src="'/imgItems/' + item.photo_url" width="40" height="40" ></td>
 						<td>
-							<a class="btn btn-sm btn-primary" title="Edit" v-on:click.prevent="editItem(user)"><i class="fas fa-edit"></i></a>
-							<a class="btn btn-sm btn-danger" title="Remove" v-on:click.prevent="deleteItem(item)"><i class="fas fa-trash-alt"></i></a>
+							<a class="btn btn-sm btn-primary" title="Edit" v-on:click.prevent="editItem(item)"><i class="fas fa-edit is-20"></i></a>
+							<a class="btn btn-sm btn-danger" title="Remove" v-on:click.prevent="deleteItem(item)"><i class="fas fa-trash-alt is-20"></i></a>
 						</td>
 					</tr>
 				</tbody>
@@ -51,7 +55,7 @@
 	            {width: '20%', label: 'Name', name: 'name' },
 	            {width: '20%', label: 'Type', name: 'type'},
 	            {width: '20%', label: 'Price', name: 'price'},
-	            {width: '20%', label: 'img', name: 'img'},
+	            {width: '20%', label: 'Image', name: 'img'},
 	            {width: '20%', label: 'Actions', name: 'actions'}
 	        ];
 	        columns.forEach((column) => {
@@ -101,12 +105,18 @@
 	        },
 
 	        deleteItem(item){
-	        	axios.delete('api/manager/'+item.id)
+	        	axios.delete('api/manager/managerItemList/'+item.id)
                     .then(response => {
-                        //this.showSuccess = true;
-                        //this.successMessage = 'User Deleted';
                         this.getItems();
                     });
+	        },
+
+	        editItem(item){
+	        	this.$parent.editedItem = item;
+	        	this.$router.push('/manager/editItem');
+	        },
+	        createItem(){
+	        	this.$router.push('/manager/createItem');
 	        },
 
 	        configPagination(data) {
