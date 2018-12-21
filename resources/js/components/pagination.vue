@@ -19,6 +19,6 @@
 </template>
 <script>
 	export default{
-		props: ['pagination', 'filtered']
+		props: ['pagination']
 	}
 </script>

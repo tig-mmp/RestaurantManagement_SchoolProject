@@ -2,11 +2,11 @@
     <div class="container-fluid">
     <div class="row">
         <div class="col-sm-2 bg-dark text-white managerLeftMenu">
-        	<div class="container">
         		<h2>Manager</h2>
-                <router-link to="/manager/managerItemList">Items</router-link>
-            	<!-- <router-link to="/manager/editItem">edit</router-link> -->
-        	</div>
+                <div class="list-group">
+                        <router-link class="list-group-item list-group-item-action list-group-item-dark" to="/manager/managerItemList">Items</router-link>
+                        <router-link class="list-group-item list-group-item-action list-group-item-dark" to="/manager/managerTableList">Tables</router-link>
+                </div>
             
             
         </div>

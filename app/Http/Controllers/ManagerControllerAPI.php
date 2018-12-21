@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Item;
+use App\RestaurantTable;
 use Illuminate\Support\Facades\Storage;
 class ManagerControllerAPI extends Controller
 {
@@ -28,13 +29,56 @@ class ManagerControllerAPI extends Controller
         }
         $items = $query->paginate($length);
         return ['data' => $items, 'draw' => $request->input('draw')];
-
     }
 
-    public function destroy($id)
+    public function tablesDataTable(Request $request)
+    {
+        $columns = ['table_number'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        
+        $query = RestaurantTable::select('table_number')->orderBy($columns[$column], $dir);
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('table_number', 'like', '%' . $searchValue . '%');
+            });
+        }
+        $tables = $query->paginate($length);
+        return ['data' => $tables, 'draw' => $request->input('draw')];
+    }
+
+
+
+    public function destroyItem($id)
     {
         $item = Item::findOrFail($id);
+        try {
+            $item->forceDelete();
+        } catch (\Exception $e) {
+            $item = Item::findOrFail($id);
+            $item->delete();
+            return response()->json(null, 204);
+        }
         $item->delete();
+        
+        return response()->json(null, 204);
+    }
+
+    public function destroyTable($id)
+    {
+        $table = RestaurantTable::findOrFail($id);
+        try {
+            $table->forceDelete();
+
+        } catch (\Exception $e) {
+            $table = RestaurantTable::findOrFail($id);
+            $table->delete();
+            return response()->json(null, 204);
+        }
+        $table->delete();
+        
         return response()->json(null, 204);
     }
 
@@ -75,5 +119,12 @@ class ManagerControllerAPI extends Controller
         $item->fill(['photo_url' => 'default']);
         $item->save();
         return response()->json($item->id, 201);
+    }
+
+    public function storeTable(Request $request){
+        $table_number = $request->table_number;
+        $table = RestaurantTable::create(['table_number' => $table_number]);
+        $table->save();
+        return response()->json(null, 201);
     }
 }

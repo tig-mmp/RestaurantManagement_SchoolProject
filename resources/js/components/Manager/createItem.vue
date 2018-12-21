@@ -86,7 +86,7 @@
 	                    	}
 	                    }
 					).then(response=>{
-	                    	
+						this.$router.push('/manager/managerItemList');
 					})
 					.catch(function(){
 						console.log('FAILURE!!');

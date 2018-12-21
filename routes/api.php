@@ -66,8 +66,11 @@ Route::middleware(['auth:api', 'manager'])->get('managers','ManagerControllerAPI
 
 
 // US28
-Route::middleware(['auth:api', 'manager'])->get('manager','ManagerControllerAPI@itemsDataTable');
-Route::middleware(['auth:api', 'manager'])->delete('manager/managerItemList/{id}', 'ManagerControllerAPI@destroy');
+Route::middleware(['auth:api', 'manager'])->get('manager/itemsDataTable','ManagerControllerAPI@itemsDataTable');
+Route::middleware(['auth:api', 'manager'])->delete('manager/managerItemList/{id}', 'ManagerControllerAPI@destroyItem');
 Route::middleware(['auth:api', 'manager'])->post('manager/editItem/{id}/uploadFile', 'ManagerControllerAPI@uploadFile');
 Route::middleware(['auth:api', 'manager'])->put('manager/editItem/{id}', 'ManagerControllerAPI@update');
 Route::middleware(['auth:api', 'manager'])->post('manager/createItem', 'ManagerControllerAPI@store');
+Route::middleware(['auth:api', 'manager'])->get('manager/tablesDataTable','ManagerControllerAPI@tablesDataTable');
+Route::middleware(['auth:api', 'manager'])->delete('manager/managerTableList/{id}', 'ManagerControllerAPI@destroyTable');
+Route::middleware(['auth:api', 'manager'])->post('manager/createTable', 'ManagerControllerAPI@storeTable');
