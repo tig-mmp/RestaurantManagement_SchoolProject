@@ -12,7 +12,7 @@
 				    	Menu
 				    </router-link>
 	                <router-link to="/createUser" v-show="this.$store.state.user && this.$store.state.user.type === 'manager'" class="nav-item nav-link">createUser</router-link>
-	                <router-link to="/manager" v-show="this.$store.state.user && this.$store.state.user.type === 'manager'" class="nav-item nav-link">
+	                <router-link to="/manager/managerItemList" v-show="this.$store.state.user && this.$store.state.user.type === 'manager'" class="nav-item nav-link">
 				    	Manager
 				    </router-link>
 				    <router-link to="/login"  v-show="!this.$store.state.user" class="nav-item nav-link">

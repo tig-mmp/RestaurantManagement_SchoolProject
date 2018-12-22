@@ -2,6 +2,15 @@
 	<div class="container-fluid">
 		<div>
 			<h1>{{editedItem.name}}</h1>
+			<div class="alert alert-danger" v-if="alertFail.show">
+	             
+	            <button type="button" class="close-btn" v-on:click="alertFail.show=false">&times;</button>
+	            <ul v-for="error in alertFail.message">
+	            	<li>
+	            		<strong  alert.message>{{ error }}</strong>
+	            	</li>
+	            </ul>
+	        </div>
 			<div class="row">
 				<div class="col-sm-8">
 			        <div class="form-group">
@@ -60,7 +69,12 @@
             return { 
                 editedItem: '',
                 file: '',
-                avatar: ''
+                avatar: '',
+                alertFail:{
+					show:false,
+					isFail:false,
+					message:'',
+				},
             }
         },
         mounted(){
@@ -81,13 +95,17 @@
                     ).then(response=>{
                     	
                     })
-                    .catch(function(){
-                        console.log('FAILURE!!');
-                    });
+                    .catch(error =>{
+                		this.buildErrorMessage(error);
+        				return;
+                	});
                 }
                 axios.put('/api/manager/editItem/'+this.editedItem.id, this.editedItem)
                 .then(response=>{
                     this.$router.push('/manager/managerItemList');
+                }).catch(error =>{
+                		this.buildErrorMessage(error);
+        				return;
                 });
         	},
         	cancelEdit:function(){
@@ -101,7 +119,16 @@
                 reader.onload = e => {
                 	this.avatar = e.target.result;
                 }
-            }
+            },
+            buildErrorMessage(error){
+        		this.alertFail.show = true;
+				this.alertFail.isFail = true;
+				this.alertFail.isSuccess = false;
+				this.alertFail.message = [];
+        		for(var prop in error.response.data.errors){
+        			this.alertFail.message.push(error.response.data.errors[prop].join('and'));
+        		}
+        	},
         }
     }
 </script>

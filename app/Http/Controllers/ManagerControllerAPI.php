@@ -84,10 +84,10 @@ class ManagerControllerAPI extends Controller
 
     public function uploadFile(Request $request, $id)
     {
-
         $request->validate([
             'file' => 'image',
         ]);
+        $request->validate(['file' => 'image',]);
         $item = Item::findOrFail($id);
         if($item->photo_url != null){
             Storage::delete("public/items/{$item->photo_url}");
@@ -97,16 +97,18 @@ class ManagerControllerAPI extends Controller
             'photo_url' => $filename,
         ]);
         $item->save();
+       
         return response()->json(null, 204);
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-                'name' => 'required',
-                'type' => 'required',
-
-            ]);
+            'name' => 'required|min:3',
+            'type' => 'required|in:dish,drink',
+            'price' => 'required|numeric|min:0.01|max:999',
+            'description' => 'required'
+        ]);
         $item = Item::findOrFail($id);
         $item->fill($request->all());
         $item->save();
@@ -114,14 +116,24 @@ class ManagerControllerAPI extends Controller
     }
 
     public function store(Request $request){
+        $request->validate([
+            'name' => 'required|min:3',
+            'type' => 'required|in:dish,drink',
+            'price' => 'required|numeric|min:0.01|max:999',
+            'description' => 'required'
+        ]);
         $item = new Item();
         $item->fill($request->all());
         $item->fill(['photo_url' => 'default']);
-        $item->save();
+        $item->save(); 
+        
         return response()->json($item->id, 201);
     }
 
     public function storeTable(Request $request){
+        $request->validate([
+            'table_number' => 'required|unique:restaurant_tables,table_number|digits_between:0,99',
+        ]);
         $table_number = $request->table_number;
         $table = RestaurantTable::create(['table_number' => $table_number]);
         $table->save();

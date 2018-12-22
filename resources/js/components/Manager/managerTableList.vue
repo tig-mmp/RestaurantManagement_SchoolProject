@@ -2,6 +2,19 @@
 	<div>
 		<h1>Tables</h1>
         <div class="container-fluid">
+        	<div class="alert alert-success" v-if="alertSucces.show">
+	            <button type="button" class="close-btn" v-on:click="alertSucces.show=false">&times;</button>
+	            <strong  alert.message>{{ alertSucces.message }}</strong>
+	        </div>
+	        <div class="alert alert-danger" v-if="alertFail.show">
+	             
+	            <button type="button" class="close-btn" v-on:click="alertFail.show=false">&times;</button>
+	            <ul v-for="error in alertFail.message">
+	            	<li>
+	            		<strong  alert.message>{{ error }}</strong>
+	            	</li>
+	            </ul>
+	        </div>
         	<div class="row">
 				<div class="col-sm-9">
 					<input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getTables()">
@@ -60,6 +73,15 @@
 	           sortOrders[column.name] = 1;
 	        });
 			return{
+				alertSucces:{
+					show:false,
+					Message:'',
+				},
+				alertFail:{
+					show:false,
+					isFail:false,
+					message:'',
+				},
 				newTable: {
 					table_number:null
 				},
@@ -108,6 +130,7 @@
 	        deleteTable(table){
 	        	axios.delete('api/manager/managerTableList/' + table.table_number)
                     .then(response => {
+                    	this.buildSuccessMessage("Table deleted");
                         this.getTables();
                     });
 	        },
@@ -115,8 +138,11 @@
 	        createTable(){
 	        	axios.post('/api/manager/createTable', this.newTable)
         		.then(response=>{
+        			this.buildSuccessMessage("Table created");
         			this.newTable.table_number = null;
-        			this.getTables();
+                }).catch(error =>{
+                		this.buildErrorMessage(error);
+        				return;
                 });
 	        },
 
@@ -142,6 +168,22 @@
 	        getIndex(array, key, value) {
 	            return array.findIndex(i => i[key] == value)
 	        },
+	        buildErrorMessage(error){
+        		this.alertFail.show = true;
+				this.alertFail.isFail = true;
+				this.alertFail.isSuccess = false;
+				this.alertFail.message = [];
+        		for(var prop in error.response.data.errors){
+        			this.alertFail.message.push(error.response.data.errors[prop].join('and'));
+        		}
+        	},
+        	buildSuccessMessage(message){
+        		this.alertSucces.show = true;
+				this.alertSucces.message = message;
+				setTimeout(() => {
+                        this.alertSucces.show = false;
+                }, 2000);
+        	},
 		}
 	};
 </script>

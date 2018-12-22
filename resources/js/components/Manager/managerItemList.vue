@@ -2,6 +2,10 @@
 	<div >
 		<h1>Items</h1>
         <div class="container-fluid">
+        	<div class="alert alert-success" v-if="alertSucces.show">
+	            <button type="button" class="close-btn" v-on:click="alertSucces.show=false">&times;</button>
+	            <strong  alert.message>{{ alertSucces.message }}</strong>
+	        </div>
         	<div class="row">
 				<div class="col-sm-9">
 					<input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getItems()">
@@ -62,6 +66,10 @@
 	           sortOrders[column.name] = -1;
 	        });
 			return{
+				alertSucces:{
+					show:false,
+					Message:'',
+				},
 				items: [],
 	            columns: columns,
 	            sortKey: 'name',
@@ -107,6 +115,7 @@
 	        deleteItem(item){
 	        	axios.delete('api/manager/managerItemList/'+item.id)
                     .then(response => {
+                    	this.buildSuccessMessage("Item deleted");
                         this.getItems();
                     });
 	        },
@@ -141,6 +150,13 @@
 	        getIndex(array, key, value) {
 	            return array.findIndex(i => i[key] == value)
 	        },
+	        buildSuccessMessage(message){
+        		this.alertSucces.show = true;
+				this.alertSucces.message = message;
+				setTimeout(() => {
+                        this.alertSucces.show = false;
+                }, 2000);
+        	},
 		}
 	};
 </script>

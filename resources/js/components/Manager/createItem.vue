@@ -2,6 +2,15 @@
 	<div class="container-fluid">
 		<div>
 			<h1>Create Item</h1>
+			<div class="alert" :class="{'alert-success':alert.isSuccess, 'alert-danger':alert.isFail }" v-if="alert.show">
+	             
+	            <button type="button" class="close-btn" v-on:click="alert.show=false">&times;</button>
+	            <ul v-for="error in alert.message">
+	            	<li>
+	            		<strong  alert.message>{{ error }}</strong>
+	            	</li>
+	            </ul>
+	        </div>
 			<div class="row">
 				<div class="col-sm-8">
 			        <div class="form-group">
@@ -57,6 +66,13 @@
     export default {
         data: function(){
             return { 
+            	alert:{
+					show:false,
+					successMessage:'',
+					isSuccess:true,
+					isFail:false,
+					message:[],
+				},
                 item: {
                     name:"",
                     type:"",
@@ -88,10 +104,23 @@
 					).then(response=>{
 						this.$router.push('/manager/managerItemList');
 					})
-					.catch(function(){
-						console.log('FAILURE!!');
-					});
+					.catch(error =>{
+                		this.buildError(error);
+        				return;
+                	});
+                }).catch(error =>{
+        				this.buildError(error);
+        				return;
                 });
+        	},
+        	buildError(error){
+        		this.alert.show = true;
+				this.alert.isFail = true;
+				this.alert.isSuccess = false;
+				this.alert.message = [];
+        		for(var prop in error.response.data.errors){
+        			this.alert.message.push(error.response.data.errors[prop].join('and'));
+        		}
         	},
         	cancelEdit:function(){
         		this.$router.push('/manager/managerItemList');
