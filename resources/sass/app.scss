@@ -8,6 +8,8 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+@import 'sideBar';
+
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
@@ -20,11 +22,11 @@ body{
 .is-20{
 	font-size:20px;
 }
+.managerLeftMenu{
+	min-height:93vh;
+}
 
 @media (min-width: 576px){
-	.managerLeftMenu{
-		min-height:93vh;
-		min-width:30vh !important;
-	}
+	
 } 
 
