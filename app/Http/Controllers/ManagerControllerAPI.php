@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Item;
 use App\RestaurantTable;
+use App\User;
 use Illuminate\Support\Facades\Storage;
 class ManagerControllerAPI extends Controller
 {
@@ -47,6 +48,27 @@ class ManagerControllerAPI extends Controller
         }
         $tables = $query->paginate($length);
         return ['data' => $tables, 'draw' => $request->input('draw')];
+    }
+
+    public function userDataTable(Request $request)
+    {
+        $columns = ['name', 'username', 'email', 'type','blocked'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        
+        $query = User::select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url')->orderBy($columns[$column], $dir);
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('name', 'like', '%' . $searchValue . '%')
+                ->orWhere('type', 'like', '%' . $searchValue . '%')
+                ->orWhere('username', 'like', '%' . $searchValue . '%')
+                ->orWhere('email', 'like', '%' . $searchValue . '%');
+            });
+        }
+        $users = $query->paginate($length);
+        return ['data' => $users, 'draw' => $request->input('draw')];
     }
 
 

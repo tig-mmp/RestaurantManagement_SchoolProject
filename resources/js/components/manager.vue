@@ -12,6 +12,9 @@
                 <li>
                     <router-link to="/manager/managerTableList">Tables</router-link>
                 </li>
+                <li>
+                    <router-link to="/manager/managerUserList">Users</router-link>
+                </li>
             </ul>
         </nav>
 

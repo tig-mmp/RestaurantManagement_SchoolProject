@@ -74,3 +74,6 @@ Route::middleware(['auth:api', 'manager'])->post('manager/createItem', 'ManagerC
 Route::middleware(['auth:api', 'manager'])->get('manager/tablesDataTable','ManagerControllerAPI@tablesDataTable');
 Route::middleware(['auth:api', 'manager'])->delete('manager/managerTableList/{id}', 'ManagerControllerAPI@destroyTable');
 Route::middleware(['auth:api', 'manager'])->post('manager/createTable', 'ManagerControllerAPI@storeTable');
+
+//US29
+Route::middleware(['auth:api', 'manager'])->get('manager/usersDataTable','ManagerControllerAPI@userDataTable');

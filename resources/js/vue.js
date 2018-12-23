@@ -39,6 +39,7 @@ const managerItemList = Vue.component('managerItemList', require('./components/M
 const editItem = Vue.component('editItem', require('./components/Manager/editItem.vue'));
 const createItem = Vue.component('createItem', require('./components/Manager/createItem.vue'));
 const managerTableList = Vue.component('managerTableList', require('./components/Manager/managerTableList.vue'));
+const managerUserList = Vue.component('managerUserList', require('./components/Manager/managerUserList.vue'));
 
 
 const routes = [
@@ -52,6 +53,7 @@ const routes = [
             { path:'editItem', component: editItem, name: 'editItem'},
             { path:'createItem', component: createItem, name: 'createItem'},
             { path:'managerTableList', component: managerTableList, name: 'managerTableList'},
+            { path:'managerUserList', component: managerUserList, name: 'managerUserList'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},
