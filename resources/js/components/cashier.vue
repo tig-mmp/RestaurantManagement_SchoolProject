@@ -31,7 +31,8 @@
             getMealsNotPaid(){
                 axios.get('api/cashier').
                 then(response=>{
-                    this.meals = response.data.data;
+                    this.meals = response.data;
+                    console.log(response.data);
                 })
             },
         },
