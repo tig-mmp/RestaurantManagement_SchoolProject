@@ -143,18 +143,15 @@ class UserControllerAPI extends Controller
             ->where('orders.state', 'prepared')->orderBy('orders.start')->get());
     }
 
-    public function invoices(Request $request, $id)
+    public function invoices(Request $request)
     {
-        $query = App\Flight::where('state', 'not paid')->get();
-        /*$query = DB::table('meals')
-            ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select( 'orders.id', 'orders.state',
-                'orders.start', 'items.name', 'meals.table_number')
-            ->where('users.id', '=', $id)
-            ->whereIn('orders.state', ['in preparation', 'confirmed'])
-            ->orderByRaw("FIELD(orders.state, 'in prepatation', 'confirmed')")
-            ->orderBy('orders.start', 'desc')
-            ->paginate(25);*/
+       /* $query = Meal::where('state', 'not paid')->get();*/
+        $query = DB::table('invoices')
+            ->join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->select( 'meals.table_number', 'users.name','invoices.total_price')
+            ->where('invoices.state', '=', 'not paid')
+            ->paginate(25);
         return $query;
     }
 
