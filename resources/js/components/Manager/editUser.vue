@@ -85,16 +85,25 @@
 			                name="name" id="inputEmail_verified_at" 
 			                placeholder="email_verified_at"/>
 		        </div>
-		        <div class="form-group col-sm">
+		        <div class="form-group col-sm" >
 		            <label for="inputBlocked">Blocked</label>
-		            <input
-			                type="text" class="form-control" v-if="editedUser.blocked" value="Yes" disabled
-			                name="name" id="inputBlocked"
-			                placeholder="blocked"/>
-			        <input
-			                type="text" class="form-control" v-else value="No" disabled
-			                name="name" id="inputBlocked"
-			                placeholder="blocked"/>
+		            <select
+			                    type="text" class="form-control" v-model="editedUser.blocked"
+			                    name="name" id="inputType"
+			                    placeholder="type"
+			                    v-if="editedUser.username==this.$store.state.user.username"
+			                    disabled>
+			                    <option value="1">yes</option>
+			                    <option value="0">no</option>
+			        </select>
+			        <select
+			                    type="text" class="form-control" v-model="editedUser.blocked"
+			                    name="name" id="inputType"
+			                    placeholder="type"
+			                    v-else>
+			                    <option value="1">yes</option>
+			                    <option value="0">no</option>
+			        </select>
 		        </div>
 		        <div class="form-group col-sm">
 		            <label for="inputShift_active">Shift active</label>

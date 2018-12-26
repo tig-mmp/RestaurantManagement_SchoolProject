@@ -58,7 +58,7 @@ class ManagerControllerAPI extends Controller
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
         
-        $query = User::select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')->orderBy($columns[$column], $dir);
+        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')->orderBy($columns[$column], $dir);
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
@@ -100,6 +100,22 @@ class ManagerControllerAPI extends Controller
             return response()->json(null, 204);
         }
         $table->delete();
+        
+        return response()->json(null, 204);
+    }
+
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+        try {
+            $user->forceDelete();
+
+        } catch (\Exception $e) {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return response()->json(null, 204);
+        }
+        $user->delete();
         
         return response()->json(null, 204);
     }

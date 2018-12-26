@@ -60,7 +60,7 @@
                 .catch(error => {
                     this.$store.commit('clearUserAndToken');
                     this.typeofmsg = "alert-danger";
-                    this.message = "Invalid credentials";
+                    this.message = "Invalid credentials or you are blocked";
                     this.showMessage = true;
                     console.log(error);
                 })
