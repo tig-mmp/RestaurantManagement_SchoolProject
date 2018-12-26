@@ -78,8 +78,8 @@
                     type:"",
                     description:"",
                     price:"",
+                    file: '',
                 },
-                file: '',
                 avatar: null
             }
         },
@@ -87,27 +87,20 @@
         },
         methods:{
         	save: function(){
-        		//Create new Item with default image
-        		axios.post('/api/manager/createItem', this.item)
-        		.then(response=>{
-        			//replace default image by real image
-        			console.log(response.data)
-	        		let formData = new FormData();
-	                formData.append('file', this.file);
-					axios.post( 'api/manager/editItem/' + response.data + '/uploadFile',
-						formData,
+        		let formData = new FormData();
+	            formData.append('file', this.item.file);
+	            formData.append('name', this.item.name);
+	            formData.append('type', this.item.type);
+	            formData.append('price', this.item.price);
+	            formData.append('description', this.item.description);
+        		axios.post('/api/manager/createItem', formData,
 	                    {
 	                    	headers: {
 	                    		'Content-Type': 'multipart/form-data'
 	                    	}
-	                    }
-					).then(response=>{
-						this.$router.push('/manager/managerItemList');
-					})
-					.catch(error =>{
-                		this.buildError(error);
-        				return;
-                	});
+	                    })
+        		.then(response=>{
+					this.$router.push('/manager/managerItemList');
                 }).catch(error =>{
         				this.buildError(error);
         				return;
@@ -125,8 +118,8 @@
         	cancelEdit:function(){
         		this.$router.push('/manager/managerItemList');
         	},
-        	handleFileUpload(e){
-        		this.file = e.target.files[0];
+        	handleFileUpload: function(e){
+        		this.item.file = e.target.files[0];
                 let image = e.target.files[0];
                 let reader = new FileReader();
                 reader.readAsDataURL(image);

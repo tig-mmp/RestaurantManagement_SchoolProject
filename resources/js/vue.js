@@ -33,13 +33,14 @@ const editProfile = Vue.component('editProfile', require('./components/editProfi
 const editPassword = Vue.component('editPassword', require('./components/editPassword.vue'));
 const shift = Vue.component('shift', require('./components/shift.vue'));
 const navbar = Vue.component('navbar', require('./components/navbar.vue'));
-const createUser = Vue.component('createUser', require('./components/createUser.vue'));
+const createUser = Vue.component('createUser', require('./components/Manager/createUser.vue'));
 const cashier = Vue.component('cashier', require('./components/cashier.vue'));
 const managerItemList = Vue.component('managerItemList', require('./components/Manager/managerItemList.vue'));
 const editItem = Vue.component('editItem', require('./components/Manager/editItem.vue'));
 const createItem = Vue.component('createItem', require('./components/Manager/createItem.vue'));
 const managerTableList = Vue.component('managerTableList', require('./components/Manager/managerTableList.vue'));
 const managerUserList = Vue.component('managerUserList', require('./components/Manager/managerUserList.vue'));
+const editUser = Vue.component('editUser', require('./components/Manager/editUser.vue'));
 
 
 const routes = [
@@ -54,12 +55,13 @@ const routes = [
             { path:'createItem', component: createItem, name: 'createItem'},
             { path:'managerTableList', component: managerTableList, name: 'managerTableList'},
             { path:'managerUserList', component: managerUserList, name: 'managerUserList'},
+            { path: 'createUser', component: createUser, name: 'createUser'},
+            { path: 'editUser', component: editUser, name: 'editUser'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},
     { path: '/editProfile', component: editProfile, name: 'editProfile'},
     { path: '/editPassword', component: editPassword, name: 'editPassword'},
-    { path: '/createUser', component: createUser, name: 'createUser'},
     { path: '/shift', component: shift, name: 'shift'},
     { path: '/cashier', component: cashier, name: 'cashier'},
 ];
