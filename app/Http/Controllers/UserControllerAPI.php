@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceItems as InvoiceItemResource;
 use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
+use App\Invoice;
+use App\InvoiceItem as invoicesitmes;
 use App\Meal;
 use Carbon\Carbon;
+use function GuzzleHttp\Psr7\copy_to_string;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
@@ -16,6 +20,7 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Item as Items;
 use App\Order;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -162,6 +167,36 @@ class UserControllerAPI extends Controller
             ->paginate(25);
         return $query;
     }
+    public function invoices_all(Request $request)
+    {
+        /* $query = Meal::where('state', 'not paid')->get();*/
+        $query1 = DB::table('items')
+            ->join('invoice_items', 'items.id', '=', 'invoice_items.item_id')
+            ->select(DB::raw("CONCAT(items.name,' quantity:' , invoice_items.quantity, ' unit price:', 
+                invoice_items.unit_price, ' total price:', invoice_items.sub_total_price ) as item"))
+            ->distinct('item')->get();
+       // dd($query1);
+
+
+
+    $query2 = InvoiceItemResource::collection(invoicesitmes::with('invoice.meal.waiter')->with('item')
+        ->distinct('invoice.meal.waiter')->get());
+
+       // ->distinct('users.name')
+        return $query2;
+    }
+//DB::raw("(Select items.name from items where items.id=invoice_items.item_id) as items")
+/* $query = DB::table('invoices')
+            ->join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->join('invoice_items', 'invoices.id', '=', 'invoice_items.invoice_id')
+            ->join('items', 'items.id', '=', 'invoice_items.item_id')
+            ->select('invoices.date','meals.table_number', 'users.name','invoices.total_price')
+            ->groupBy(  'invoices.id')
+
+            ->paginate(25);
+primeira parte completa
+*/
 
     public function myProfile(Request $request)
     {

@@ -15,14 +15,14 @@ class Invoice extends Model
      * @var array
      */
      protected $fillable = [
-        'id', 'state', 'meal_id','nif','name','date','total_price',
+        'id','state','meal_id','nif','name','date','total_price',
     ];
 
     public function meal(){
         return $this->hasOne(Meal::class, 'id', 'meal_id');
     }
 
-    public function invoiceItem(){
-        return $this->belongsToMany(InvoiceItem::class, 'invoice_id','id');
+    public function invoice_items(){
+        return $this->belongsTo(InvoiceItem::class,'id','invoice_id');
     }
 }

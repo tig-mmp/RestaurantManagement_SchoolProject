@@ -23,10 +23,10 @@ class Item extends Model
     ];
 
     public function invoiceItem(){
-        return $this->belongsToMany(InvoiceItem::class, 'item_id','id');
+        return $this->belongsTo(InvoiceItem::class, 'item_id','id');
     }
 
     public function order(){
-        return $this->belongsToMany(Order::class, 'item_id','id');
+        return $this->belongsTo(Order::class, 'item_id','id');
     }
 }
