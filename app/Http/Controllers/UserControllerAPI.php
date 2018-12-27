@@ -7,7 +7,7 @@ use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
 use App\Invoice;
-use App\InvoiceItem;
+use App\InvoiceItem as invoicesitmes;
 use App\Meal;
 use Carbon\Carbon;
 use function GuzzleHttp\Psr7\copy_to_string;
@@ -169,11 +169,10 @@ class UserControllerAPI extends Controller
             ->distinct('item')->get();
        // dd($query1);
 
-        $query = OrderItemResource::collection(
-            Order::join('meals', 'orders.meal_id', 'meals.id')->select('orders.*')->distinct('item_id')
-            ->where('orders.state', 'prepared')->orderBy('orders.start')->get());
 
-    $query2 = InvoiceItemResource::collection(Invoice::with('meal','invoice_items')->with('meal.waiter','invoice_items.item')->get());
+
+    $query2 = InvoiceItemResource::collection(invoicesitmes::with('invoice.meal.waiter')->with('item')
+        ->distinct('invoice.meal.waiter')->get());
 
        // ->distinct('users.name')
         return $query2;

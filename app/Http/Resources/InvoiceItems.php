@@ -13,12 +13,12 @@ class InvoiceItems extends Resource
     public function toArray($request)
     {
         return [
-            'date' => $this->date,
-            'table' => $this->meal->table_number,
-            'name' => $this->meal->waiter->name,
-            'price_total' =>$this->total_price,
-            'invoices_items' => $this->invoice_items->id,
-            'items' => $this->item,
+            'date' => $this->invoice->date,
+            'table' => $this->invoice->meal->table_number,
+            'name' => $this->invoice->meal->waiter->name,
+            'price_total' =>$this->invoice->total_price,
+            'invoices_items' => $this->item,
+           // 'items' => $this->item,
 
         ];
     }
