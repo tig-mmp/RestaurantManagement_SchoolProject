@@ -28,10 +28,14 @@
 						<td>{{user.username}}</td>
 						<td>{{user.email}}</td>
 						<td>{{user.type}}</td>
-						<td>{{user.blocked}}</td>
+						<td v-if="user.blocked">Yes</td>
+						<td v-else >No</td>
+						<td v-if="user.deleted_at == null">No</td>
+						<td v-else >Yes</td>
 						<td><img :src="'/imgProfiles/' + user.photo_url" width="40" height="40" ></td>
 						<td>
 							<a class="btn btn-sm btn-primary" title="Edit" v-on:click.prevent="editUser(user)"><i class="fas fa-edit is-20"></i></a>
+							<a class="btn btn-sm btn-danger" :class="{'disabled':user.deleted_at!=null}" title="Remove" v-on:click.prevent="deleteUser(user)"><i class="fas fa-trash-alt is-20"></i></a>
 						</td>
 					</tr>
 				</tbody>
@@ -57,12 +61,13 @@
 		data(){
 			let sortOrders = {};
 	        let columns = [
-	            {width: '14%', label: 'Name', name: 'name', order:true },
+	            {width: '20%', label: 'Name', name: 'name', order:true },
 	            {width: '14%', label: 'Username', name: 'username', order:true},
 	            {width: '14%', label: 'E-mail', name: 'email', order:true},
-	            {width: '14%', label: 'Type', name: 'type', order:false},
-	            {width: '14%', label: 'Blocked', name: 'blocked', order: true},
-	            {width: '14%', label: 'Image', name: 'img', order:false},
+	            {width: '10%', label: 'Type', name: 'type', order:false},
+	            {width: '10%', label: 'Blocked', name: 'blocked', order: true},
+	            {width: '7%', label: 'Deleted', name: 'deleted_at', order: false},
+	            {width: '8%', label: 'Image', name: 'img', order:false},
 	            {width: '14%', label: 'Actions', name: 'actions', order:false}
 	        ];
 	        columns.forEach((column) => {
@@ -117,6 +122,17 @@
 	        editUser(user){
 	        	this.$parent.editedUser = user;
 	        	this.$router.push('/manager/editUser');
+	        },
+	        deleteUser(user){
+	        	if (user.username == this.$store.state.user.username) {
+	        		alert('You cannot delete your self');
+	        		return;
+	        	}
+	        	axios.delete('api/manager/managerUserList/'+user.id)
+                    .then(response => {
+                    	this.buildSuccessMessage("Item deleted");
+                        this.getUsers();
+                });
 	        },
 	        createUser(){
 	        	this.$router.push('/manager/createUser');

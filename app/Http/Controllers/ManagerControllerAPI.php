@@ -58,7 +58,7 @@ class ManagerControllerAPI extends Controller
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
         
-        $query = User::select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url')->orderBy($columns[$column], $dir);
+        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')->orderBy($columns[$column], $dir);
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
@@ -104,6 +104,22 @@ class ManagerControllerAPI extends Controller
         return response()->json(null, 204);
     }
 
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+        try {
+            $user->forceDelete();
+
+        } catch (\Exception $e) {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return response()->json(null, 204);
+        }
+        $user->delete();
+        
+        return response()->json(null, 204);
+    }
+
     public function uploadFile(Request $request, $id)
     {
         $request->validate([
@@ -137,17 +153,41 @@ class ManagerControllerAPI extends Controller
         return response()->json(null, 204);
     }
 
+    public function updateUser(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|min:3',
+            'type' => 'required|in:manager,cook,waiter,cashier',
+        ]);
+        $user = User::findOrFail($id);
+        if ($user->username != $request->username) {
+            $request->validate([
+                'username' => 'required|unique:users,username',
+            ]);
+        }
+        if ($user->email != $request->email) {
+            $request->validate([
+                'email' => 'required|email|unique:users,email',
+            ]);
+        }
+        $user->fill($request->all());
+        $user->save();
+        return response()->json(null, 204);
+    }
+
     public function store(Request $request){
         $request->validate([
             'name' => 'required|min:3',
             'type' => 'required|in:dish,drink',
             'price' => 'required|numeric|min:0.01|max:999',
-            'description' => 'required'
+            'description' => 'required',
+            'file' => 'required|image',
         ]);
+        $filename = basename($request->file('file')->store('public/items'));
         $item = new Item();
         $item->fill($request->all());
-        $item->fill(['photo_url' => 'default']);
-        $item->save(); 
+        $item->fill(['photo_url' => $filename]);
+        $item->save();
         
         return response()->json($item->id, 201);
     }

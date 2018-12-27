@@ -56,7 +56,7 @@ Route::get('cashier_all','UserControllerAPI@invoices_all');
 
 
 
-Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@store');
+
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@destroy');
 
@@ -81,3 +81,7 @@ Route::middleware(['auth:api', 'manager'])->post('manager/createTable', 'Manager
 
 //US29
 Route::middleware(['auth:api', 'manager'])->get('manager/usersDataTable','ManagerControllerAPI@userDataTable');
+Route::middleware(['auth:api', 'manager'])->post('users/create', 'UserControllerAPI@store');
+Route::middleware(['auth:api', 'manager'])->put('manager/editUser/{id}', 'ManagerControllerAPI@updateUser');
+//US30
+Route::middleware(['auth:api', 'manager'])->delete('manager/managerUserList/{id}', 'ManagerControllerAPI@destroyUser');

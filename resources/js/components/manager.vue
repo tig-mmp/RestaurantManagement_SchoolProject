@@ -35,6 +35,7 @@
         data: function(){
             return { 
                 editedItem: null,
+                editedUser: null,
                 showSideBar: false,
             }
         },
