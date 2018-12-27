@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 //US1
 Route::get('items', 'ItemsControllerAPI@index');
+Route::get('items/paginate', 'ItemsControllerAPI@paginate');
 
 Auth::routes(['verify' => true]);
 
@@ -31,7 +32,7 @@ Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
 
 //US9
-Route::/*middleware('auth:api','cook')->*/get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
+Route::middleware('auth:api','cook')->get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
 Route::middleware('auth:api')->put('order/{id}', 'OrderControllerAPI@update');
 //US12
@@ -39,14 +40,12 @@ Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControll
 Route::middleware('auth:api', 'waiter')->post('meals/create', 'MealControllerAPI@store');
 //US13
 Route::middleware('auth:api', 'waiter')->get('users/{id}/meals', 'UserControllerAPI@meals');
-Route::middleware('auth:api', 'waiter')->get('dishes', 'ItemsControllerAPI@dishes');
-Route::middleware('auth:api', 'waiter')->get('drinks', 'ItemsControllerAPI@drinks');
 Route::middleware('auth:api', 'waiter')->post('orders/create', 'OrderControllerAPI@store');
 //US14
 Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/pendingOrders', 'UserControllerAPI@waiterPendingOrders');
 //US15
 Route::middleware('auth:api', 'waiter')->delete('orders/{id}', 'OrderControllerAPI@destroy');
-//US14
+//US1
 Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/preparedOrders', 'UserControllerAPI@waiterPreparedOrders');
 //US22
 Route::get('cashier','UserControllerAPI@invoices');

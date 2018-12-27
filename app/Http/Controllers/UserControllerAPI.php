@@ -19,6 +19,7 @@ use App\User;
 use App\Order;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class UserControllerAPI extends Controller
 {
@@ -60,6 +61,12 @@ class UserControllerAPI extends Controller
         $request->validate([
             'file' => 'image',
         ]);
+        if(isset($_FILES['file']) && $_FILES['file']['size'] > 5242880) {
+            return response()->json(array(
+                'message' => 'The given data was invalid.',
+                'errors' => "max size of image is 5MB"
+            ),422);
+        }
         $user = User::findOrFail($id);
         if($user->profile_photo != null){
             Storage::delete("public/profiles/{$user->profile_photo}");
@@ -75,17 +82,17 @@ class UserControllerAPI extends Controller
     public function updatePassword(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        /*if (!Hash::check($request['old_password'], $user->password)){
-            new UserResource($user);
-        }*/
+        if (!Hash::check($request['old_password'], $user->password)){
+            return response()->json(array(
+                'message' => 'The given data was invalid.',
+                'errors' => array('password' => "old_password and actual_password don't match")
+            ),422);
+        }
         $request->validate([
-            'password' => 'min:3|confirmed'
+            'password' => 'confirmed|min:3|different:old_password',
         ]);
-        $user->fill([
-            'password' => Hash::make($user->password)
-        ]);
-        $user->save();
-        return new UserResource($user);
+        $user->update(['password' => Hash::make($request['password'])]);
+        return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
     }
 
     public function store(Request $request){
@@ -133,7 +140,8 @@ class UserControllerAPI extends Controller
     {
         return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
             ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])->get());
+            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.state')
+            ->orderBy('orders.start', 'desc')->get());
     }
 
     public function waiterPreparedOrders(Request $request, $id)

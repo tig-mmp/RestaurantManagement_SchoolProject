@@ -29,7 +29,6 @@ export default new Vuex.Store({
         },
         setUser: (state, user) => {
             state.user =  user;
-            console.log(user);
             sessionStorage.setItem('user', JSON.stringify(user));
         },
         setToken: (state, token) => {

@@ -24,7 +24,7 @@
 			  			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			    			<img :src="'/imgProfiles/' + this.$store.state.user.photo_url" width="40" height="40">
 			  			</a>
-	  					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+	  					<div v-show="this.$store.state.user" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
 	                        <div class="col-lg-13 p-4">
 	                        	<p class="text-left">
 	                        		<strong v-if="this.$store.state.user">

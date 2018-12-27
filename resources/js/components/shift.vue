@@ -14,10 +14,7 @@
 
             <manager-chat></manager-chat>
             <cook v-if="this.user.type === 'cook'"></cook>
-            <create-meal @meal-created="updateMeals" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'">
-                Create Meal</create-meal>
-            <meals :newMeal="meal" v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'">Create Meal</meals>
-            <orders-prepared v-if="this.$store.state.user && this.$store.state.user.type === 'waiter'"></orders-prepared>
+            <waiter v-if="this.user.type === 'waiter'" v-bind:userId="user.id"></waiter>
             <cashier v-if="this.user.type === 'cashier'"></cashier>
         </div>
     </div>
@@ -25,19 +22,15 @@
 <script type="text/javascript">
     import managerChat from './managerChat.vue';
     import cook from './cook.vue';
-    import createMeal from './waiter/createMeal.vue';
-    import meals from './waiter/meals.vue';
+    import waiter from './waiter/main.vue';
     import cashier from './cashier.vue';
-    import ordersPrepared from './waiter/ordersPrepared.vue';
 
     export default {
         components: {
             'manager-chat': managerChat,
             'cook': cook,
-            'create-meal': createMeal,
-            'meals': meals,
+            'waiter': waiter,
             'cashier': cashier,
-            'orders-prepared': ordersPrepared,
         },
 
         data: function(){

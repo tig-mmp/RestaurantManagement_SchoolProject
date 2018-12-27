@@ -31,7 +31,6 @@
             },
         },
         mounted() {
-            console.log(this.user);
             this.getInformationFromLoggedUser();
         },
         sockets: {
