@@ -51,6 +51,10 @@ Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/preparedOrders',
 //US22
 Route::get('cashier','UserControllerAPI@invoices');
 
+//US24
+Route::get('cashier_all','UserControllerAPI@invoices_all');
+
+
 
 Route::middleware('auth:api')->post('users/create', 'UserControllerAPI@store');
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@show');

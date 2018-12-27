@@ -16,11 +16,11 @@ class InvoiceItem extends Model
      * @var array
      */
      protected $fillable = [
-        'invoice_id', 'item_id', 'quantity','unit_price','sub_total_price',
+        'invoice_id','item_id','quantity','unit_price','sub_total_price',
     ];
 
     public function invoice(){
-        return $this->hasOne(Invoice::class, 'id', 'invoice_id');
+        return $this->hasOne(Invoice::class, 'invoice_id', 'invoice_id');
     }
 
     public function item(){

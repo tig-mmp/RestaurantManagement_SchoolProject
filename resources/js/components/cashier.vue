@@ -35,6 +35,13 @@
                     console.log(response.data.data);
                     console.log(response.data.data);
                 })
+            },getInvoicesAll(){
+                axios.get('api/cashier_all').
+                then(response=>{
+                    this.invoices = response.data.data;
+                    console.log(response.data.data);
+                    console.log(response.data.data);
+                })
             },
         },
         mounted() {
