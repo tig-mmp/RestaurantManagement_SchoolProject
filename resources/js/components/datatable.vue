@@ -1,5 +1,5 @@
 <template>
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover" :class="datatableStyle">
         <thead>
             <tr>
                 <th v-for="column in columns" :key="column.name" 
@@ -18,6 +18,6 @@
 </template>
 <script>
     export default{
-        props: ['columns', 'sortKey', 'sortOrders']
+        props: ['columns', 'sortKey', 'sortOrders', 'datatableStyle']
     }
 </script>

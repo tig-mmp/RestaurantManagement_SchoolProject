@@ -6,6 +6,7 @@ use App\Item;
 use App\RestaurantTable;
 use App\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 class ManagerControllerAPI extends Controller
 {
     public function index()
@@ -69,6 +70,91 @@ class ManagerControllerAPI extends Controller
         }
         $users = $query->paginate($length);
         return ['data' => $users, 'draw' => $request->input('draw')];
+    }
+
+    public function invoiceDataTable(Request $request)
+    {
+        $columns = ['table_number', 'name','state','total_price'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        
+        $query = DB::table('invoices')
+            ->join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->select('invoices.state','meals.table_number', 'users.name','invoices.total_price')
+            ->where('invoices.state', '=', 'pending')->orderBy($columns[$column], $dir);
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('users.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $invoices = $query->paginate($length);
+        return ['data' => $invoices, 'draw' => $request->input('draw')];
+    }
+
+    public function mealDataTable(Request $request)
+    {
+        $columns = ['id','table_number', 'name','state','total_price_preview'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        
+        $query = DB::table('meals')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->select('meals.id','meals.state','meals.table_number', 'users.name','meals.total_price_preview');
+            
+
+        $query->where(function($query) {
+            $query->where('meals.state', '=', 'active')
+            ->orWhere('meals.state', '=', 'terminated');
+        })->orderBy($columns[$column], $dir);
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('users.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+        //return $this->getSql($query); 
+        $meals = $query->paginate($length);
+        return ['data' => $meals, 'draw' => $request->input('draw')];
+    }
+
+    public function orderDataTable(Request $request)
+    {
+        $columns = ['meal_id', 'state','name'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        $meal_id = $request->input('meal_id');
+        
+        $query = DB::table('orders')
+            ->join('items', 'orders.item_id', '=', 'items.id')
+            ->select('orders.meal_id','orders.state','items.name')
+            ->where('orders.meal_id', '=', $meal_id)->orderBy($columns[$column], $dir);
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('items.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $orders = $query->paginate($length);
+        return ['data' => $orders, 'draw' => $request->input('draw')];
+    }
+
+     public function getSql($b){
+         $query = str_replace(array('?'), array('\'%s\''), $b->toSql());
+         $query = vsprintf($query, $b->getBindings());
+         dump($query);
+
+         return sizeof($b->get());
+         // return null;
     }
 
 

@@ -10728,3 +10728,8 @@ body {
   min-height: 93vh;
 }
 
+.transition {
+  -webkit-transition: .5s;
+  transition: .5s;
+}
+
