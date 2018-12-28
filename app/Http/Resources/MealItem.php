@@ -11,7 +11,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class Meal extends Resource
+class MealItem extends Resource
 {
     public function toArray($request)
     {
