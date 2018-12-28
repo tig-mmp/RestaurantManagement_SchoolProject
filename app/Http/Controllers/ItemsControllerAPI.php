@@ -21,7 +21,7 @@ class ItemsControllerAPI extends Controller
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
-        $query = Item::select('id', 'name', 'type', 'price', 'photo_url', 'description')->orderBy($columns[$column], $dir);
+        $query = Item::select('id', 'name', 'type', 'price', 'photo_url')->orderBy($columns[$column], $dir);
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')

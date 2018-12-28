@@ -19,6 +19,7 @@
                 <td>{{order.table_number}}</td>
                 <td>
                     <a class="btn btn-sm btn-success" v-on:click.prevent="delivered(order.id)">Delivered</a>
+                    <a class="btn btn-sm btn-success" v-on:click.prevent="notDelivered(order.id)">Not Delivered</a>
                 </td>
             </tr>
             </tbody>
@@ -36,6 +37,12 @@
         methods: {
             delivered(id){
                 axios.put('/api/order/'+id, {'state' : 'delivered'})
+                    .then(response=>{
+                        this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
+                    });
+            },
+            notDelivered(id){
+                axios.put('/api/order/'+id, {'state' : 'not delivered'})
                     .then(response=>{
                         this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     });

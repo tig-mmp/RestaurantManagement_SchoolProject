@@ -65,6 +65,8 @@
                         this.$socket.emit('orderCreated', this.meal_id);
                         this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                         this.orders.unshift(response.data.data);
+                        axios.put('/api/meal/'+response.data.data.meal_id, {'price' : this.newOrder.price}).
+                            then(response=>{});
                     });
             },
             issetButton(id){

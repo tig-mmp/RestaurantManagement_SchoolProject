@@ -1,7 +1,8 @@
 <template>
     <div>
         <create-meal @meal-created="newMeal" v-bind:userId="userId">Create Meal</create-meal>
-        <meals @start-order="startOrder" :newMeal="meal" v-bind:userId="userId">Create Meal</meals>
+        <meals @start-order="startOrder" @show-summary="showSummary" :newMeal="meal" v-bind:userId="userId">Create Meal</meals>
+        <meal-summary v-show="mealSummary !== null" :mealId="mealSummary"></meal-summary>
         <items v-show="mealId !== null" @create-order="createOrder"></items>
         <orders-pending :newOrder="order" :mealId="mealId" v-bind:userId="userId"></orders-pending>
         <orders-prepared v-bind:userId="userId"></orders-prepared>
@@ -14,6 +15,7 @@
     import ordersPrepared from './ordersPrepared.vue';
     import items from './items.vue';
     import ordersPending from './ordersPending.vue';
+    import summary from './summary.vue';
 
     export default {
         components: {
@@ -21,14 +23,16 @@
             'meals': meals,
             'orders-prepared': ordersPrepared,
             'items': items,
-            'orders-pending': ordersPending
+            'orders-pending': ordersPending,
+            'meal-summary': summary
         },
         props: ['userId'],
         data: function(){
             return {
                 meal: '',
                 mealId: null,
-                order: ''
+                order: '',
+                mealSummary: null
             }
         },
         methods: {
@@ -44,8 +48,9 @@
                     this.order = response.data;
                 });
             },
-        },
-        mounted() {
+            showSummary(id){
+                this.mealSummary = id;
+            }
         },
     }
 </script>

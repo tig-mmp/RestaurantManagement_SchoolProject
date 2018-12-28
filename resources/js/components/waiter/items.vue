@@ -1,11 +1,10 @@
 <template>
-	<div >
+	<div>
 		<h1>Items</h1>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-sm-9">
 					<input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getItems()">
-
 					<div class="control">
 						<select class="custom-select col-sm-1" v-model="tableData.length" @change="getItems()">
 							<option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
@@ -57,10 +56,6 @@
 				sortOrders[column.name] = -1;
 			});
 			return{
-				alertSucces:{
-					show:false,
-					Message:'',
-				},
 				items: [],
 				columns: columns,
 				sortKey: 'name',
@@ -89,9 +84,9 @@
 			createOrder(id){
 				this.$emit('create-order', id);
 			},
-			getItems() {
+			getItems(url = 'api/items/paginate') {
 				this.tableData.draw++;
-				axios.get('api/items/paginate', {params: this.tableData})
+				axios.get(url, {params: this.tableData})
 				.then(response => {
 					let data = response.data;
 					if (this.tableData.draw == data.draw) {
@@ -122,13 +117,6 @@
 			},
 			getIndex(array, key, value) {
 				return array.findIndex(i => i[key] == value)
-			},
-			buildSuccessMessage(message){
-				this.alertSucces.show = true;
-				this.alertSucces.message = message;
-				setTimeout(() => {
-					this.alertSucces.show = false;
-				}, 2000);
 			},
 		}
 	};
