@@ -1,6 +1,10 @@
 <template>
     <div class="jumbotron">
-        <h2>Edit User {{user.email}}</h2>
+        <div class="alert" :class="typeofmsg" v-if="showMessage">
+            <button type="button" class="close-btn" v-on:click="showMessage=false">&times;</button>
+            <strong>{{ message }}</strong>
+        </div>
+        <h1>Edit User {{user.email}}</h1>
         <div class="form-group">
             <label for="inputName">Name</label>
             <input
@@ -17,7 +21,7 @@
         </div>
         <div class="form-group">
             <label>File
-                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+                <input type="file" id="file" ref="file" accept="image/*" v-on:change="handleFileUpload()"/>
             </label>
         </div>
         <div class="form-group">
@@ -32,31 +36,55 @@
         data: function(){
             return {
                 user: [],
-                file: ''
+                file: '',
+                typeofmsg: "alert-success",
+                showMessage: false,
+                message: "",
             }
         },
         methods: {
             save() {
+                this.showMessage = false;
+                this.message = '';
                 if (this.file !== ''){
-                    let formData = new FormData();
-                    formData.append('file', this.file);
-                    axios.post( 'api/users/'+this.user.id+'/uploadFile',
-                        formData,
-                        {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
+                    if(document.getElementById('file').files[0].size > 5242880) {
+                        this.typeofmsg = "alert-danger";
+                        this.message = "max size of image is 5MB";
+                        this.showMessage = true;
+                    }
+                    else {
+                        let formData = new FormData();
+                        formData.append('file', this.file);
+                        axios.post('api/users/' + this.user.id + '/uploadFile',
+                            formData,
+                            {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
                             }
-                        }
-                    ).then(response=>{
-                        this.$store.commit('setUser',response.data.data);
-                    })
-                    .catch(function(){
-                        console.log('FAILURE!!');
-                    });
+                        ).then(response => {
+                            this.$store.commit('setUser', response.data.data);
+                        })
+                        .catch(error => {
+                            this.typeofmsg = "alert-danger";
+                            this.message = error.response.data;
+                            this.showMessage = true;
+                        });
+                    }
                 }
                 axios.put('/api/users/'+this.user.id, this.user)
                 .then(response=>{
                     this.$store.commit('setUser',response.data.data);
+                    if (this.message === ''){
+                        this.typeofmsg = "alert-success";
+                        this.message = "User changed with success";
+                        this.showMessage = true;
+                    }
+                })
+                .catch(error => {
+                    this.typeofmsg = "alert-danger";
+                    this.message = error.response.data.errors;
+                    this.showMessage = true;
                 });
             },
             cancelEdit: function(){

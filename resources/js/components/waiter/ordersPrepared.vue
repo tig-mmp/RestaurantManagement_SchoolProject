@@ -27,6 +27,7 @@
 </template>
 <script>
     module.exports= {
+        props: ['userId'],
         data: function () {
             return {
                 orders: [],
@@ -41,7 +42,7 @@
             },
         },
         mounted() {
-            axios.get('api/users/waiter/'+this.$store.state.user.id+'/preparedOrders').then(response=>{
+            axios.get('api/users/waiter/'+this.userId+'/preparedOrders').then(response=>{
                 this.orders = response.data.data;
             });
         },

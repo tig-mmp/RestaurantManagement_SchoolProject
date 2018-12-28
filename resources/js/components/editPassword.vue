@@ -1,6 +1,10 @@
 <template>
     <div class="jumbotron">
-        <h2>Edit Password</h2>
+        <div class="alert" :class="typeofmsg" v-if="showMessage">
+            <button type="button" class="close-btn" v-on:click="showMessage=false">&times;</button>
+            <strong>{{ message }}</strong>
+        </div>
+        <h1>Edit Password</h1>
         <div class="form-group">
             <label for="old_password">Old Password</label>
             <input
@@ -34,13 +38,24 @@
         data: function(){
             return {
                 user: [],
+                typeofmsg: "alert-success",
+                showMessage: false,
+                message: "",
             }
         },
         methods: {
             savePassword() {
+                this.showMessage = false;
                 axios.put('/api/users/'+this.user.id+'/password', this.user)
                     .then(response=>{
-                        this.$store.commit('setUser',response.data.data);
+                        this.typeofmsg = "alert-success";
+                        this.message = "Password changed with success";
+                        this.showMessage = true;
+                    })
+                    .catch(error => {
+                        this.typeofmsg = "alert-danger";
+                        this.message = error.response.data.errors.password;
+                        this.showMessage = true;
                     });
             },
             cancelEdit: function(){

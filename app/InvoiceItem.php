@@ -16,7 +16,7 @@ class InvoiceItem extends Model
      * @var array
      */
      protected $fillable = [
-        'invoice_id', 'item_id', 'quantity','unit_price','sub_total_price',
+        'invoice_id','item_id','quantity','unit_price','sub_total_price',
     ];
 
     public function invoice(){

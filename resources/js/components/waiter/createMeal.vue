@@ -4,9 +4,11 @@
             <h2>Create Meal</h2>
             <div class="form-group">
                 <label>Table: </label>
-                <select v-model="select">
-                    <option v-for="mesa in mesasLivres" :value="mesa.table_number">{{mesa.table_number}}</option>
-                </select>
+                <label>
+                    <select v-model="select">
+                        <option v-for="mesa in mesasLivres" :value="mesa.table_number">{{mesa.table_number}}</option>
+                    </select>
+                </label>
             </div>
             <button id="submit" type="submit" class="btn btn-default" v-on:click.prevent="register">Submit</button>
         </form>
@@ -15,6 +17,7 @@
 
 <script type="text/javascript">
     export default {
+        props: ['userId'],
         data: function () {
             return {
                 select: '',
@@ -23,12 +26,13 @@
         },
         methods: {
             register: function () {
-                axios.post('/api/meals/create', {table_number: this.select, 'id': this.$store.state.user.id})
+                axios.post('/api/meals/create', {table_number: this.select, 'id': this.userId})
                 .then(response => {
                     this.$emit('meal-created', response.data);
+                    this.getMesasLivres();
                 });
             },
-            getMesasLivres() {
+            getMesasLivres(){
                 axios.get('api/tables')
                 .then(response=>{
                     this.mesasLivres = response.data;

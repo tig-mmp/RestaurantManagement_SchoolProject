@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceItems as InvoiceItemResource;
 use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
+use App\Invoice;
+use App\InvoiceItem as invoicesitmes;
 use App\Meal;
 use Carbon\Carbon;
+use function GuzzleHttp\Psr7\copy_to_string;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
@@ -16,9 +20,11 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Item as Items;
 use App\Order;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class UserControllerAPI extends Controller
 {
@@ -60,6 +66,12 @@ class UserControllerAPI extends Controller
         $request->validate([
             'file' => 'image',
         ]);
+        if(isset($_FILES['file']) && $_FILES['file']['size'] > 5242880) {
+            return response()->json(array(
+                'message' => 'The given data was invalid.',
+                'errors' => "max size of image is 5MB"
+            ),422);
+        }
         $user = User::findOrFail($id);
         if($user->profile_photo != null){
             Storage::delete("public/profiles/{$user->profile_photo}");
@@ -75,17 +87,17 @@ class UserControllerAPI extends Controller
     public function updatePassword(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        /*if (!Hash::check($request['old_password'], $user->password)){
-            new UserResource($user);
-        }*/
+        if (!Hash::check($request['old_password'], $user->password)){
+            return response()->json(array(
+                'message' => 'The given data was invalid.',
+                'errors' => array('password' => "old_password and actual_password don't match")
+            ),422);
+        }
         $request->validate([
-            'password' => 'min:3|confirmed'
+            'password' => 'confirmed|min:3|different:old_password',
         ]);
-        $user->fill([
-            'password' => Hash::make($user->password)
-        ]);
-        $user->save();
-        return new UserResource($user);
+        $user->update(['password' => Hash::make($request['password'])]);
+        return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
     }
 
     public function store(Request $request){
@@ -133,7 +145,8 @@ class UserControllerAPI extends Controller
     {
         return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
             ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])->get());
+            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.state')
+            ->orderBy('orders.start', 'desc')->get());
     }
 
     public function waiterPreparedOrders(Request $request, $id)
@@ -154,6 +167,36 @@ class UserControllerAPI extends Controller
             ->paginate(25);
         return $query;
     }
+    public function invoices_all(Request $request)
+    {
+        /* $query = Meal::where('state', 'not paid')->get();*/
+        $query1 = DB::table('items')
+            ->join('invoice_items', 'items.id', '=', 'invoice_items.item_id')
+            ->select(DB::raw("CONCAT(items.name,' quantity:' , invoice_items.quantity, ' unit price:', 
+                invoice_items.unit_price, ' total price:', invoice_items.sub_total_price ) as item"))
+            ->distinct('item')->get();
+       // dd($query1);
+
+
+
+    $query2 = InvoiceItemResource::collection(invoicesitmes::with('invoice.meal.waiter')->with('item')
+        ->distinct('invoice.meal.waiter')->get());
+
+       // ->distinct('users.name')
+        return $query2;
+    }
+//DB::raw("(Select items.name from items where items.id=invoice_items.item_id) as items")
+/* $query = DB::table('invoices')
+            ->join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->join('invoice_items', 'invoices.id', '=', 'invoice_items.invoice_id')
+            ->join('items', 'items.id', '=', 'invoice_items.item_id')
+            ->select('invoices.date','meals.table_number', 'users.name','invoices.total_price')
+            ->groupBy(  'invoices.id')
+
+            ->paginate(25);
+primeira parte completa
+*/
 
     public function myProfile(Request $request)
     {
