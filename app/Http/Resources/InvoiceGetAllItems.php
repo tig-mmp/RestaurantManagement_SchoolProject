@@ -8,16 +8,13 @@ use App\Http\Resources\Item as ItemResource;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
-class InvoiceItems extends Resource
+class InvoiceGetAllItems extends Resource
 {
     public function toArray($request)
     {
         return [
-            'date' => $this->invoice->date,
-            'table' => $this->invoice->meal->table_number,
-            'name' => $this->invoice->meal->waiter,
-            'price_total' =>$this->invoice->total_price,
-            'item' => $this->item,
+             "id" => $this->invoice_id,
+             "item" => array($this->item_id),
            // 'items' => $this->item,
 
         ];
