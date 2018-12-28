@@ -16,6 +16,7 @@
             <cook v-if="this.user.type === 'cook'"></cook>
             <waiter v-if="this.user.type === 'waiter'" v-bind:userId="user.id"></waiter>
             <cashier v-if="this.user.type === 'cashier'"></cashier>
+            <cashier_all v-if="this.user.type === 'cashier'"></cashier_all>
         </div>
     </div>
 </template>
@@ -24,6 +25,7 @@
     import cook from './cook.vue';
     import waiter from './waiter/main.vue';
     import cashier from './cashier.vue';
+    import cashier_all from './cashier_all.vue';
 
     export default {
         components: {
@@ -31,6 +33,7 @@
             'cook': cook,
             'waiter': waiter,
             'cashier': cashier,
+            'cashier_all': cashier_all,
         },
 
         data: function(){

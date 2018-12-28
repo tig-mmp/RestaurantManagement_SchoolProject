@@ -7,6 +7,7 @@ define('YOUR_SERVER_URL', 'http://restaurantmanagement.test');
 // Check "oauth_clients" table for next 2 values:
 define('CLIENT_ID', '2');
 define('CLIENT_SECRET', 'ojpZD33Lka3deJCasJ8ji5UPAsj4HPaJpiUPcaeZ');
+//define('CLIENT_SECRET', 'A6kh949Z2Vk5DcOo9Y9XfG4qCpYHUhFl71665rlI');
 
 class LoginControllerAPI extends Controller
 {

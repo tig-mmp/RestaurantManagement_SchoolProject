@@ -84,3 +84,8 @@ Route::middleware(['auth:api', 'manager'])->post('users/create', 'UserController
 Route::middleware(['auth:api', 'manager'])->put('manager/editUser/{id}', 'ManagerControllerAPI@updateUser');
 //US30
 Route::middleware(['auth:api', 'manager'])->delete('manager/managerUserList/{id}', 'ManagerControllerAPI@destroyUser');
+//US31
+Route::middleware(['auth:api', 'manager'])->get('manager/invoiceDataTable', 'ManagerControllerAPI@invoiceDataTable');
+Route::middleware(['auth:api', 'manager'])->get('manager/mealDataTable', 'ManagerControllerAPI@mealDataTable');
+Route::middleware(['auth:api', 'manager'])->get('manager/orderDataTable', 'ManagerControllerAPI@orderDataTable');
+

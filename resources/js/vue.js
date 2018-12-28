@@ -41,6 +41,7 @@ const createItem = Vue.component('createItem', require('./components/Manager/cre
 const managerTableList = Vue.component('managerTableList', require('./components/Manager/managerTableList.vue'));
 const managerUserList = Vue.component('managerUserList', require('./components/Manager/managerUserList.vue'));
 const editUser = Vue.component('editUser', require('./components/Manager/editUser.vue'));
+const dashboard = Vue.component('dashboard', require('./components/Manager/dashboard.vue'));
 
 
 const routes = [
@@ -57,6 +58,7 @@ const routes = [
             { path:'managerUserList', component: managerUserList, name: 'managerUserList'},
             { path: 'createUser', component: createUser, name: 'createUser'},
             { path: 'editUser', component: editUser, name: 'editUser'},
+            { path: 'dashboard', component: dashboard, name: 'dashboard'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},

@@ -1,11 +1,14 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" v-if="this.$store.state.user.shift_active === 1">
         <nav id="sidebar" :class="{active:showSideBar}" class="managerLeftMenu">
             <div class="sidebar-header">
                 <h3>Manager</h3>
             </div>
 
             <ul class="list-unstyled components">
+                <li>
+                    <router-link to="/manager/dashboard">Dashboard</router-link>
+                </li>
                 <li>
                     <router-link to="/manager/managerItemList">Items</router-link>
                 </li>
@@ -15,6 +18,7 @@
                 <li>
                     <router-link to="/manager/managerUserList">Users</router-link>
                 </li>
+
             </ul>
         </nav>
 
@@ -28,6 +32,9 @@
                     <router-view></router-view>
                 </div>
             </div>
+    </div>
+    <div class="jumbotron" v-else>
+        <h1>Shift not started</h1>
     </div>
 </template>
 <script>

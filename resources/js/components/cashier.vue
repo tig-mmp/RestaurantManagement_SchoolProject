@@ -18,12 +18,16 @@
         </tr>
         </tbody>
     </table>
+
+
 </template>
+
 <script>
     module.exports= {
         data: function () {
             return {
-                invoices: []
+                invoices: [],
+                invoices_all: [],
             }
         },
         methods: {
@@ -35,10 +39,11 @@
                     console.log(response.data.data);
                     console.log(response.data.data);
                 })
-            },getInvoicesAll(){
+            },
+            getInvoicesAll(){
                 axios.get('api/cashier_all').
                 then(response=>{
-                    this.invoices = response.data.data;
+                    this.invoices_all = response.data.data;
                     console.log(response.data.data);
                     console.log(response.data.data);
                 })
@@ -46,6 +51,7 @@
         },
         mounted() {
             this.getInvoicesNotPaid();
+            this.getInvoicesAll();
         },
         sockets: {
             },

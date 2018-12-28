@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceItems as InvoiceItemResource;
+use App\Http\Resources\InvoiceGetAllItems as InvoiceGetAllResource;
 use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
 use App\Invoice;
 use App\InvoiceItem as invoicesitmes;
+use App\InvoiceItem;
 use App\Meal;
 use Carbon\Carbon;
 use function GuzzleHttp\Psr7\copy_to_string;
@@ -176,14 +178,21 @@ class UserControllerAPI extends Controller
                 invoice_items.unit_price, ' total price:', invoice_items.sub_total_price ) as item"))
             ->distinct('item')->get();
        // dd($query1);
+        $query4 = DB::table('invoice_items')
+            ->select('invoice_id','item_id')->distinct('invoice_id')->get();
 
 
 
-    $query2 = InvoiceItemResource::collection(invoicesitmes::with('invoice.meal.waiter')->with('item')
-        ->distinct('invoice.meal.waiter')->get());
+    $query2 = InvoiceItemResource::collection(InvoiceItem::with('item')->with('invoice.meal.waiter')->get());
+    $query3 = InvoiceItem::join('invoices','invoices.id','invoice_items.invoice_id')
+        ->join('meals','invoices.meal_id','meals.id')->join('users','users.id','meals.responsible_waiter_id')
+        ->join('items','items.id','invoice_items.item_id')->select('invoices.date','meals.table_number','users.name','invoices.total_price',
+            'invoice_items.quantity','items.name as item','invoice_items.unit_price','invoice_items.sub_total_price')->
+        distinct('meals.table_number','users.name')->paginate(30);
+    //$query3 = InvoiceGetAllResource::collection(InvoiceItem::with('item')->selectRaw('invoice_id,(select item_id from invoice_items)')->groupBy('invoice_id')->get());
 
        // ->distinct('users.name')
-        return $query2;
+        return $query3;
     }
 //DB::raw("(Select items.name from items where items.id=invoice_items.item_id) as items")
 /* $query = DB::table('invoices')
