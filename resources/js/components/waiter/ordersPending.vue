@@ -28,11 +28,12 @@
 </template>
 <script>
     module.exports= {
-        props: ['newOrder', 'userId'],
+        props: ['newOrder', 'userId', 'mealId'],
         data: function () {
             return {
                 orders: [],
-                deleteButton: []
+                deleteButton: [],
+                meal_id: ''
             }
         },
         methods: {
@@ -49,15 +50,19 @@
                 this.deleteButton.splice(this.deleteButton.findIndex(v => v.id === id), 1);
             },
             timeoutOrder: function(id){
+                //continua ter meal_id mesmo se fechar orders
+                this.meal_id = JSON.parse(JSON.stringify(this.mealId));
                 setTimeout(() => {
                     this.hideButton(id);
                     this.confirmOrder(id);
-                }, 5000)
+                }, 5000);
             },
             confirmOrder(id){
                 axios.put('/api/order/'+id, {'state' : 'confirmed'})
                     .then(response=>{
                         this.$socket.emit('orderConfirmed', response.data.data);
+                        //envia pedido para o meneger para ele atualizar a lista de orders de uma especifica meal
+                        this.$socket.emit('orderCreated', this.meal_id);
                         this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                         this.orders.unshift(response.data.data);
                     });

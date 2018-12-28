@@ -1,7 +1,11 @@
 <template>
-	<div v-if="invoices.length > 0">
+	<div >{{updateProp}}
 		<h3>Pending Invoices</h3>
         <div class="container-fluid">
+        	<div class="alert alert-success" v-if="alertSucces.show">
+	            <button type="button" class="close-btn" v-on:click="alertSucces.show=false">&times;</button>
+	            <strong  alert.message>{{ alertSucces.message }}</strong>
+	        </div>
         	<div class="row">
 					<div class="control">
 						<select class="custom-select col-sm" v-model="tableData.length" @change="getInvoices()">
@@ -10,6 +14,7 @@
 			        </div>
 					<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Table" @input="getInvoices()">
 		    </div>
+		    
 			<datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders"
 			@sort="sortBy">
 				<tbody>
@@ -18,6 +23,11 @@
 						<td>{{invoice.name}}</td>
 						<td>{{invoice.state}}</td>
 						<td>{{invoice.total_price}}</td>
+						<td>
+							<a class="btn btn-danger is-20" title="declare as not paid" @click="$emit('declaredNotPaid', invoice.meal_id)">
+								<i class="fab fa-creative-commons-nc-eu"></i>
+							</a>
+						</td>
 					</tr>
 				</tbody>
 			</datatable>
@@ -32,6 +42,7 @@
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
 	export default{
+		props: ['updateNotPaid'],
 		components:{
 			datatable: Datatable, 
 			pagination: Pagination
@@ -46,6 +57,7 @@
 	            {width: '40%', label: 'Responsable waiter', name: 'name', order:true },
 	            {width: '20%', label: 'State', name: 'state', order:false},
 	            {width: '25%', label: 'Total Price', name: 'total_price', order:true},
+	            {width: '25%', label: 'Actions', name: 'actions', order:false},
 	        ];
 	        columns.forEach((column) => {
 	           sortOrders[column.name] = -1;
@@ -96,7 +108,6 @@
 	                    console.log(errors);
 	                });
 	        },
-
 	        configPagination(data) {
 	            this.pagination.lastPage = data.last_page;
 	            this.pagination.currentPage = data.current_page;
@@ -126,6 +137,13 @@
                         this.alertSucces.show = false;
                 }, 2000);
         	},
-		}
+		},
+		computed: { 
+      		updateProp: function() { // watch it
+      			this.getInvoices();
+      			this.updateNotPaid;
+      			return null;
+			}
+		},
 	};
 </script>

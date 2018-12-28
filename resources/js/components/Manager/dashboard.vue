@@ -1,10 +1,14 @@
 <template>
 	<div class="container-fluid">
 		<h1>Dashboard</h1>
-		<pendingInvoices></pendingInvoices>
+		<div class="alert alert-success" v-if="alertSucces.show">
+	    	<button type="button" class="close-btn" v-on:click="alertSucces.show=false">&times;</button>
+	    	<strong  alert.message>{{ alertSucces.message }}</strong>
+	    </div>
+		<pendingInvoices @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid" ></pendingInvoices>
 		<div class="row mt-5">
 			<div class="col-sm">
-				<meals @melOrders="fillOrders"></meals>
+				<meals @melOrders="fillOrders" @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid"></meals>
 			</div>
 			<div class="col-sm-4"  v-if="selectedMeal != null">
 				<orders :selectedMeal="selectedMeal" @closeOrders="closeOrders"></orders>
@@ -26,6 +30,11 @@
 		data(){
 			return{
 				selectedMeal: null,
+				updateNotPaid: '',
+				alertSucces:{
+					show:false,
+					Message:'',
+				},
 			}
 		},
 		methods:{
@@ -34,7 +43,23 @@
 			},
 			closeOrders(){
 				this.selectedMeal = null;
-			}			
+			},
+			declaredNotPaid: function(meal_id){
+	        	axios.put('/api/manager/pendingInvoicesAsNotPaid/' + meal_id)
+                .then(response=>{
+                	this.updateNotPaid = null;
+                	this.buildSuccessMessage('Invoices and Meals updated successfully');
+                });
+                this.updateNotPaid = meal_id;
+	        },
+	        buildSuccessMessage(message){
+        		this.alertSucces.show = true;
+				this.alertSucces.message = message;
+				setTimeout(() => {
+                        this.alertSucces.show = false;
+                }, 2000);
+        	},
+
 		}
 	};
 </script>

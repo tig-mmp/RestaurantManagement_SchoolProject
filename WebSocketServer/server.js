@@ -71,6 +71,14 @@ io.on('connection', function (socket) {
 		io.sockets.to('cook').emit('updateConfirmedOrder', order);
 	});
 
+	socket.on('orderCreated', function (meal_id) {
+		io.sockets.to('manager').emit('updateManagerOrders', meal_id);
+	});
+
+	socket.on('mealCreated', function (meal) {
+		io.sockets.to('manager').emit('updateManagersMeals', meal);
+	});
+
 	socket.on('orderPrepared', function (order, destUserId) {
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;

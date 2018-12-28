@@ -1,5 +1,5 @@
 <template>
-	<div >
+	<div >{{updateProp}}
 		<h3>Active or Terminated meals</h3>
         <div class="container-fluid">
         	<div class="row">
@@ -21,6 +21,9 @@
 						<td>{{meal.total_price_preview}}</td>
 						<td>
 							<a class="btn btn-sm btn-primary" title="See orders" v-on:click.prevent="$emit('melOrders', meal)"><i class="fas fa-th-list"></i></a>
+							<a class="btn btn-danger" title="Declare as not paid" v-if="meal.state=='terminated'"  @click="$emit('declaredNotPaid', meal.id)">
+								<i class="fab fa-creative-commons-nc-eu"></i>
+							</a>
 						</td>
 					</tr>
 				</tbody>
@@ -36,6 +39,12 @@
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
 	export default{
+		props: ['updateNotPaid'],
+		watch: {
+      		updateNotPaid: function(newVal, oldVal) { // watch it
+      			this.getMeals();
+			}
+		},
 		components:{
 			datatable: Datatable, 
 			pagination: Pagination
@@ -102,7 +111,6 @@
 	                    console.log(errors);
 	                });
 	        },
-
 	        configPagination(data) {
 	            this.pagination.lastPage = data.last_page;
 	            this.pagination.currentPage = data.current_page;
@@ -132,6 +140,23 @@
                         this.alertSucces.show = false;
                 }, 2000);
         	},
-		}
+		},
+		sockets: {
+            updateManagersMeals(dataFromServer){
+                this.getMeals();
+                let toast = this.$toasted.show(dataFromServer[0], {
+                    theme: "outline",
+                    position: "top-center",
+                    duration : null
+                });
+            },
+        },
+        computed: { 
+      		updateProp: function() { // watch it
+      			this.getMeals();
+      			this.updateNotPaid;
+      			return null;
+			}
+		},
 	};
 </script>

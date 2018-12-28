@@ -14,7 +14,9 @@
     module.exports={
         data: function(){
             return {
-                user: [],msgManagersText:'',msgManagersTextArea:''
+                user: [],
+                msgManagersText:'',
+                msgManagersTextArea:''
             }
         },
         methods: {

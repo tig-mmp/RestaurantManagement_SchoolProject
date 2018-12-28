@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 use App\Item;
 use App\RestaurantTable;
 use App\User;
+use App\Meal;
+use App\Invoice;
+use App\Order;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 class ManagerControllerAPI extends Controller
@@ -74,7 +77,7 @@ class ManagerControllerAPI extends Controller
 
     public function invoiceDataTable(Request $request)
     {
-        $columns = ['table_number', 'name','state','total_price'];
+        $columns = ['id','meal_id','table_number', 'name','state','total_price'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
@@ -83,7 +86,7 @@ class ManagerControllerAPI extends Controller
         $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select('invoices.state','meals.table_number', 'users.name','invoices.total_price')
+            ->select('invoices.id','meal_id','invoices.state','meals.table_number', 'users.name','invoices.total_price')
             ->where('invoices.state', '=', 'pending')->orderBy($columns[$column], $dir);
 
         if ($searchValue) {
@@ -286,5 +289,44 @@ class ManagerControllerAPI extends Controller
         $table = RestaurantTable::create(['table_number' => $table_number]);
         $table->save();
         return response()->json(null, 201);
+    }
+
+    /*public function pendingInvoicesAsNotPaid($id)
+    {
+        $invoice = Invoice::findOrFail($id);
+        $invoice->fill(['state' => 'not paid']);
+        
+        $meal = Meal::findOrFail($invoice->meal_id);
+        if ($meal->state == 'terminated') {
+            $meal->fill(['state' => 'not paid']);
+        }
+
+        $orders = Order::where('meal_id', '=', $meal->id)
+        ->where('state', '!=', 'delivered')
+        ->update(['state' => 'not delivered']);
+
+        $meal->save();
+        $invoice->save();
+
+        return response()->json(null, 204);
+    }*/
+
+    public function pendingInvoicesAsNotPaid($id)
+    {
+        $meal = Meal::findOrFail($id);
+        if ($meal->state == 'terminated') {
+            $meal->fill(['state' => 'not paid']);
+        }
+
+        $invoice = Invoice::where('meal_id', '=', $meal->id)->update(['state' => 'not paid']);
+        
+
+        $orders = Order::where('meal_id', '=', $meal->id)
+        ->where('state', '!=', 'delivered')
+        ->update(['state' => 'not delivered']);
+
+        $meal->save();
+
+        return response()->json(null, 204);
     }
 }

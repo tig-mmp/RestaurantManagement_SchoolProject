@@ -135,7 +135,20 @@
                         this.alertSucces.show = false;
                 }, 2000);
         	},
-		}
+		},
+		sockets: {
+            updateManagerOrders(mealId){
+            	//só atualiza se estiver a ver as orders desta meal
+            	if (mealId == this.selectedMeal.id) {
+                	this.getOrders();
+            	}
+                let toast = this.$toasted.show(dataFromServer[0], {
+                    theme: "outline",
+                    position: "top-center",
+                    duration : null
+                });
+            },
+        },
 	};
 </script>
 

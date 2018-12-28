@@ -3,7 +3,7 @@
         <create-meal @meal-created="newMeal" v-bind:userId="userId">Create Meal</create-meal>
         <meals @start-order="startOrder" :newMeal="meal" v-bind:userId="userId">Create Meal</meals>
         <items v-show="mealId !== null" @create-order="createOrder"></items>
-        <orders-pending :newOrder="order" v-bind:userId="userId"></orders-pending>
+        <orders-pending :newOrder="order" :mealId="mealId" v-bind:userId="userId"></orders-pending>
         <orders-prepared v-bind:userId="userId"></orders-prepared>
     </div>
 </template>

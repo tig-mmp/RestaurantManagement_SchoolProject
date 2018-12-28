@@ -88,4 +88,6 @@ Route::middleware(['auth:api', 'manager'])->delete('manager/managerUserList/{id}
 Route::middleware(['auth:api', 'manager'])->get('manager/invoiceDataTable', 'ManagerControllerAPI@invoiceDataTable');
 Route::middleware(['auth:api', 'manager'])->get('manager/mealDataTable', 'ManagerControllerAPI@mealDataTable');
 Route::middleware(['auth:api', 'manager'])->get('manager/orderDataTable', 'ManagerControllerAPI@orderDataTable');
+//US32
+Route::middleware(['auth:api', 'manager'])->put('manager/pendingInvoicesAsNotPaid/{id}', 'ManagerControllerAPI@pendingInvoicesAsNotPaid');
 

@@ -29,8 +29,10 @@
                 axios.post('/api/meals/create', {table_number: this.select, 'id': this.userId})
                 .then(response => {
                     this.$emit('meal-created', response.data);
+                    this.$socket.emit('mealCreated', this.select);
                     this.getMesasLivres();
                 });
+
             },
             getMesasLivres(){
                 axios.get('api/tables')
