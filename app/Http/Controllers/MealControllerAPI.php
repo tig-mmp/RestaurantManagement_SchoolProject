@@ -36,7 +36,8 @@ class MealControllerAPI
     public function update(Request $request, $id)
     {
         $meal = Meal::findOrFail($id);
-        $meal->fill(['total_price_preview' => $meal->total_price_preview + $request->get('price')]);
+        $meal->fill($request->all());
+        $meal->fill(['total_price_preview' => round($meal->total_price_preview + $request->get('price'), 2)]);
         $meal->save();
         return new MealResource($meal);
     }
@@ -54,9 +55,10 @@ class MealControllerAPI
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
-        $query = Order::where('meal_id', $id)->join('items', 'orders.item_id', 'items.id')
-            ->select('items.name', 'items.type', 'items.price', 'photo_url')
-            ->orderBy($columns[$column], $dir);
+        $query = Order::where('meal_id', $id)
+            ->with(array('item' => function($query) use($columns, $column, $dir) {
+                $query->orderBy($columns[$column], $dir);
+            }))->select('item_id');
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
@@ -65,6 +67,12 @@ class MealControllerAPI
         }
         $items = $query->paginate($length);
         return ['data' => $items, 'draw' => $request->input('draw')];
+    }
+
+    public function onGoingOrders(Request $request, $id)
+    {
+        return Order::where('meal_id', $id)->whereNotIn('state', ['not delivered', 'delivered'])
+            ->with('item:id,price')->select('id', 'state', 'responsible_cook_id', 'item_id')->get();
     }
 
 }

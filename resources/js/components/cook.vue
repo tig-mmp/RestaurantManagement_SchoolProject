@@ -20,7 +20,7 @@
                 <td>{{order.table_number}}</td>
                 <td>
                     <a class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'prepared')">Prepared</a>
-                    <a v-show="order.state === 'confirmed'" class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'in preparation')">Start preparing</a>
+                    <a class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'in preparation')">Start preparing</a>
                 </td>
             </tr>
         </tbody>
@@ -35,7 +35,7 @@
         },
         methods: {
             prepare(id, state){
-                axios.put('/api/order/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
+                axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
                 .then(response=>{
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     if (response.data.data.state === 'in preparation'){
@@ -69,6 +69,10 @@
                 this.orders.push(order);
                 this.sortOrders();
             },
+            removeOrder(orderId){
+                console.log('recived ' + orderId);
+                this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
+            }
         },
     }
 </script>

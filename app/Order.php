@@ -25,7 +25,10 @@ class Order extends Model
     }
 
     public function item(){
-        return $this->hasOne(Item::class, 'id', 'item_id');
+        return $this->hasOne(Item::class, 'id', 'item_id')
+            ->select('id', 'name', 'type','description','photo_url','price')
+            ->withTrashed();
+
     }
 
     public function user(){

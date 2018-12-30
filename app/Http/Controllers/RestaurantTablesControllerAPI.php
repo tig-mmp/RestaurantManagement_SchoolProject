@@ -23,7 +23,8 @@ class RestaurantTablesControllerAPI
             ->select( 'restaurant_tables.table_number')
             ->where('meals.state', '=', 'active')
             ->get();
-        $result = $todasAsMesas->pluck('table_number')->diff($mesasOcupadas->pluck('table_number'))->map(function($table_number) {
+        $result = $todasAsMesas->pluck('table_number')->diff($mesasOcupadas->pluck('table_number'))
+            ->map(function($table_number) {
             return [
                 'table_number' => $table_number
             ];

@@ -5,12 +5,12 @@
             <div class="form-group">
                 <label>Table: </label>
                 <label>
-                    <select v-model="select">
-                        <option v-for="mesa in mesasLivres" :value="mesa.table_number">{{mesa.table_number}}</option>
+                    <select v-model="select" id="select">
+                        <option v-for="mesa in mesasLivres" :value="mesa">{{mesa}}</option>
                     </select>
                 </label>
             </div>
-            <button id="submit" type="submit" class="btn btn-default" v-on:click.prevent="register">Submit</button>
+            <button id="submit" type="submit" class="btn btn-default" v-on:click.prevent="createMeal">Submit</button>
         </form>
     </div>
 </template>
@@ -25,24 +25,46 @@
             };
         },
         methods: {
-            register: function () {
-                axios.post('/api/meals', {table_number: this.select, 'id': this.userId})
-                .then(response => {
-                    this.$emit('meal-created', response.data);
-                    this.$socket.emit('mealCreated', this.select);
-                    this.getMesasLivres();
-                });
-
+            createMeal: function () {
+                if (document.getElementById("select").selectedIndex !== -1) {//se o campo estiver vazio não faz nada
+                    //this.removeTable(this.select);
+                    axios.post('/api/meals', {table_number: this.select, 'id': this.userId})//cria a meal
+                    .then(response => {
+                        this.$emit('meal-created', response.data);//envia para o main que envia para o meals que lista as meals do waiter
+                        this.$socket.emit('mealCreated', this.select);
+                    }).catch(error => {
+                        this.addTable(this.select);
+                    });
+                }
+            },
+            addTable(table){
+                this.mesasLivres.push(table);
+                this.mesasLivres.sort((a, b) => a - b);//ordena numericamente
+            },
+            removeTable(table){
+                this.mesasLivres.splice(this.mesasLivres.indexOf(table), 1);
             },
             getMesasLivres(){
                 axios.get('api/tables')
-                .then(response=>{
-                    this.mesasLivres = response.data;
+                .then(response=> {
+                    Object.values(response.data).forEach((table) => {
+                        //isto era um objeto de objetos, Object.values transforma num array com os values
+                        // e assim ja da para percorrer no foreach
+                        this.mesasLivres.push(table.table_number);
+                    });
                 });
             }
         },
         mounted() {
             this.getMesasLivres();
         },
+        sockets: {
+            mealRemoved(table){
+                this.addTable(table);
+            },
+            mealCreated(table){
+                this.removeTable(table);
+            }
+        }
     }
 </script>

@@ -66,35 +66,40 @@ io.on('connection', function (socket) {
 		}
 	});
 
-
 	socket.on('orderConfirmed', function (order) {
 		io.sockets.to('cook').emit('updateConfirmedOrder', order);
-	});
-
-	socket.on('orderCreated', function (meal_id) {
-		io.sockets.to('manager').emit('updateManagerOrders', meal_id);
-	});
-
-	socket.on('mealCreated', function (meal) {
-		io.sockets.to('manager').emit('updateManagersMeals', meal);
 	});
 
 	socket.on('orderPrepared', function (order, destUserId) {
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
 		if (socket_id !== null) {
-			console.log(userInfo);
-			console.log(order);
 			io.to(socket_id).emit('orderPreparedUpdate', order);
 		}
 	});
-	
-    // Emit message to the same cliente 
-    //socket.emit('my_active_games_changed');
 
-    // Handle message sent from the client to the server
-    // socket.on('messageType_from_client_to_server', function (data){
+	socket.on('removePendingOrder', function (orderId) {
+		io.sockets.to('cook').emit('removeOrder', orderId);
+	});
 
-    // });
+	socket.on('removeInPreparationOrder', function (orderId, destUserId) {
+		let userInfo = loggedUsers.userInfoByID(destUserId);
+		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
+		if (socket_id !== null) {
+			io.to(socket_id).emit('removeOrder', orderId);
+		}
+	});
+
+	socket.on('mealCreated', function (table) {//os waiters so precisam de receber a table
+		io.sockets.to('waiter').emit('mealCreated', table);
+	});
+
+	socket.on('mealRemoved', function (table) {
+		io.sockets.to('waiter').emit('mealRemoved', table);
+	});
+
+
+
+
 
 });

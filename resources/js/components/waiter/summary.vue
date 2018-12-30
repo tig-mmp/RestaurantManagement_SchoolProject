@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <div class="box-content right">Table nº{{meal.table_number}}</div>
-        <div class="box-content right">Actual price: {{meal.total_price_preview}}</div>
+        <h4 class="box-content right">Table nº<b>{{meal.table_number}}</b></h4>
+        <h4 class="box-content right">Actual price: <b>{{meal.total_price_preview}}</b></h4>
         <div class="row">
             <div class="col-sm-9">
                 <input class="form-control col-sm-2" type="text" v-model="tableData.search" placeholder="Search Table" @input="getItems()">
@@ -15,10 +15,10 @@
         <datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" @sort="sortBy">
             <tbody>
             <tr v-for="item in items" :key="item.id">
-                <td><img :src="'/imgItems/' + item.photo_url" width="40" height="40" ></td>
-                <td>{{item.name}}</td>
-                <td>{{item.type}}</td>
-                <td>{{item.price}}</td>
+                <td><img :src="'/imgItems/' + item.item.photo_url" width="40" height="40" ></td>
+                <td>{{item.item.name}}</td>
+                <td>{{item.item.type}}</td>
+                <td>{{item.item.price}}</td>
             </tr>
             </tbody>
         </datatable>

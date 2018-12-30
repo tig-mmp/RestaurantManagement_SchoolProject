@@ -19,6 +19,7 @@
                         <a v-show="summary === meal.id" class="btn btn-sm btn-danger" v-on:click.prevent="closeSummary(meal.id)">close summary</a>
                         <a v-show="mealId !== meal.id" class="btn btn-sm btn-success" v-on:click.prevent="startOrder(meal.id)">add order</a>
                         <a v-show="mealId === meal.id" class="btn btn-sm btn-danger" v-on:click.prevent="closeOrder()">close order</a>
+                        <a class="btn btn-sm btn-warning" v-on:click.prevent="endMeal(meal.id)">end meal</a>
                     </td>
                 </tr>
             </tbody>
@@ -27,7 +28,7 @@
 </template>
 <script>
     module.exports= {
-        props: ['newMeal', 'userId'],
+        props: ['newMeal', 'userId', 'mealIdToRemove'],
         data: function () {
             return {
                 meals: [],
@@ -51,6 +52,9 @@
             closeSummary(id){
                 this.summary = null;
                 this.$emit('show-summary', null);
+            },
+            endMeal(id){
+                this.$emit('end-meal', id);
             }
         },
         mounted() {
@@ -61,6 +65,9 @@
         watch: {
             newMeal: function (meal) {
                 this.meals.push(meal);
+            },
+            mealIdToRemove: function (mealId) {
+                this.meals.splice(this.meals.findIndex(meal => meal.id === mealId), 1);
             }
         }
     }

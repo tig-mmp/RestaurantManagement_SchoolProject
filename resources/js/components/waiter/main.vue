@@ -1,11 +1,13 @@
 <template>
     <div>
         <create-meal @meal-created="newMeal" v-bind:userId="userId">Create Meal</create-meal>
-        <meals @start-order="startOrder" @show-summary="showSummary" :newMeal="meal" v-bind:userId="userId">Create Meal</meals>
+        <meals @start-order="startOrder" @show-summary="showSummary" @end-meal="endMeal"
+               :newMeal="meal" :mealIdToRemove="mealIdToRemove" v-bind:userId="userId">Create Meal</meals>
         <meal-summary v-show="mealSummary !== null" :mealId="mealSummary"></meal-summary>
         <items v-show="mealId !== null" @create-order="createOrder"></items>
-        <orders-pending :newOrder="order" :mealId="mealId" v-bind:userId="userId"></orders-pending>
-        <orders-prepared v-bind:userId="userId"></orders-prepared>
+        <orders-pending :newOrder="order" :mealId="mealId" :removeOrders="pendingOrdersToRemove"
+                v-bind:userId="userId"></orders-pending>
+        <orders-prepared :removeOrders="preparedOrdersToRemove" v-bind:userId="userId"></orders-prepared>
     </div>
 </template>
 
@@ -32,7 +34,10 @@
                 meal: '',
                 mealId: null,
                 order: '',
-                mealSummary: null
+                mealSummary: null,
+                pendingOrdersToRemove: null,
+                preparedOrdersToRemove: null,
+                mealIdToRemove: null,
             }
         },
         methods: {
@@ -50,6 +55,38 @@
             },
             showSummary(id){
                 this.mealSummary = id;
+            },
+            endMeal(id){
+                this.pendingOrdersToRemove = [];
+                this.preparedOrdersToRemove = [];
+                var price = 0;
+                axios.get('api/meals/'+id+'/onGoingOrders')
+                .then(response=>{
+                    response.data.forEach((order) => {
+                        if (order.state === 'pending') {
+                            this.pendingOrdersToRemove.push(order.id);
+                        }
+                        if (order.state === 'confirmed'){
+                            this.pendingOrdersToRemove.push(order.id);
+                            this.$socket.emit('removePendingOrder', order.id);
+                        }
+                        if (order.state === 'in preparation'){
+                            this.$socket.emit('removeInPreparationOrder', order.id, order.responsible_cook_id);
+                        }
+                        if (order.state === 'prepared') {
+                            this.preparedOrdersToRemove.push(order.id);
+                        }
+                        axios.put('/api/orders/'+order.id, {'state': 'not delivered'}).then(response=>{});
+                        price = Math.round(+price + +order.item.price);
+                    });
+                })
+                .then(response=>(
+                    axios.put('/api/meals/'+id, {'price' : -price, 'state': 'terminated'})
+                    .then(response=>{
+                        this.mealIdToRemove = id;
+                        this.$socket.emit('mealRemoved', response.data.data.table_number);
+                    })
+                ));
             }
         },
     }

@@ -28,7 +28,7 @@
 </template>
 <script>
     module.exports= {
-        props: ['newOrder', 'userId', 'mealId'],
+        props: ['newOrder', 'userId', 'mealId', 'removeOrders'],
         data: function () {
             return {
                 orders: [],
@@ -58,16 +58,16 @@
                 }, 5000);
             },
             confirmOrder(id){
-                axios.put('/api/order/'+id, {'state' : 'confirmed'})
-                    .then(response=>{
-                        this.$socket.emit('orderConfirmed', response.data.data);
-                        //envia pedido para o meneger para ele atualizar a lista de orders de uma especifica meal
-                        this.$socket.emit('orderCreated', this.meal_id);
-                        this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
-                        this.orders.unshift(response.data.data);
-                        axios.put('/api/meal/'+response.data.data.meal_id, {'price' : this.newOrder.price}).
-                            then(response=>{});
-                    });
+                axios.put('/api/orders/'+id, {'state' : 'confirmed'})
+                .then(response=>{
+                    this.$socket.emit('orderConfirmed', response.data.data);
+                    //envia pedido para o meneger para ele atualizar a lista de orders de uma especifica meal
+                    //this.$socket.emit('orderCreated', this.meal_id);
+                    this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
+                    this.orders.unshift(response.data.data);
+                    axios.put('/api/meals/'+response.data.data.meal_id, {'price' : this.newOrder.price}).
+                        then(response=>{});
+                }).catch(error => {});
             },
             issetButton(id){
                 return this.deleteButton.find(function(val){return val === id;});
@@ -83,6 +83,11 @@
                 this.orders.unshift(order);
                 this.deleteButton.push(order.id);
                 this.timeoutOrder(order.id);
+            },
+            removeOrders: function (ordersRecived) {
+                ordersRecived.forEach((orderId) => {
+                    this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
+                });
             }
         }
     }

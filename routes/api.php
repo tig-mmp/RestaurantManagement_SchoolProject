@@ -34,7 +34,7 @@ Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@
 //US9
 Route::middleware('auth:api','cook')->get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
-Route::middleware('auth:api')->put('order/{id}', 'OrderControllerAPI@update');
+Route::middleware('auth:api')->put('orders/{id}', 'OrderControllerAPI@update');
 Route::middleware('auth:api', 'waiter')->put('meals/{id}', 'MealControllerAPI@update');
 //US12
 Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControllerAPI@mesasLivres');
@@ -51,6 +51,8 @@ Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/preparedOrders',
 //US19
 Route::middleware('auth:api', 'waiter')->get('meals/{id}', 'MealControllerAPI@summary');
 Route::middleware('auth:api', 'waiter')->get('meals/{id}/items', 'MealControllerAPI@items');
+//20
+Route::middleware('auth:api', 'waiter')->get('meals/{id}/onGoingOrders', 'MealControllerAPI@onGoingOrders');
 //US22
 Route::get('cashier','UserControllerAPI@invoices');
 
