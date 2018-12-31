@@ -27,14 +27,13 @@
         methods: {
             createMeal: function () {
                 if (document.getElementById("select").selectedIndex !== -1) {//se o campo estiver vazio não faz nada
-                    //this.removeTable(this.select);
                     axios.post('/api/meals', {table_number: this.select, 'id': this.userId})//cria a meal
                     .then(response => {
-                        this.$emit('meal-created', response.data);//envia para o main que envia para o meals que lista as meals do waiter
-                        this.$socket.emit('mealCreated', this.select);
-                    }).catch(error => {
-                        this.addTable(this.select);
-                    });
+                        if(response.data != ''){
+                            this.$emit('meal-created', response.data);//envia para o main que envia para o meals que lista as meals do waiter
+                            this.$socket.emit('mealCreated', this.select);
+                        }
+                    }).catch(error => {});
                 }
             },
             addTable(table){

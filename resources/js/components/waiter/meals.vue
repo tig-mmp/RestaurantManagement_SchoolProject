@@ -59,7 +59,9 @@
         },
         mounted() {
             axios.get('api/users/'+this.userId+'/meals').then(response=>{
-                this.meals = response.data.data;
+                if (response.data != '') {
+                    this.meals = response.data.data;
+                }
             });
         },
         watch: {

@@ -19,6 +19,7 @@
                 <td>{{item.item.name}}</td>
                 <td>{{item.item.type}}</td>
                 <td>{{item.item.price}}</td>
+                <td>{{item.state}}</td>
             </tr>
             </tbody>
         </datatable>
@@ -47,6 +48,7 @@
                 {width: '20%', label: 'Name', name: 'name', order:true },
                 {width: '20%', label: 'Type', name: 'type', order:true},
                 {width: '20%', label: 'Price', name: 'price', order:true},
+                {width: '20%', label: 'State', name: 'state', order:false},
             ];
             columns.forEach((column) => {
                 sortOrders[column.name] = -1;

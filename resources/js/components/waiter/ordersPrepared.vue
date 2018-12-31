@@ -18,7 +18,7 @@
                 <td>{{order.state}}</td>
                 <td>{{order.table_number}}</td>
                 <td>
-                    <a class="btn btn-sm btn-success" v-on:click.prevent="delivered(order.id)">Delivered</a>
+                    <a class="btn btn-sm btn-success" v-on:click.prevent="deliver(order.id)">Delivered</a>
                 </td>
             </tr>
             </tbody>
@@ -27,23 +27,47 @@
 </template>
 <script>
     module.exports= {
-        props: ['userId'],
+        props: ['userId', 'removeOrders'],
         data: function () {
             return {
                 orders: [],
             }
         },
         methods: {
-            delivered(id){
+            deliver(id){
                 axios.put('/api/orders/'+id, {'state' : 'delivered'})
-                    .then(response=>{
-                        this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
-                    });
+                .then(response=> {
+                    axios.all([this.getItemId(response.data.data.id), this.getInvoiceId(response.data.data.meal_id)])
+                    .then(axios.spread(function (item, invoice) {
+                        var invoice_id = invoice.data.id;
+                        var item_id = item.data.item_id;
+                        var price = item.data.item.price;
+                        axios.get('/api/invoiceItems/find', {params: {'invoice_id': invoice_id, 'item_id': item_id}})
+                        .then(response => {
+                            if (response.data != ''){
+                                axios.put('/api/invoiceItems/'+invoice_id+'/'+item_id)
+                                    .then(response => {});
+                            }else{
+                                axios.post('/api/invoiceItems', {'invoice_id': invoice_id, 'item_id': item_id, 'price': price})
+                                .then(response => {});
+                            }
+                        });
+                    }));
+                    this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
+                });
+            },
+            getItemId(id){
+                return axios.get('api/orders/' + id +'/item');
+            },
+            getInvoiceId(id){
+                return axios.get('api/meals/' + id + '/invoice');
             }
         },
         mounted() {
             axios.get('api/users/waiter/'+this.userId+'/preparedOrders').then(response=>{
-                this.orders = response.data.data;
+                if (response.data != ''){
+                    this.orders = response.data.data;
+                }
             });
         },
         watch: {

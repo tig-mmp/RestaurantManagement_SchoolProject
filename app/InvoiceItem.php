@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +16,11 @@ class InvoiceItem extends Model
      *
      * @var array
      */
-     protected $fillable = [
+    public $timestamps = false;
+    protected $primaryKey = ['invoice_id', 'item_id'];
+    public $incrementing = false;
+
+    protected $fillable = [
         'invoice_id','item_id','quantity','unit_price','sub_total_price',
     ];
 
@@ -26,4 +31,11 @@ class InvoiceItem extends Model
     public function item(){
         return $this->hasOne(Item::class, 'id', 'item_id');
     }
+
+    protected function setKeysForSaveQuery(Builder $query)//isto é para fazer update, porque tem chave composta
+    {
+        return $query->where('invoice_id', $this->getAttribute('invoice_id'))
+            ->where('item_id', $this->getAttribute('item_id'));
+    }
+
 }

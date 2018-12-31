@@ -66,7 +66,7 @@
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     this.orders.unshift(response.data.data);
                     axios.put('/api/meals/'+response.data.data.meal_id, {'price' : this.newOrder.price}).
-                        then(response=>{});
+                    then(response=>{});
                 }).catch(error => {});
             },
             issetButton(id){
@@ -75,7 +75,9 @@
         },
         mounted() {
             axios.get('api/users/waiter/'+this.userId+'/pendingOrders').then(response=>{
-                this.orders = response.data.data;
+                if (response.data != '') {
+                    this.orders = response.data.data;
+                }
             });
         },
         watch: {
@@ -89,6 +91,10 @@
                     this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
                 });
             }
+        },sockets: {
+            orderPreparing(orderId){
+                this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
+            },
         }
     }
 </script>

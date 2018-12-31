@@ -81,8 +81,8 @@
 			}
 		},
 		methods:{
-			createOrder(id){
-				this.$emit('create-order', id);
+			createOrder(itemId){
+				this.$emit('create-order', itemId);
 			},
 			getItems(url = 'api/items/paginate') {
 				this.tableData.draw++;

@@ -35,22 +35,32 @@
                 mealId: null,
                 order: '',
                 mealSummary: null,
-                pendingOrdersToRemove: null,
-                preparedOrdersToRemove: null,
+                pendingOrdersToRemove: [],
+                preparedOrdersToRemove: [],
                 mealIdToRemove: null,
             }
         },
         methods: {
-            newMeal(meal){
+            newMeal(meal){//envia a nova meal do createMeal para o meals
                 this.meal = meal;
             },
             startOrder(id) {
                 this.mealId = id;
             },
             createOrder(id){
-                axios.post('/api/orders/create', {'item_id': id, 'meal_id': this.mealId, 'responsible_cook_id': this.userId})
+                axios.post('/api/orders', {'item_id': id, 'meal_id': this.mealId})
                 .then(response=>{
                     this.order = response.data;
+                    axios.get('api/meals/'+response.data.meal_id+'/invoice')
+                    .then(response=>{
+                        if (response.data === '') {
+                            axios.post('/api/invoices', {'meal_id': this.order.meal_id}).then(response => {
+                                //enviar para o manager response.data
+                            });
+                        }
+                    });
+                }).catch(function (error) {
+                    this.createOrder(id);
                 });
             },
             showSummary(id){
@@ -60,9 +70,17 @@
                 this.pendingOrdersToRemove = [];
                 this.preparedOrdersToRemove = [];
                 var price = 0;
-                axios.get('api/meals/'+id+'/onGoingOrders')
-                .then(response=>{
-                    response.data.forEach((order) => {
+                var i = 0;
+                axios.all([this.getOnGoingOrders(id), this.getInvoiceId(id)])
+                .then(axios.spread((orders, invoice) => {
+                    if (invoice.data !== ''){
+                        axios.get('api/invoices/'+invoice.data.id+'/totalPrice')
+                        .then(response=>{
+                            axios.put('api/invoices/'+invoice.data.id, {'total_price' : response.data})
+                                .then(response=>{});
+                        });
+                    }
+                    orders.data.forEach((order) => {
                         if (order.state === 'pending') {
                             this.pendingOrdersToRemove.push(order.id);
                         }
@@ -77,18 +95,31 @@
                             this.preparedOrdersToRemove.push(order.id);
                         }
                         axios.put('/api/orders/'+order.id, {'state': 'not delivered'}).then(response=>{});
-                        price = Math.round(+price + +order.item.price);
+                        price = +price + +order.item.price;
+                        i++;
+                        if(i === orders.data.length) {//espera que calcule o preço
+                            this.terminarMeal(id, price);
+                        }
                     });
-                })
-                .then(response=>(
-                    axios.put('/api/meals/'+id, {'price' : -price, 'state': 'terminated'})
-                    .then(response=>{
-                        this.mealIdToRemove = id;
-                        this.$socket.emit('mealRemoved', response.data.data.table_number);
-                    })
-                ));
+                    if (orders.data.length === 0) {//se todas as orders estão terminadas
+                        this.terminarMeal(id, price);
+                    }
+                }));
+            },
+            getOnGoingOrders(id){
+                return axios.get('api/meals/'+id+'/onGoingOrders');
+            },
+            getInvoiceId(id){
+                return axios.get('api/meals/'+id+'/invoice');
+            },
+            terminarMeal(mealId, price){
+                axios.put('api/meals/'+mealId, {'price' : -price, 'state': 'terminated'})
+                .then(response=>{
+                    this.mealIdToRemove = mealId;
+                    this.$socket.emit('mealRemoved', response.data.data.table_number);
+                });
             }
-        },
+        }
     }
 </script>
 

@@ -47,9 +47,9 @@ class UserControllerAPI extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-                'name' => 'required|min:3',
-                'username' => 'required|unique:users,username,'.$id
-            ]);
+            'name' => 'required|min:3',
+            'username' => 'required|unique:users,username,'.$id
+        ]);
         $user = User::findOrFail($id);
         $old_shift = $user->shift_active;
         $user->fill($request->all());
@@ -133,8 +133,7 @@ class UserControllerAPI extends Controller
     public function cookOrders(Request $request, $id)
     {
         return OrderItemResource::collection(Order::where('state', 'confirmed')
-            ->orWhere('responsible_cook_id', $id)
-            ->where('state', 'in preparation')
+            ->orWhere('responsible_cook_id', $id)->where('state', 'in preparation')
             ->orderByRaw("FIELD(state, 'in prepatation', 'confirmed')")->orderBy('start', 'desc')->get());
     }
 
@@ -152,7 +151,11 @@ class UserControllerAPI extends Controller
     }
 
     public function waiterPreparedOrders(Request $request, $id)
-    {
+    {/*
+        return OrderItemResource::collection(Order::with(['meal' => function($q) use($id){
+            $q->where("responsible_waiter_id", $id);}])
+            ->select('orders.*')
+            ->where('orders.state', 'prepared')->orderBy('orders.start')->get());*/
         return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
             ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
             ->where('orders.state', 'prepared')->orderBy('orders.start')->get());

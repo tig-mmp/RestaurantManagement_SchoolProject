@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Meal as MealResource;
+use App\Invoice;
 use App\Meal;
 use App\Order;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ class MealControllerAPI
         $request->validate([
             'table_number' => 'numeric',
         ]);
+        $invoice = Meal::where('table_number', $request->get('table_number'))->where('state', 'active')->first();
+        if ($invoice !== null){
+            return response()->json();
+        }
         $meal = new Meal();
         $meal->fill([
             'state' => 'active',
@@ -36,6 +41,9 @@ class MealControllerAPI
     public function update(Request $request, $id)
     {
         $meal = Meal::findOrFail($id);
+        if ($request->get('state') === 'paid' || $request->get('state') === 'not paid'){
+            $meal->fill(['end' => Carbon::now()->toDateTimeString()]);
+        }
         $meal->fill($request->all());
         $meal->fill(['total_price_preview' => round($meal->total_price_preview + $request->get('price'), 2)]);
         $meal->save();
@@ -58,7 +66,7 @@ class MealControllerAPI
         $query = Order::where('meal_id', $id)
             ->with(array('item' => function($query) use($columns, $column, $dir) {
                 $query->orderBy($columns[$column], $dir);
-            }))->select('item_id');
+            }))->select('item_id', 'state');
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
@@ -75,4 +83,11 @@ class MealControllerAPI
             ->with('item:id,price')->select('id', 'state', 'responsible_cook_id', 'item_id')->get();
     }
 
+    public function numberOrders(Request $request, $id){
+        return Order::where('meal_id', $id)->count();
+    }
+
+    public function invoiceId(Request $request, $id){
+        return Invoice::where('meal_id', $id)->where('state', 'pending')->select('id')->first();
+    }
 }

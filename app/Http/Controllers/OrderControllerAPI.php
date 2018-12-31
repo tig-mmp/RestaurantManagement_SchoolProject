@@ -47,4 +47,8 @@ class OrderControllerAPI
         return response()->json(null, 204);
     }
 
+    public function itemId(Request $request, $id){
+        return Order::where('id', $id)->select('item_id')->with('item:id,price')->first();
+    }
+
 }

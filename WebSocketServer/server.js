@@ -78,11 +78,19 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('orderPreparing', function (order, destUserId) {//remove das pendings
+		let userInfo = loggedUsers.userInfoByID(destUserId);
+		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
+		if (socket_id !== null) {
+			io.to(socket_id).emit('orderPreparing', order);
+		}
+	});
+
 	socket.on('removePendingOrder', function (orderId) {
 		io.sockets.to('cook').emit('removeOrder', orderId);
 	});
 
-	socket.on('removeInPreparationOrder', function (orderId, destUserId) {
+	socket.on('removeInPreparationOrder', function (orderId, destUserId) {//quando a meal termina o cook remove as orders
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
 		if (socket_id !== null) {

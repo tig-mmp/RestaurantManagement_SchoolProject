@@ -21,9 +21,9 @@ class OrderItem extends Resource
         return [
             'id' => $this->id,
             'start' => $this->start,
-            'price' => $this->item()->withTrashed()->get()->first()->price,
-            'photo_url' => $this->item()->withTrashed()->get()->first()->photo_url,
-            'name' => $this->item()->withTrashed()->get()->first()->name,
+            'price' => $this->item()->withTrashed()->first()->price,
+            'photo_url' => $this->item()->withTrashed()->first()->photo_url,
+            'name' => $this->item()->withTrashed()->first()->name,
             'state' => $this->state,
             'meal_id' => $this->meal_id,
             'table_number' => $this->meal->table->table_number,
