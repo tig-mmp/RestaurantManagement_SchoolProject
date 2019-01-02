@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceItems as InvoiceItemResource;
-use App\Http\Resources\InvoiceGetAllItems as InvoiceGetAllResource;
 use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
@@ -30,20 +29,6 @@ use Illuminate\Validation\ValidationException;
 
 class UserControllerAPI extends Controller
 {
-    public function index(Request $request)
-    {
-        if ($request->has('page')) {
-            return UserResource::collection(User::paginate(5));
-        } else {
-            return UserResource::collection(User::all());
-        }
-    }
-
-    public function show($id)
-    {
-        return new UserResource(User::find($id));
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -144,21 +129,41 @@ class UserControllerAPI extends Controller
 
     public function waiterPendingOrders(Request $request, $id)
     {
-        return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
-            ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.state')
-            ->orderBy('orders.start', 'desc')->get());
+        return OrderItemResource::collection(
+            Order::with(['meal' => function($query) use($id){
+                return $query->with('table:table_number')
+                    ->select('id', 'responsible_waiter_id', 'table_number')
+                    ->where('responsible_waiter_id', $id);
+            }])
+                ->select('id', 'meal_id', 'start', 'state', 'item_id', 'responsible_cook_id')
+                ->whereIn('orders.state', ['pending', 'confirmed'])
+                ->orderBy('orders.state')
+                ->orderBy('orders.start', 'desc')
+                ->get());
     }
 
     public function waiterPreparedOrders(Request $request, $id)
-    {/*
-        return OrderItemResource::collection(Order::with(['meal' => function($q) use($id){
-            $q->where("responsible_waiter_id", $id);}])
-            ->select('orders.*')
-            ->where('orders.state', 'prepared')->orderBy('orders.start')->get());*/
+    {
         return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
             ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
             ->where('orders.state', 'prepared')->orderBy('orders.start')->get());
+        /*return OrderItemResource::collection(Order::with('meal')
+        ->whereHas('meal', function($query) use($id){
+            return $query->with('waiter:id,name')
+                ->with('table:table_number')
+                ->select('id', 'responsible_waiter_id', 'table_number')
+                ->where('responsible_waiter_id', $id);
+        })->select('id', 'meal_id', 'start', 'state', 'item_id', 'responsible_cook_id')
+            ->where('orders.state', 'prepared')
+            ->orderBy('orders.start')->get());*/
+    }
+
+    public function test(Request $request){
+        return InvoiceWaiterResource::collection(Invoice::with(['meal' => function($query){
+            return $query->with('waiter:id,name')->with('table:table_number')
+                ->select('id', 'responsible_waiter_id', 'table_number');
+        }])->where('invoices.state', '=', 'pending')
+            ->select('id', 'meal_id', 'total_price')->paginate(25));
     }
 
     public function invoices(Request $request)
