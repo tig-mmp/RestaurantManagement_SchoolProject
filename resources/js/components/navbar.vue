@@ -8,6 +8,19 @@
 
 			<div class="collapse navbar-collapse flex-row-reverse" id="navbarNavAltMarkup">
 			    <div class="navbar-nav">
+
+			    	<div v-if="this.$store.state.user && this.$store.state.user.type == 'manager'" 
+			    	class="dropdown">
+			  			<a class="btn btn-secondary" href="#"  data-toggle="dropdown">
+			    			<i class="fas fa-comments"></i>
+			  			</a>
+	  					<div v-show="this.$store.state.user" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+	                        <div class="p-4" style="width: 100vh">
+	                        	<managersNotifications></managersNotifications>
+	                    	</div>
+	                    </div>
+	  				</div>
+
 				    <router-link to="/menu" class="nav-item nav-link active">
 				    	Menu
 				    </router-link>
@@ -20,8 +33,9 @@
 				    	Login
 				    </router-link>
 	                <router-link to="/shift" v-if="this.$store.state.user" class="nav-item nav-link">shift</router-link>
+
 				    <div v-if="this.$store.state.user && (this.$store.state.user.photo_url !== undefined || this.$store.state.user.photo_url !== null)" class="dropdown show">
-			  			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			  			<a class="btn btn-secondary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			    			<img :src="'/imgProfiles/' + this.$store.state.user.photo_url" width="40" height="40">
 			  			</a>
 	  					<div v-show="this.$store.state.user" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">

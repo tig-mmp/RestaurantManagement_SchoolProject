@@ -42,6 +42,7 @@ const managerTableList = Vue.component('managerTableList', require('./components
 const managerUserList = Vue.component('managerUserList', require('./components/Manager/managerUserList.vue'));
 const editUser = Vue.component('editUser', require('./components/Manager/editUser.vue'));
 const dashboard = Vue.component('dashboard', require('./components/Manager/dashboard.vue'));
+const managersNotifications = Vue.component('managersNotifications', require('./components/Manager/managersNotifications.vue'));
 
 
 const routes = [

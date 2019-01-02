@@ -5,7 +5,9 @@
 	    	<button type="button" class="close-btn" v-on:click="alertSucces.show=false">&times;</button>
 	    	<strong  alert.message>{{ alertSucces.message }}</strong>
 	    </div>
-		<pendingInvoices @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid" ></pendingInvoices>
+
+	    <pendingInvoices @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid" ></pendingInvoices>
+
 		<div class="row mt-5">
 			<div class="col-sm">
 				<meals @melOrders="fillOrders" @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid"></meals>
@@ -60,6 +62,6 @@
                 }, 2000);
         	},
 
-		}
+		},
 	};
 </script>
