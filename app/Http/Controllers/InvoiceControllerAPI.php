@@ -18,6 +18,17 @@ class InvoiceControllerAPI extends Controller
         return new InoiceResource($invoice);
     }
 
+    public function updateClient(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|regex:/^[A-Za-z- ]+$/',
+            'nif' => 'required|numeric|regex:/[0-9]{9}/'
+        ]);
+        $invoice = Invoice::findOrFail($id);
+        $invoice->update($request->all());
+        return new InoiceResource($invoice);
+    }
+
     public function store(Request $request)
     {
         $invoice = Invoice::where('meal_id', $request->get('meal_id'))->where('state', 'pending')->first();

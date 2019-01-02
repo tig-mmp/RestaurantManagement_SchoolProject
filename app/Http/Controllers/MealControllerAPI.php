@@ -44,8 +44,9 @@ class MealControllerAPI
         if ($request->get('state') === 'paid' || $request->get('state') === 'not paid'){
             $meal->fill(['end' => Carbon::now()->toDateTimeString()]);
         }
+        $price = $request->get('price') ?? 0;
         $meal->fill($request->all());
-        $meal->fill(['total_price_preview' => round($meal->total_price_preview + $request->get('price'), 2)]);
+        $meal->fill(['total_price_preview' => round($meal->total_price_preview + $price, 2)]);
         $meal->save();
         return new MealResource($meal);
     }
@@ -77,17 +78,14 @@ class MealControllerAPI
         return ['data' => $items, 'draw' => $request->input('draw')];
     }
 
-    public function onGoingOrders(Request $request, $id)
+    public function orders(Request $request, $id)
     {
-        return Order::where('meal_id', $id)->whereNotIn('state', ['not delivered', 'delivered'])
-            ->with('item:id,price')->select('id', 'state', 'responsible_cook_id', 'item_id')->get();
+        return Order::where('meal_id', $id)->with('item:id,price')
+            ->select('id', 'state', 'responsible_cook_id', 'item_id')->get();
     }
 
     public function numberOrders(Request $request, $id){
         return Order::where('meal_id', $id)->count();
     }
 
-    public function invoiceId(Request $request, $id){
-        return Invoice::where('meal_id', $id)->where('state', 'pending')->select('id')->first();
-    }
 }

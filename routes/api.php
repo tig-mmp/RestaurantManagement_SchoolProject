@@ -35,7 +35,7 @@ Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@
 Route::middleware('auth:api','cook')->get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
 Route::middleware('auth:api')->put('orders/{id}', 'OrderControllerAPI@update');
-Route::middleware('auth:api', 'waiter')->put('meals/{id}', 'MealControllerAPI@update');
+Route::middleware('auth:api')->put('meals/{id}', 'MealControllerAPI@update');
 //US12
 Route::middleware('auth:api', 'waiter')->get('tables', 'RestaurantTablesControllerAPI@mesasLivres');
 Route::middleware('auth:api', 'waiter')->post('meals', 'MealControllerAPI@store');
@@ -47,27 +47,28 @@ Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/pendingOrders', 
 //US15
 Route::middleware('auth:api', 'waiter')->delete('orders/{id}', 'OrderControllerAPI@destroy');
 //US17
-Route::get('users/waiter/{id}/preparedOrders', 'UserControllerAPI@waiterPreparedOrders');
+Route::middleware('auth:api', 'waiter')->get('users/waiter/{id}/preparedOrders', 'UserControllerAPI@waiterPreparedOrders');
 //US19
 Route::middleware('auth:api', 'waiter')->get('meals/{id}', 'MealControllerAPI@summary');
 Route::middleware('auth:api', 'waiter')->get('meals/{id}/items', 'MealControllerAPI@items');
 //US20
-Route::middleware('auth:api', 'waiter')->get('meals/{id}/onGoingOrders', 'MealControllerAPI@onGoingOrders');
+Route::middleware('auth:api', 'waiter')->get('meals/{id}/orders', 'MealControllerAPI@orders');
 //US21
 Route::middleware('auth:api', 'waiter')->get('meals/{id}/numberOrders', 'MealControllerAPI@numberOrders');
 Route::middleware('auth:api', 'waiter')->post('invoices', 'InvoiceControllerAPI@store');
-Route::middleware('auth:api', 'waiter')->get('meals/{id}/invoice', 'MealControllerAPI@invoiceId');
 Route::middleware('auth:api', 'waiter')->get('orders/{id}/item', 'OrderControllerAPI@itemId');
 Route::middleware('auth:api', 'waiter')->get('invoiceItems/find', 'InvoiceItemControllerAPI@find');
 Route::middleware('auth:api', 'waiter')->put('invoiceItems/{invoice}/{item}', 'InvoiceItemControllerAPI@update');
 Route::middleware('auth:api', 'waiter')->post('invoiceItems', 'InvoiceItemControllerAPI@store');
-Route::middleware('auth:api', 'waiter')->put('invoices/{id}', 'InvoiceControllerAPI@update');
+Route::middleware('auth:api')->put('invoices/{id}', 'InvoiceControllerAPI@update');
 Route::middleware('auth:api', 'waiter')->get('invoices/{id}/totalPrice', 'InvoiceControllerAPI@totalPrice');
 //US22
-Route::get('cashier','UserControllerAPI@invoices');
+Route::middleware('auth:api', 'cashier')->get('cashier','UserControllerAPI@invoices');
 
 //US24
-Route::get('cashier_all','UserControllerAPI@invoices_all');
+Route::middleware('auth:api', 'cashier')->get('cashier_all','UserControllerAPI@invoices_all');
+//US25
+Route::middleware('auth:api', 'cashier')->put('invoices/{id}/client', 'InvoiceControllerAPI@updateClient');
 
 
 

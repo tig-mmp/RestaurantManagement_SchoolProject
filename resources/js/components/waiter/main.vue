@@ -38,6 +38,7 @@
                 pendingOrdersToRemove: [],
                 preparedOrdersToRemove: [],
                 mealIdToRemove: null,
+                invoiceItems : []
             }
         },
         methods: {
@@ -51,17 +52,7 @@
                 axios.post('/api/orders', {'item_id': id, 'meal_id': this.mealId})
                 .then(response=>{
                     this.order = response.data;
-                    axios.get('api/meals/'+response.data.meal_id+'/invoice')
-                    .then(response=>{
-                        if (response.data === '') {
-                            axios.post('/api/invoices', {'meal_id': this.order.meal_id}).then(response => {
-                                //enviar para o manager response.data
-                            });
-                        }
-                    });
-                }).catch(function (error) {
-                    this.createOrder(id);
-                });
+                }).catch(function (error) {});
             },
             showSummary(id){
                 this.mealSummary = id;
@@ -69,18 +60,13 @@
             endMeal(id){
                 this.pendingOrdersToRemove = [];
                 this.preparedOrdersToRemove = [];
-                var price = 0;
+                var priceInvalid = 0;
                 var i = 0;
-                axios.all([this.getOnGoingOrders(id), this.getInvoiceId(id)])
-                .then(axios.spread((orders, invoice) => {
-                    if (invoice.data !== ''){
-                        axios.get('api/invoices/'+invoice.data.id+'/totalPrice')
-                        .then(response=>{
-                            axios.put('api/invoices/'+invoice.data.id, {'total_price' : response.data})
-                                .then(response=>{});
-                        });
-                    }
-                    orders.data.forEach((order) => {
+                var invoiceItemsIndice = this.invoiceItems.length;
+                this.invoiceItems[invoiceItemsIndice] = [];
+                axios.get('api/meals/'+id+'/orders')
+                .then(response=>{
+                    response.data.forEach((order) => {
                         if (order.state === 'pending') {
                             this.pendingOrdersToRemove.push(order.id);
                         }
@@ -94,30 +80,68 @@
                         if (order.state === 'prepared') {
                             this.preparedOrdersToRemove.push(order.id);
                         }
-                        axios.put('/api/orders/'+order.id, {'state': 'not delivered'}).then(response=>{});
-                        price = +price + +order.item.price;
+                        if (order.state === 'delivered') {
+                            this.getInvoiceItem(invoiceItemsIndice, order);
+                        } else{//se onGoing não foi entregue
+                            axios.put('/api/orders/'+order.id, {'state': 'not delivered'}).then(response=>{});
+                            priceInvalid = Math.floor((+priceInvalid + +order.item.price) * 100) / 100;
+                        }
                         i++;
-                        if(i === orders.data.length) {//espera que calcule o preço
-                            this.terminarMeal(id, price);
+                        if(i === response.data.length) {//espera que calcule o preço a remover
+                            this.terminarMeal(id, priceInvalid);
+                            this.createInvoice(invoiceItemsIndice, id);
                         }
                     });
-                    if (orders.data.length === 0) {//se todas as orders estão terminadas
-                        this.terminarMeal(id, price);
+                    if (response.data.length === 0) {//se todas as orders estão terminadas
+                        this.terminarMeal(invoiceItemsIndice, id, priceInvalid);
+                        this.createInvoice(id);
                     }
-                }));
+                }).catch(function (error) {
+                    console.log(error)}
+                );
             },
-            getOnGoingOrders(id){
-                return axios.get('api/meals/'+id+'/onGoingOrders');
-            },
-            getInvoiceId(id){
-                return axios.get('api/meals/'+id+'/invoice');
+            getInvoiceItem(i, order){
+                let obj = this.invoiceItems[i].find(x => x.item_id === order.item_id);
+                if (obj === undefined){
+                    this.invoiceItems[i].push(
+                        {
+                            item_id : order.item_id,
+                            quantity : 1,
+                            unit_price : Number(order.item.price),
+                            sub_total_price : Number(order.item.price),
+                        }
+                    );
+                } else{
+                    let index = this.invoiceItems[i].indexOf(obj);
+                    this.invoiceItems[i][index].quantity = Number(this.invoiceItems[i][index].quantity) + 1;
+                    this.invoiceItems[i][index].sub_total_price = Math.floor((this.invoiceItems[i][index].sub_total_price +
+                        this.invoiceItems[i][index].unit_price) * 100) / 100; //para os arredondamentos
+                }
             },
             terminarMeal(mealId, price){
                 axios.put('api/meals/'+mealId, {'price' : -price, 'state': 'terminated'})
-                .then(response=>{
-                    this.mealIdToRemove = mealId;
-                    this.$socket.emit('mealRemoved', response.data.data.table_number);
-                });
+                    .then(response=>{
+                        this.mealIdToRemove = mealId;
+                        this.$socket.emit('mealRemoved', response.data.data.table_number);
+                    });
+            },
+            createInvoice(indice, mealId){
+                var i = 0;
+                var price = 0;
+                axios.post('/api/invoices', {'meal_id': mealId})
+                    .then(response => {
+                        this.invoiceItems[indice].forEach((invoiceItem) => {
+                            invoiceItem.invoice_id = response.data.id;
+                            axios.post('/api/invoiceItems', invoiceItem)
+                                .then(response => {console.log(response.data)});
+                            i++;
+                            price = Math.floor((+price + +invoiceItem.sub_total_price) * 100) / 100;
+                            if(i === this.invoiceItems[indice].length) {//espera que percorra tudo
+                                axios.put('api/invoices/'+response.data.id, {'total_price' : price})
+                                    .then(response=>{console.log(response.data)});
+                            }
+                        });
+                    });
             }
         }
     }

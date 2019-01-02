@@ -16,7 +16,7 @@
             <cook v-if="this.user.type === 'cook'"></cook>
             <waiter v-if="this.user.type === 'waiter'" v-bind:userId="user.id"></waiter>
             <cashier v-if="this.user.type === 'cashier'"></cashier>
-            <cashier_all v-if="this.user.type === 'cashier'"></cashier_all>
+            <!--<cashier_all v-if="this.user.type === 'cashier'"></cashier_all>-->
         </div>
     </div>
 </template>
@@ -83,7 +83,7 @@
             },
             updateMeals(e){
                 this.meal = e;
-            }
+            },
         },
         mounted() {
             this.getInformationFromLoggedUser();

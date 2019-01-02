@@ -22,19 +22,8 @@ class InvoiceItemControllerAPI extends Controller
 
     public function store(Request $request)
     {
-        $invoice = InvoiceItem::where('invoice_id', $request->get('invoice_id'))
-            ->where('item_id', $request->get('item_id'))->first();
-        if ($invoice !== null){
-            return response()->json();
-        }
         $invoice = new InvoiceItem();
-        $invoice->fill([
-            'invoice_id' => $request->get('invoice_id'),
-            'item_id' => $request->get('item_id'),
-            'quantity' => 1,
-            'unit_price' => $request->get('price'),
-            'sub_total_price' => $request->get('price')
-        ]);
+        $invoice->fill($request->all());
         $invoice->save();
         return response()->json(new InvoiceItemResource($invoice), 201);
     }

@@ -51,6 +51,8 @@
                         // e assim ja da para percorrer no foreach
                         this.mesasLivres.push(table.table_number);
                     });
+                }).catch(function (error) {
+                    this.getMesasLivres();
                 });
             }
         },

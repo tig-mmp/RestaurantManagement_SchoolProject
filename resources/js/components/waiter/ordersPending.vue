@@ -71,14 +71,19 @@
             },
             issetButton(id){
                 return this.deleteButton.find(function(val){return val === id;});
+            },
+            getPendingOrders(){
+                axios.get('api/users/waiter/'+this.userId+'/pendingOrders').then(response=>{
+                    if (response.data != '') {
+                        this.orders = response.data.data;
+                    }
+                }).catch(function (error) {
+                    this.getPendingOrders();
+                });
             }
         },
         mounted() {
-            axios.get('api/users/waiter/'+this.userId+'/pendingOrders').then(response=>{
-                if (response.data != '') {
-                    this.orders = response.data.data;
-                }
-            });
+            this.getPendingOrders();
         },
         watch: {
             newOrder: function (order) {

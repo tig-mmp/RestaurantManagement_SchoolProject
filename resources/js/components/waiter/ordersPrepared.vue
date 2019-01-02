@@ -37,38 +37,21 @@
             deliver(id){
                 axios.put('/api/orders/'+id, {'state' : 'delivered'})
                 .then(response=> {
-                    axios.all([this.getItemId(response.data.data.id), this.getInvoiceId(response.data.data.meal_id)])
-                    .then(axios.spread(function (item, invoice) {
-                        var invoice_id = invoice.data.id;
-                        var item_id = item.data.item_id;
-                        var price = item.data.item.price;
-                        axios.get('/api/invoiceItems/find', {params: {'invoice_id': invoice_id, 'item_id': item_id}})
-                        .then(response => {
-                            if (response.data != ''){
-                                axios.put('/api/invoiceItems/'+invoice_id+'/'+item_id)
-                                    .then(response => {});
-                            }else{
-                                axios.post('/api/invoiceItems', {'invoice_id': invoice_id, 'item_id': item_id, 'price': price})
-                                .then(response => {});
-                            }
-                        });
-                    }));
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                 });
             },
-            getItemId(id){
-                return axios.get('api/orders/' + id +'/item');
-            },
-            getInvoiceId(id){
-                return axios.get('api/meals/' + id + '/invoice');
+            getPreparedOrders(){
+                axios.get('api/users/waiter/'+this.userId+'/preparedOrders').then(response=>{
+                    if (response.data != ''){
+                        this.orders = response.data.data;
+                    }
+                }).catch(function (error) {
+                    this.getPreparedOrders();
+                });
             }
         },
         mounted() {
-            axios.get('api/users/waiter/'+this.userId+'/preparedOrders').then(response=>{
-                if (response.data != ''){
-                    this.orders = response.data.data;
-                }
-            });
+            this.getPreparedOrders();
         },
         watch: {
             removeOrders: function (ordersRecived) {

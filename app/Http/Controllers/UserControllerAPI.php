@@ -167,8 +167,9 @@ class UserControllerAPI extends Controller
         $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select( 'meals.table_number', 'users.name','invoices.total_price')
-            ->where('invoices.state', '=', 'not paid')
+            ->select( 'meals.table_number', 'users.name as waiter','invoices.total_price',
+                'invoices.id', 'invoices.name', 'invoices.nif', 'invoices.meal_id')
+            ->where('invoices.state', '=', 'pending')
             ->paginate(25);
         return $query;
     }
