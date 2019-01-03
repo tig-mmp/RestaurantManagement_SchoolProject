@@ -106,6 +106,12 @@ const app = new Vue({
 
     },
     sockets: {
+        connect(){
+            console.log('socket connected (socket ID = '+this.$socket.id+')');
+            if(this.$store.state.user !== null){
+              this.$socket.emit('user_enter', store.state.user);
+            }
+        },
         msg_from_server_managers(dataFromServer){
             this.msgManagersTextArea = dataFromServer + '\n' + this.msgManagersTextArea;
         },

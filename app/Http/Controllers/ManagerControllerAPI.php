@@ -77,7 +77,7 @@ class ManagerControllerAPI extends Controller
 
     public function invoiceDataTable(Request $request)
     {
-        $columns = ['id','meal_id','table_number', 'name','state','total_price'];
+        $columns = ['id','table_number','meal_id','name','state','total_price'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
@@ -86,7 +86,7 @@ class ManagerControllerAPI extends Controller
         $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select('invoices.id','meal_id','invoices.state','meals.table_number', 'users.name','invoices.total_price')
+            ->select('invoices.id','meals.table_number','meal_id', 'users.name','invoices.state','invoices.total_price')
             ->where('invoices.state', '=', 'pending')->orderBy($columns[$column], $dir);
 
         if ($searchValue) {
