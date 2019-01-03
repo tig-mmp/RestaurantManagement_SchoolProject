@@ -19,10 +19,11 @@ class Invoice extends Model
     ];
 
     public function meal(){
-        return $this->hasOne(Meal::class, 'id', 'meal_id');
+        return $this->belongsTo(Meal::class, 'meal_id', 'id');
     }
 
     public function invoice_items(){
-        return $this->belongsTo(InvoiceItem::class,'id','invoice_id');
+        return $this->hasMany(InvoiceItem::class, 'invoice_id','id');
+
     }
 }

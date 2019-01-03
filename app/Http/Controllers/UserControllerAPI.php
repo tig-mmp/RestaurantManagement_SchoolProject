@@ -192,16 +192,16 @@ class UserControllerAPI extends Controller
 
 
 
-    $query2 = InvoiceItemResource::collection(InvoiceItem::with('item')->with('invoice.meal.waiter')->get());
+    //$query2 = InvoiceItemResource::collection(InvoiceItem::with('item')->with('invoice.meal.waiter')->get());
     $query3 = InvoiceItem::join('invoices','invoices.id','invoice_items.invoice_id')
         ->join('meals','invoices.meal_id','meals.id')->join('users','users.id','meals.responsible_waiter_id')
         ->join('items','items.id','invoice_items.item_id')->select('invoices.date','meals.table_number','users.name','invoices.total_price',
             'invoice_items.quantity','items.name as item','invoice_items.unit_price','invoice_items.sub_total_price')->
-        distinct('meals.table_number','users.name')->paginate(30);
-    //$query3 = InvoiceGetAllResource::collection(InvoiceItem::with('item')->selectRaw('invoice_id,(select item_id from invoice_items)')->groupBy('invoice_id')->get());
+        distinct('meals.table_number','users.name')->groupBy('invoice_id','invoice_items.item_id','users.name')->paginate(30);
+    $query5 = InvoiceItemResource::collection(Invoice::with('meal.waiter','invoice_items','invoice_items.item')->get());
 
        // ->distinct('users.name')
-        return $query3;
+        return $query5;
     }
 //DB::raw("(Select items.name from items where items.id=invoice_items.item_id) as items")
 /* $query = DB::table('invoices')
