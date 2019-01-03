@@ -19,7 +19,9 @@
 			@sort="sortBy">
 				<tbody>
 					<tr v-for="invoice in invoices" :key="invoice.id">
+						<td>{{invoice.id}}</td>
 						<td>{{invoice.table_number}}</td>
+						<td>{{invoice.meal_id}}</td>
 						<td>{{invoice.name}}</td>
 						<td>{{invoice.state}}</td>
 						<td>{{invoice.total_price}}</td>
@@ -53,7 +55,9 @@
 		data(){
 			let sortOrders = {};
 	        let columns = [
-	            {width: '15%', label: 'Table', name: 'table_number', order:true},
+	            {width: '7%', label: 'ID', name: 'id', order:true},
+	            {width: '7%', label: 'Table', name: 'table_number', order:true},
+	            {width: '7%', label: 'Meal ID', name: 'meal_id', order:true},
 	            {width: '40%', label: 'Responsable waiter', name: 'name', order:true },
 	            {width: '20%', label: 'State', name: 'state', order:false},
 	            {width: '25%', label: 'Total Price', name: 'total_price', order:true},

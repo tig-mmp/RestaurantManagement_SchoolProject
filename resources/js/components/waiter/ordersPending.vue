@@ -61,7 +61,7 @@
                 axios.put('/api/orders/'+id, {'state' : 'confirmed'})
                 .then(response=>{
                     this.$socket.emit('orderConfirmed', response.data.data);
-                    //envia pedido para o meneger para ele atualizar a lista de orders de uma especifica meal
+                    //envia pedido para o maneger para ele atualizar a lista de orders de uma especifica meal
                     //this.$socket.emit('orderCreated', this.meal_id);
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     this.orders.unshift(response.data.data);

@@ -104,6 +104,7 @@ io.on('connection', function (socket) {
 
 	socket.on('mealRemoved', function (table) {
 		io.sockets.to('waiter').emit('mealRemoved', table);
+		io.sockets.to('manager').emit('mealRemoved');
 	});
 
 
