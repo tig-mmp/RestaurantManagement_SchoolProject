@@ -100,11 +100,16 @@ io.on('connection', function (socket) {
 
 	socket.on('mealCreated', function (table) {//os waiters so precisam de receber a table
 		io.sockets.to('waiter').emit('mealCreated', table);
+		io.sockets.to('manager').emit('mealCreated');
 	});
 
-	socket.on('mealRemoved', function (table) {
+	socket.on('mealRemoved', function (table, mealId) {
 		io.sockets.to('waiter').emit('mealRemoved', table);
-		io.sockets.to('manager').emit('mealRemoved');
+		io.sockets.to('manager').emit('mealRemoved', mealId);
+	});
+
+	socket.on('setAsNotPaid', function () {
+		io.sockets.to('manager').emit('setAsNotPaid');
 	});
 
 

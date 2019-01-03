@@ -1,5 +1,5 @@
 <template>
-	<div >{{updateProp}}
+	<div >
 		<h3>Pending Invoices</h3>
         <div class="container-fluid">
         	<div class="alert alert-success" v-if="alertSucces.show">
@@ -44,7 +44,6 @@
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
 	export default{
-		props: ['updateNotPaid'],
 		components:{
 			datatable: Datatable, 
 			pagination: Pagination
@@ -142,12 +141,13 @@
                 }, 2000);
         	},
 		},
-		computed: { 
-      		updateProp: function() { // watch it
-      			this.getInvoices();
-      			this.updateNotPaid;
-      			return null;
-			}
-		},
+		sockets: {
+            setAsNotPaid(){
+                this.getInvoices();
+            },
+            mealRemoved(){
+                this.getInvoices();
+            },
+        },
 	};
 </script>
