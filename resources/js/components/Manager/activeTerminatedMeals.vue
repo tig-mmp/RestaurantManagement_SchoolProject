@@ -91,7 +91,6 @@
 	           sortOrders[column.name] = -1;
 	        });
 			return{
-
 				alertSucces:{
 					show:false,
 					Message:'',
