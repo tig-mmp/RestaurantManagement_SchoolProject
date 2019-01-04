@@ -101,25 +101,46 @@ class ManagerControllerAPI extends Controller
 
     public function mealDataTable(Request $request)
     {
-        $columns = ['id','table_number', 'name','state','total_price_preview'];
+        $columns = ['id','table_number', 'name','state','total_price_preview','created_at'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
-        
+        $filterByDate = $request->input('date');
+        $hasFilterStates = $request->input('filterState.0');
+        $filterStates = [];
+        if($hasFilterStates){
+            foreach ($request->input('filterState') as $value){
+                array_push($filterStates, $value);
+            }
+        }
         $query = DB::table('meals')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select('meals.id','meals.state','meals.table_number', 'users.name','meals.total_price_preview');
-            
-
-        $query->where(function($query) {
-            $query->where('meals.state', '=', 'active')
-            ->orWhere('meals.state', '=', 'terminated');
-        })->orderBy($columns[$column], $dir);
+            ->select(
+                'meals.id',
+                'meals.state',
+                'meals.table_number', 
+                'users.name',
+                'meals.total_price_preview',
+                'meals.created_at')->orderBy($columns[$column], $dir);
+        
+        if($hasFilterStates){
+            $query->where(function($query) use ($filterStates) {
+                foreach ($filterStates as $state){
+                    $query->orWhere('meals.state', '=', $state);
+                }
+            });
+        }
 
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('users.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        if ($filterByDate) {
+            $query->where(function($query) use ($filterByDate) {
+                $query->where('meals.created_at', 'like', date($filterByDate). '%');
             });
         }
         //return $this->getSql($query); 

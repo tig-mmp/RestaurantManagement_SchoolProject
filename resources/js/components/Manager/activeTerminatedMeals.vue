@@ -1,14 +1,41 @@
 <template>
 	<div >
-		<h3>Active or Terminated meals</h3>
+		
+
+		<h3>Meals</h3>
         <div class="container-fluid">
+        	
         	<div class="row">
 					<div class="control">
 						<select class="custom-select col-sm" v-model="tableData.length" @change="getMeals()">
 			                <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
 			            </select>
 			        </div>
-					<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Table" @input="getMeals()">
+			        <div class="row">
+			        	<div class="col-sm">
+			        		<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Table" 
+							@input="getMeals()">
+			        	</div>
+			        	
+			        	<div class="col-sm">
+			        		<datepicker format="YYYY-MM-DD" @dateSelected="onDateSelected"></datepicker>
+			        	</div>
+			        	<div id='example-3' @change="getMeals()">
+							<input type="checkbox" id="chackActive" value="active" v-model="tableData.filterState" >
+							<label for="chackActive">Active</label>
+							<input type="checkbox" id="checkTerminated" value="terminated" v-model="tableData.filterState" >
+							<label for="checkTerminated">Terminated</label>
+							<input type="checkbox" id="checkPaid" value="paid" v-model="tableData.filterState">
+							<label for="checkPaid">Paid</label>
+							<input type="checkbox" id="chekNotPaid" value="not paid" v-model="tableData.filterState">
+							<label for="chekNotPaid">Not paid</label>
+						</div>
+
+			        </div>
+			        
+					
+			    </div>
+					
 		    </div>
 			<datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders"
 			@sort="sortBy">
@@ -19,6 +46,7 @@
 						<td>{{meal.name}}</td>
 						<td>{{meal.state}}</td>
 						<td>{{meal.total_price_preview}}</td>
+						<td>{{meal.created_at}}</td>
 						<td>
 							<a class="btn btn-sm btn-primary" title="See orders" v-on:click.prevent="$emit('melOrders', meal)"><i class="fas fa-th-list"></i></a>
 							<a class="btn btn-danger" title="Declare as not paid" v-if="meal.state=='terminated'"  @click="$emit('declaredNotPaid', meal.id)">
@@ -38,10 +66,12 @@
 <script>
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
+	import Datepicker from './../datepicker.vue';
 	export default{
 		components:{
 			datatable: Datatable, 
-			pagination: Pagination
+			pagination: Pagination,
+			datepicker: Datepicker,
 		},
 		created() {
 	        this.getMeals();
@@ -51,15 +81,17 @@
 	        let columns = [
 	            {width: '15%', label: 'Meal id', name: 'id', order:true},
 	            {width: '15%', label: 'Table', name: 'table_number', order:true},
-	            {width: '40%', label: 'Responsable waiter', name: 'users.name', order:true },
-	            {width: '20%', label: 'State', name: 'state', order:true},
-	            {width: '25%', label: 'Total Price', name: 'total_price_preview', order:true},
+	            {width: '20%', label: 'Responsable waiter', name: 'users.name', order:true },
+	            {width: '10%', label: 'State', name: 'state', order:true},
+	            {width: '15%', label: 'Total Price', name: 'total_price_preview', order:true},
+	            {width: '25%', label: 'Created at', name: 'created_at', order:true},
 	            {width: '25%', label: 'Actions', name: 'actions', order:false},
 	        ];
 	        columns.forEach((column) => {
 	           sortOrders[column.name] = -1;
 	        });
 			return{
+
 				alertSucces:{
 					show:false,
 					Message:'',
@@ -70,6 +102,8 @@
 	            sortOrders: sortOrders,
 	            perPage: ['5','10', '20', '30'],
 	            tableData: {
+	            	date:'',
+	            	filterState: ["active","terminated"],
 	                draw: 0,
 	                length: 5,
 	                search: '',
@@ -122,6 +156,11 @@
 	            this.tableData.column = this.getIndex(this.columns, 'name', key);
 	            this.tableData.dir = this.sortOrders[key] === 1 ? 'asc' : 'desc';
 	            this.getMeals();
+	        },
+
+	        onDateSelected: function(date){
+	        	this.tableData.date = date;
+	        	this.getMeals();
 	        },
 
 	        getIndex(array, key, value) {
