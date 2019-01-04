@@ -1,5 +1,5 @@
 <template>
-	<div >{{updateProp}}
+	<div >
 		<h3>Active or Terminated meals</h3>
         <div class="container-fluid">
         	<div class="row">
@@ -39,12 +39,6 @@
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
 	export default{
-		props: ['updateNotPaid'],
-		watch: {
-      		updateNotPaid: function(newVal, oldVal) { // watch it
-      			this.getMeals();
-			}
-		},
 		components:{
 			datatable: Datatable, 
 			pagination: Pagination
@@ -142,21 +136,20 @@
         	},
 		},
 		sockets: {
-            updateManagersMeals(dataFromServer){
+            setAsNotPaid(){
                 this.getMeals();
-                let toast = this.$toasted.show(dataFromServer[0], {
-                    theme: "outline",
-                    position: "top-center",
-                    duration : null
+            },
+            mealCreated(){
+                this.getMeals();
+            },
+            mealRemoved(meal_id){
+                this.getMeals();
+                let toast = this.$toasted.show("Meal with id " + meal_id[0] + " is terminated", {
+                    theme: "bubble", 
+					position: "top-right", 
+					duration : 5000
                 });
             },
         },
-        computed: { 
-      		updateProp: function() { // watch it
-      			this.getMeals();
-      			this.updateNotPaid;
-      			return null;
-			}
-		},
 	};
 </script>

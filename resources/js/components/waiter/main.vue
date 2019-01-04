@@ -129,7 +129,7 @@
                 axios.put('api/meals/'+mealId, {'price' : -price, 'state': 'terminated'})
                     .then(response=>{
                         this.mealIdToRemove = mealId;
-                        this.$socket.emit('mealRemoved', response.data.data.table_number);
+                        this.$socket.emit('mealRemoved', response.data.data.table_number, mealId);
                     });
             },
             createInvoice(indice, mealId){

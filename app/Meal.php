@@ -31,7 +31,7 @@ class Meal extends Model
     }
 
     public function invoice(){
-        return $this->belongsToMany(Invoice::class, 'meal_id','id');
+        return $this->hasMany(Invoice::class, 'meal_id','id');
     }
 
 }
