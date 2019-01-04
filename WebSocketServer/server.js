@@ -67,34 +67,35 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('orderConfirmed', function (order) {
-		io.sockets.to('cook').emit('updateConfirmedOrder', order);
+		io.sockets.to('cook').emit('cookUpdateOrders', order);
 	});
 
 	socket.on('orderPrepared', function (order, destUserId) {
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
 		if (socket_id !== null) {
-			io.to(socket_id).emit('orderPreparedUpdate', order);
+			io.to(socket_id).emit('orderPreparedUpdate');
 		}
 	});
 
-	socket.on('orderPreparing', function (order, destUserId) {//remove das pendings
+	socket.on('orderPreparing', function (order, destUserId) {//remove order das pendings do waiter e de todos os cook
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
 		if (socket_id !== null) {
 			io.to(socket_id).emit('orderPreparing', order);
 		}
+		io.sockets.to('cook').emit('cookUpdateOrders');
 	});
 
 	socket.on('removePendingOrder', function (orderId) {
-		io.sockets.to('cook').emit('removeOrder', orderId);
+		io.sockets.to('cook').emit('cookUpdateOrders');
 	});
 
 	socket.on('removeInPreparationOrder', function (orderId, destUserId) {//quando a meal termina o cook remove as orders
 		let userInfo = loggedUsers.userInfoByID(destUserId);
 		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
 		if (socket_id !== null) {
-			io.to(socket_id).emit('removeOrder', orderId);
+			io.to(socket_id).emit('cookUpdateOrders');
 		}
 	});
 

@@ -15,10 +15,10 @@
         <datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" @sort="sortBy">
             <tbody>
             <tr v-for="item in items" :key="item.id">
-                <td><img :src="'/imgItems/' + item.item.photo_url" width="40" height="40" ></td>
                 <td>{{item.item.name}}</td>
                 <td>{{item.item.type}}</td>
                 <td>{{item.item.price}}</td>
+                <td><img :src="'/imgItems/' + item.item.photo_url" width="40" height="40" ></td>
                 <td>{{item.state}}</td>
             </tr>
             </tbody>
@@ -37,17 +37,17 @@
             datatable: Datatable,
             pagination: Pagination
         },
-        props: ['mealId'],
+        props: ['mealId', 'update'],
         mounted() {
             this.getItems();
         },
         data(){
             let sortOrders = {};
             let columns = [
-                {width: '20%', label: 'Image', name: 'img', order:false},
                 {width: '20%', label: 'Name', name: 'name', order:true },
                 {width: '20%', label: 'Type', name: 'type', order:true},
                 {width: '20%', label: 'Price', name: 'price', order:true},
+                {width: '20%', label: 'Image', name: 'img', order:false},
                 {width: '20%', label: 'State', name: 'state', order:false},
             ];
             columns.forEach((column) => {
@@ -64,8 +64,6 @@
                     draw: 0,
                     length: 5,
                     search: '',
-                    column: 0,
-                    dir: 'desc',
                 },
                 pagination: {
                     lastPage: '',
@@ -127,7 +125,10 @@
                 if (this.mealId !== null) {
                     this.getItems()
                 }
+            },
+            update: function () {
+                this.getItems();
             }
-        }
+        },
     };
 </script>

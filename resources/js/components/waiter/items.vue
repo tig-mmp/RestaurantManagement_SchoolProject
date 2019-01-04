@@ -88,10 +88,9 @@
 				this.tableData.draw++;
 				axios.get(url, {params: this.tableData})
 				.then(response => {
-					let data = response.data;
-					if (this.tableData.draw == data.draw) {
-						this.items = data.data.data;
-						this.configPagination(data.data);
+					if (this.tableData.draw == response.data.draw) {
+						this.items = response.data.data.data;
+						this.configPagination(response.data.data);
 					}
 				})
 				.catch(errors => {
