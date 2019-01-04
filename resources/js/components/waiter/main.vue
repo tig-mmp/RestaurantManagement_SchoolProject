@@ -79,10 +79,10 @@
                         }
                         if (order.state === 'confirmed'){
                             this.pendingOrdersToRemove.push(order.id);
-                            this.$socket.emit('removePendingOrder', order.id);
+                            this.$socket.emit('orderRemoved', order.id);
                         }
                         if (order.state === 'in preparation'){
-                            this.$socket.emit('removeInPreparationOrder', order.id, order.responsible_cook_id);
+                            this.$socket.emit('orderInPreparation', order.id, order.responsible_cook_id);
                         }
                         if (order.state === 'prepared') {
                             this.preparedOrdersToRemove.push(order.id);

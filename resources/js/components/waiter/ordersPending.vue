@@ -101,6 +101,11 @@
         sockets: {
             orderPreparing(orderId){
                 this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
+                let toast = this.$toasted.show("cook is preparing a order", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 1500
+                });
             },
         }
     }

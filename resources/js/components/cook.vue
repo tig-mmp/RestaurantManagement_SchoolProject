@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Orders to prepare</h1>
+        <h3>Orders to prepare</h3>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-9">
@@ -21,8 +21,10 @@
                     <td>{{order.type}}</td>
                     <td>{{order.table_number}}</td>
                     <td>
-                        <a class="btn btn-sm btn-success" v-on:click.prevent="prepare(order.id, 'prepared')">Prepared</a>
-                        <a class="btn btn-sm btn-success" v-show="order.state === 'confirmed'" v-on:click.prevent="prepare(order.id, 'in preparation')">Start preparing</a>
+                        <a class="btn btn-sm btn-success"
+                           v-on:click.prevent="prepare(order.id, order.state, 'prepared')">Prepared</a>
+                        <a class="btn btn-sm btn-success" v-show="order.state === 'confirmed'"
+                           v-on:click.prevent="prepare(order.id, order.state, 'in preparation')">Start preparing</a>
                     </td>
                 </tr>
                 </tbody>
@@ -66,14 +68,18 @@
             }
         },
         methods:{
-            prepare(id, state){
+            prepare(id, oldState, state){
                 axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
                     .then(response=>{
-                        this.$socket.emit('orderPreparing', response.data.data.id, response.data.data.waiter_id);//atualiza a lista e remove do waiter responsavel
-                        this.getOrders();
                         if (response.data.data.state === 'in preparation'){
-                            this.sortOrders();
+                            this.$socket.emit('orderInPreparation', response.data.data.id, response.data.data.waiter_id);//atualiza a lista e remove do waiter responsavel
                         } else{
+                            if (oldState === 'confirmed'){
+                                this.$socket.emit('orderRemoved');
+                            } else{
+                                let url = this.pagination.lastPageUrl;//para manter na mesma página
+                                this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
+                            }
                             this.$socket.emit('orderPrepared', response.data.data, response.data.data.waiter_id);
                         }
                     });
@@ -98,16 +104,25 @@
                 this.pagination.prevPageUrl = data.prev_page_url;
                 this.pagination.from = data.from;
                 this.pagination.to = data.to;
-            }
+            },
         },
         sockets: {
-            cookUpdateOrders() {
-                let toast = this.$toasted.show("orders updated", {
+            cookNewOrder() {
+                let toast = this.$toasted.show("new order", {
                     theme: "outline",
                     position: "top-right",
-                    duration: 2500
+                    duration: 1500
                 });
-                let url = this.pagination.lastPageUrl;
+                let url = this.pagination.lastPageUrl;//para manter na mesma página
+                this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
+            },
+            cookRemoveOrder() {
+                let toast = this.$toasted.show("removing order", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 1500
+                });
+                let url = this.pagination.lastPageUrl;//para manter na mesma página
                 this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
             }
         }
