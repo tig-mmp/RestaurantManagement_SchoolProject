@@ -61,8 +61,13 @@
             }
         },
         sockets: {
-            orderPreparedUpdate(order){
+            orderPrepared(order){
                 this.orders.push(order);
+                let toast = this.$toasted.show("order prepared", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 1500
+                });
             },
         }
     }

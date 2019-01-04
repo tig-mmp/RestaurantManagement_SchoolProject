@@ -3,9 +3,9 @@
         <create-meal @meal-created="newMeal" v-bind:userId="userId">Create Meal</create-meal>
         <meals @start-order="startOrder" @show-summary="showSummary" @end-meal="endMeal"
                :newMeal="meal" :mealIdToRemove="mealIdToRemove" v-bind:userId="userId">Create Meal</meals>
-        <meal-summary v-show="mealSummary !== null" :mealId="mealSummary"></meal-summary>
+        <meal-summary v-show="mealSummary !== null" :mealId="mealSummary" :update="summaryUpdate"></meal-summary>
         <items v-show="mealId !== null" @create-order="createOrder"></items>
-        <orders-pending :newOrder="order" :mealId="mealId" :removeOrders="pendingOrdersToRemove"
+        <orders-pending @order-confirmed="updateSummary" :newOrder="order" :mealId="mealId" :removeOrders="pendingOrdersToRemove"
                 v-bind:userId="userId"></orders-pending>
         <orders-prepared :removeOrders="preparedOrdersToRemove" v-bind:userId="userId"></orders-prepared>
     </div>
@@ -38,7 +38,8 @@
                 pendingOrdersToRemove: [],
                 preparedOrdersToRemove: [],
                 mealIdToRemove: null,
-                invoiceItems : []
+                invoiceItems : [],
+                summaryUpdate: 0,
             }
         },
         methods: {
@@ -52,7 +53,13 @@
                 axios.post('/api/orders', {'item_id': id, 'meal_id': this.mealId})
                 .then(response=>{
                     this.order = response.data;
+                    this.updateSummary();
                 }).catch(function (error) {});
+            },
+            updateSummary(){
+                if (this.mealSummary !== null){
+                    this.summaryUpdate++;
+                }
             },
             showSummary(id){
                 this.mealSummary = id;
@@ -72,10 +79,10 @@
                         }
                         if (order.state === 'confirmed'){
                             this.pendingOrdersToRemove.push(order.id);
-                            this.$socket.emit('removePendingOrder', order.id);
+                            this.$socket.emit('orderRemoved', order.id);
                         }
                         if (order.state === 'in preparation'){
-                            this.$socket.emit('removeInPreparationOrder', order.id, order.responsible_cook_id);
+                            this.$socket.emit('orderInPreparation', order.id, order.responsible_cook_id);
                         }
                         if (order.state === 'prepared') {
                             this.preparedOrdersToRemove.push(order.id);
@@ -143,6 +150,13 @@
                         });
                     });
             }
+        },
+        sockets: {
+            orderPreparedUpdate(order){
+                if (this.mealSummary === order.meal_id){
+                    this.summaryUpdate++;
+                }
+            },
         }
     }
 </script>

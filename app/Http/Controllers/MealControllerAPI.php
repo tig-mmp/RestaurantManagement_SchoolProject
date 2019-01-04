@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Meal as MealResource;
+use App\Http\Resources\OrderItem;
 use App\Invoice;
 use App\Meal;
 use App\Order;
@@ -59,15 +60,10 @@ class MealControllerAPI
 
     public function items(Request $request, $id)
     {
-        $columns = ['name', 'type', 'price'];
         $length = $request->input('length');
-        $column = $request->input('column');
-        $dir = $request->input('dir');
         $searchValue = $request->input('search');
         $query = Order::where('meal_id', $id)
-            ->with(array('item' => function($query) use($columns, $column, $dir) {
-                $query->orderBy($columns[$column], $dir);
-            }))->select('item_id', 'state');
+            ->with('item')->select('item_id', 'state');
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
