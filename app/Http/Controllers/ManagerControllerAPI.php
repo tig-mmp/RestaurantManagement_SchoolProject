@@ -150,7 +150,7 @@ class ManagerControllerAPI extends Controller
 
     public function orderDataTable(Request $request)
     {
-        $columns = ['meal_id', 'state','name'];
+        $columns = ['state','name','type','price','meal_id'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
@@ -159,7 +159,7 @@ class ManagerControllerAPI extends Controller
         
         $query = DB::table('orders')
             ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select('orders.meal_id','orders.state','items.name')
+            ->select('orders.meal_id','orders.state','items.name','items.type','items.price')
             ->where('orders.meal_id', '=', $meal_id)->orderBy($columns[$column], $dir);
 
         if ($searchValue) {
