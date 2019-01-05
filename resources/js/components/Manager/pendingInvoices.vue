@@ -11,7 +11,7 @@
 			        </div>
 			        <div class="row">
 			        	<div class="col-sm">
-			        		<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Table" 
+			        		<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Per Name" 
 							@input="getInvoices()">
 			        	</div>
 			        	
@@ -42,7 +42,7 @@
 						<td>{{invoice.created_at}}</td>
 						<td>
 
-							<a class="btn btn-primary" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportToPdf(invoice.id)">
+							<a class="btn btn-warning" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportToPdf(invoice.id)">
 								<i class="fas fa-file-pdf"></i>
 							</a>
 							<a class="btn btn-sm btn-primary" title="See associated items" v-on:click.prevent="$emit('invoiceItems', invoice)"><i class="fas fa-th-list"></i></a>

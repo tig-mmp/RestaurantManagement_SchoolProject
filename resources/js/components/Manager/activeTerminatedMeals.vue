@@ -13,7 +13,7 @@
 			        </div>
 			        <div class="row">
 			        	<div class="col-sm">
-			        		<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Table" 
+			        		<input class="form-control" type="text" v-model="tableData.search" placeholder="Search Per Name" 
 							@input="getMeals()">
 			        	</div>
 			        	
