@@ -15,10 +15,10 @@ class InvoiceItems extends Resource
         return [
             'date' => $this->date,
             'table' => $this->meal->table_number,
-            'name' => $this->meal->waiter,
+            'name' => $this->meal->waiter->name,
             'price_total' =>$this->total_price,
-            //'items' => $this->invoice_items->id,
-            //'item_name' => $this->invoice_items->quantity,
+            'items' => InvoiceGetAllItems::collection($this->invoice_items),
+
 
         ];
     }
