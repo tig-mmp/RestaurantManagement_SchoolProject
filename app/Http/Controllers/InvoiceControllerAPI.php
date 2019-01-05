@@ -51,5 +51,4 @@ class InvoiceControllerAPI extends Controller
         return Invoice::findOrFail($id)->invoice_items()->sum('sub_total_price');
     }
 
-
 }

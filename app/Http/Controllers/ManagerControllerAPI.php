@@ -202,6 +202,37 @@ class ManagerControllerAPI extends Controller
         return ['data' => $orders, 'draw' => $request->input('draw')];
     }
 
+    public function invoiceItemsDataTable(Request $request)
+    {
+        $columns = ['type','name','quantity','unit_price','sub_total_price','invoice_id'];
+        $length = $request->input('length');
+        $column = $request->input('column');
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+        $invoice_id = $request->input('invoice_id');
+        
+        $query = DB::table('invoice_items')
+            ->join('items', 'invoice_items.item_id', '=', 'items.id')
+            ->select(
+                'items.type',
+                'items.name',
+                'invoice_items.quantity',
+                'invoice_items.unit_price',
+                'invoice_items.sub_total_price',
+                'invoice_items.invoice_id'
+            )
+            ->where('invoice_items.invoice_id', '=', $invoice_id)->orderBy($columns[$column], $dir);
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('items.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $orders = $query->paginate($length);
+        return ['data' => $orders, 'draw' => $request->input('draw')];
+    }
+
      public function getSql($b){
          $query = str_replace(array('?'), array('\'%s\''), $b->toSql());
          $query = vsprintf($query, $b->getBindings());
@@ -342,26 +373,6 @@ class ManagerControllerAPI extends Controller
         return response()->json(null, 201);
     }
 
-    /*public function pendingInvoicesAsNotPaid($id)
-    {
-        $invoice = Invoice::findOrFail($id);
-        $invoice->fill(['state' => 'not paid']);
-        
-        $meal = Meal::findOrFail($invoice->meal_id);
-        if ($meal->state == 'terminated') {
-            $meal->fill(['state' => 'not paid']);
-        }
-
-        $orders = Order::where('meal_id', '=', $meal->id)
-        ->where('state', '!=', 'delivered')
-        ->update(['state' => 'not delivered']);
-
-        $meal->save();
-        $invoice->save();
-
-        return response()->json(null, 204);
-    }*/
-
     public function pendingInvoicesAsNotPaid($id)
     {
         $meal = Meal::findOrFail($id);
@@ -379,5 +390,24 @@ class ManagerControllerAPI extends Controller
         $meal->save();
 
         return response()->json(null, 204);
+    }
+
+    public function paidInvoicesToPDF(Request $request)
+    {
+        $query = DB::table('invoices')
+            ->join('meals', 'invoices.meal_id', '=', 'meals.id')
+            ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
+            ->select(
+                'invoices.id',
+                'meals.table_number',
+                'meal_id', 
+                'users.name',
+                'invoices.state',
+                'invoices.total_price',
+                'invoices.created_at'
+        )->where('invoices.state', '=', 'paid');
+
+        $invoices = $query->paginate(10);
+        return ['data' => $invoices];
     }
 }

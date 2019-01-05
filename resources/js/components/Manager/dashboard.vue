@@ -6,11 +6,18 @@
 	    	<strong  alert.message>{{ alertSucces.message }}</strong>
 	    </div>
 
-	    <pendingInvoices @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid" ></pendingInvoices>
+	    <div class="row mt-5">
+			<div class="col-sm">
+				 <pendingInvoices @invoiceItems="fillInvoiceItems" @declaredNotPaid="declaredNotPaid" ></pendingInvoices>
+			</div>
+			<div class="col-sm-4"  v-if="selectedInvoice != null">
+				<items :selectedInvoice="selectedInvoice" @closeItems="closeItems"></items>
+			</div>
+		</div>
 
 		<div class="row mt-5">
 			<div class="col-sm">
-				<meals @melOrders="fillOrders" @declaredNotPaid="declaredNotPaid" :updateNotPaid="updateNotPaid"></meals>
+				<meals @melOrders="fillOrders" @declaredNotPaid="declaredNotPaid"></meals>
 			</div>
 			<div class="col-sm-4"  v-if="selectedMeal != null">
 				<orders :selectedMeal="selectedMeal" @closeOrders="closeOrders"></orders>
@@ -23,16 +30,18 @@
 	import PendingInvoices from './pendingInvoices.vue';
 	import Meals from './activeTerminatedMeals.vue';
 	import MealOrders from './mealOrders.vue';
+	import InvoiceItems from './invoicesItems.vue';
 	export default{
 		components:{
 			pendingInvoices: PendingInvoices,
 			meals: Meals,
 			orders: MealOrders,
+			items: InvoiceItems,
 		},
 		data(){
 			return{
 				selectedMeal: null,
-				updateNotPaid: '',
+				selectedInvoice: null,
 				alertSucces:{
 					show:false,
 					Message:'',
@@ -43,8 +52,14 @@
 			fillOrders(meal){
 				this.selectedMeal = meal;
 			},
+			fillInvoiceItems(invoice){
+				this.selectedInvoice = invoice;
+			},
 			closeOrders(){
 				this.selectedMeal = null;
+			},
+			closeItems(){
+				this.selectedInvoice = null;
 			},
 			declaredNotPaid: function(meal_id){
 	        	axios.put('/api/manager/pendingInvoicesAsNotPaid/' + meal_id)
@@ -60,7 +75,6 @@
                         this.alertSucces.show = false;
                 }, 2000);
         	},
-
 		},
 	};
 </script>

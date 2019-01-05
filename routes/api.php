@@ -103,4 +103,6 @@ Route::middleware(['auth:api', 'manager'])->get('manager/mealDataTable', 'Manage
 Route::middleware(['auth:api', 'manager'])->get('manager/orderDataTable', 'ManagerControllerAPI@orderDataTable');
 //US32
 Route::middleware(['auth:api', 'manager'])->put('manager/pendingInvoicesAsNotPaid/{id}', 'ManagerControllerAPI@pendingInvoicesAsNotPaid');
-
+//US38
+Route::middleware(['auth:api', 'manager'])->get('manager/invoiceItemsDataTable', 'ManagerControllerAPI@invoiceItemsDataTable');
+Route::middleware('auth:api')->get('invoices/paid/pdf', 'ManagerControllerAPI@paidInvoicesToPDF');

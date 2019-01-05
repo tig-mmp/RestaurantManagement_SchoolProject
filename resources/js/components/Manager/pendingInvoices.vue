@@ -40,7 +40,11 @@
 						<td>{{invoice.total_price}}</td>
 						<td>{{invoice.created_at}}</td>
 						<td>
-							<a class="btn btn-danger is-20" title="declare as not paid" @click="$emit('declaredNotPaid', invoice.meal_id)">
+							<a class="btn btn-primary" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportPdf(invoice)">
+								<i class="fas fa-file-pdf"></i>
+							</a>
+							<a class="btn btn-sm btn-primary" title="See associated items" v-on:click.prevent="$emit('invoiceItems', invoice)"><i class="fas fa-th-list"></i></a>
+							<a class="btn btn-danger is-20" title="declare as not paid" v-if="invoice.state=='pending'" @click="$emit('declaredNotPaid', invoice.meal_id)">
 								<i class="fab fa-creative-commons-nc-eu"></i>
 							</a>
 						</td>
@@ -58,11 +62,13 @@
 	import Datatable from './../datatable.vue';
 	import Pagination from './../Pagination.vue';
 	import Datepicker from './../datepicker.vue';
+	import PaidInvoicesPDF from './../downloadPaidInvoicesPDF.vue';
 	export default{
 		components:{
 			datatable: Datatable, 
 			pagination: Pagination,
 			datepicker: Datepicker,
+			paidInvoicesPDF: PaidInvoicesPDF
 		},
 		created() {
 	        this.getInvoices();
@@ -116,6 +122,27 @@
 		},
 
 		methods:{
+			exportPdf(invoice){
+        		var columns = [
+        			{title: 'ID', dataKey: 'id'},
+		            {title: 'Table', dataKey: 'table_number'},
+		            {title: 'Meal ID', dataKey: 'meal_id'},
+		            {title: 'Responsable waiter', dataKey: 'name' },
+		            {title: 'State', dataKey: 'state'},
+		            {title: 'Total Price', dataKey: 'total_price'},
+		            {title: 'Created at', dataKey: 'created_at'},
+        		];
+
+        		var invoices = [];
+        		invoices.push(invoice);
+
+        		var doc = new jsPDF('p', 'pt');
+                doc.text(40, 30, 'Invoice');
+        		doc.autoTable(columns, invoices, {
+				    margin: {top: 100},
+				});
+        		doc.save('table.pdf');
+        	},
 			getInvoices(url = 'api/manager/invoiceDataTable') {
 	            this.tableData.draw++;
 	            axios.get(url, {params: this.tableData})
