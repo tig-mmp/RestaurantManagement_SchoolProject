@@ -23,7 +23,7 @@ class Meal extends Model
     }
 
     public function waiter(){
-        return $this->hasOne(User::class, 'id', 'responsible_waiter_id');
+        return $this->hasOne(User::class, 'id', 'responsible_waiter_id')->withTrashed();
     }
 
     public function order(){
