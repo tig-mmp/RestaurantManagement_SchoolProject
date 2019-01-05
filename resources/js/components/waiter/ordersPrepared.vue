@@ -1,7 +1,9 @@
 <template>
     <div>
         <h3>Prepared orders</h3>
-        <table class="table">
+        <a class="btn btn-sm btn-success" v-show="!hide" v-on:click.prevent="setHide(true)">hide</a>
+        <a class="btn btn-sm btn-success" v-show="hide" v-on:click.prevent="setHide(false)">show</a>
+        <table class="table" v-show="!hide">
             <thead>
             <tr>
                 <th scope="col">image</th>
@@ -31,9 +33,13 @@
         data: function () {
             return {
                 orders: [],
+                hide: false
             }
         },
         methods: {
+            setHide(decisao){
+                this.hide = decisao;
+            },
             deliver(id){
                 axios.put('/api/orders/'+id, {'state' : 'delivered'})
                 .then(response=> {

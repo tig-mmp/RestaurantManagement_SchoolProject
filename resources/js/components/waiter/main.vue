@@ -79,10 +79,10 @@
                         }
                         if (order.state === 'confirmed'){
                             this.pendingOrdersToRemove.push(order.id);
-                            this.$socket.emit('orderRemoved', order.id);
+                            this.$socket.emit('orderRemoveAllCook', order.id);
                         }
                         if (order.state === 'in preparation'){
-                            this.$socket.emit('orderInPreparation', order.id, order.responsible_cook_id);
+                            this.$socket.emit('orderRemoveCook', order.id, order.responsible_cook_id);
                         }
                         if (order.state === 'prepared') {
                             this.preparedOrdersToRemove.push(order.id);
@@ -95,13 +95,13 @@
                         }
                         i++;
                         if(i === response.data.length) {//espera que calcule o preço a remover
-                            this.terminarMeal(id, priceInvalid);
                             this.createInvoice(invoiceItemsIndice, id);
+                            this.terminarMeal(id, priceInvalid);
                         }
                     });
                     if (response.data.length === 0) {//se todas as orders estão terminadas
-                        this.terminarMeal(invoiceItemsIndice, id, priceInvalid);
-                        this.createInvoice(id);
+                        this.createInvoice(invoiceItemsIndice, id);
+                        this.terminarMeal(id, priceInvalid);
                     }
                 }).catch(function (error) {
                     console.log(error)}
@@ -135,17 +135,22 @@
             createInvoice(indice, mealId){
                 var i = 0;
                 var price = 0;
+                if (this.invoiceItems[indice].size === 0){
+                    return;
+                }
                 axios.post('/api/invoices', {'meal_id': mealId})
                     .then(response => {
                         this.invoiceItems[indice].forEach((invoiceItem) => {
                             invoiceItem.invoice_id = response.data.id;
                             axios.post('/api/invoiceItems', invoiceItem)
-                                .then(response => {console.log(response.data)});
+                                .then(response => {});
                             i++;
                             price = Math.floor((+price + +invoiceItem.sub_total_price) * 100) / 100;
                             if(i === this.invoiceItems[indice].length) {//espera que percorra tudo
                                 axios.put('api/invoices/'+response.data.id, {'total_price' : price})
-                                    .then(response=>{console.log(response.data)});
+                                    .then(response=>{
+                                        this.$socket.emit('newInvoice', response.data.data);
+                                    });
                             }
                         });
                     });

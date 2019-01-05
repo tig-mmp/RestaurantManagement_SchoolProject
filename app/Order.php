@@ -32,7 +32,7 @@ class Order extends Model
     }
 
     public function user(){
-        return $this->hasOne(User::class, 'id', 'responsible_cook_id');
+        return $this->hasOne(User::class, 'id', 'responsible_cook_id')->withTrashed();
     }
 
 

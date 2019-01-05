@@ -130,6 +130,7 @@
 	        deleteTable(table){
 	        	axios.delete('api/manager/managerTableList/' + table.table_number)
                     .then(response => {
+						this.$socket.emit('updateTables');
                     	this.buildSuccessMessage("Table deleted");
                         this.getTables();
                     });
@@ -138,6 +139,7 @@
 	        createTable(){
 	        	axios.post('/api/manager/createTable', this.newTable)
         		.then(response=>{
+					this.$socket.emit('updateTables');
         			this.buildSuccessMessage("Table created");
         			this.newTable.table_number = null;
                 }).catch(error =>{

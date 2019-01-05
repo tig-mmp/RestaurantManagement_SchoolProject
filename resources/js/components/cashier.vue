@@ -77,7 +77,15 @@
             //this.getInvoicesAll();
         },
         sockets: {
-            },
+            newInvoice(invoice){
+                let toast = this.$toasted.show("new invoice", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 10000
+                });
+                this.invoices.push(invoice);
+            }
+        },
 
     }
 </script>

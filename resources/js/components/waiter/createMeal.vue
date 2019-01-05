@@ -65,7 +65,11 @@
             },
             mealCreated(table){
                 this.removeTable(table);
-            }
+            },
+            updateTables(){
+                this.mesasLivres = [];
+                this.getMesasLivres();
+            },
         }
     }
 </script>

@@ -117,6 +117,12 @@
 			getIndex(array, key, value) {
 				return array.findIndex(i => i[key] == value)
 			},
+		},
+		sockets: {
+			updateItems(){
+				this.items = [];
+				this.getItems();
+			},
 		}
 	};
 </script>

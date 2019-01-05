@@ -1,24 +1,24 @@
 <template>
     <div>
         <h3>Orders to prepare</h3>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-9">
-                    <div class="control">
-                        <select class="custom-select col-sm-1" v-model="tableData.length" @change="getOrders()">
-                            <option v-for="(records, index) in perPage" :key="index" :value="records">{{records}}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <datatable>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">start</th>
+                    <th scope="col">image</th>
+                    <th scope="col">name</th>
+                    <th scope="col">state</th>
+                    <th scope="col">table_number</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
                 <tbody>
-                <tr v-for="order in orders" :key="order.id">
+                <tr class="color-box" v-for="order in orders"
+                    v-bind:style="[order.state === 'confirmed' ? {'background-color' : 'Crimson'} : {'background-color' : 'LightSkyBlue'}]">
                     <td>{{order.start}}</td>
                     <img :src="'/imgItems/' + order.photo_url" class="rounded-circle border border-warning" width="25" height="25" >
                     <td>{{order.name}}</td>
                     <td>{{order.state}}</td>
-                    <td>{{order.type}}</td>
                     <td>{{order.table_number}}</td>
                     <td>
                         <a class="btn btn-sm btn-success"
@@ -27,103 +27,73 @@
                            v-on:click.prevent="prepare(order.id, order.state, 'in preparation')">Start preparing</a>
                     </td>
                 </tr>
-                </tbody>
-            </datatable>
-            <pagination :pagination="pagination" @prev="getOrders(pagination.prevPageUrl)"
-                        @next="getOrders(pagination.nextPageUrl)">
-            </pagination>
-        </div>
+            </tbody>
+        </table>
     </div>
 </template>
-
 <script>
-    import Datatable from '././datatable.vue';
-    import Pagination from '././Pagination.vue';
-    export default{
-        components:{
-            datatable: Datatable,
-            pagination: Pagination
+    module.exports= {
+        data: function () {
+            return {
+                orders: []
+            }
+        },
+        methods: {
+            prepare(id, oldState, state){
+                axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
+                .then(response=>{
+                    if (oldState === 'confirmed') {
+                        this.$socket.emit('orderRemoveWaiterPendingAddAllCook', response.data.data.id, response.data.data.waiter_id);
+                        if (state === 'prepared'){
+                            this.$socket.emit('orderAddWaiterPrepared', response.data.data, response.data.data.waiter_id);
+                        }
+                    } else{
+                        this.removeOrder(id);
+                        this.$socket.emit('orderAddWaiterPrepared', response.data.data, response.data.data.waiter_id);
+                    }
+                });
+            },
+            getOrders(){
+                axios.get('api/users/cook/'+this.$store.state.user.id+'/orders').
+                then(response=>{
+                    this.orders = response.data.data;
+                })
+            },
+            sortOrders(){
+                this.orders.sort(function(a, b){
+                    if (a.state.charAt(0) !== b.state.charAt(0)) {
+                        return a.state.charAt(0) === 'c' ? 1 : -1;
+                    }
+                    return b.start > a.start ? -1 : 1;
+                });
+            },
+            addSortedOrder(order){
+                this.orders.unshift(order);
+                this.sortOrders();
+            },
+            removeOrder(id){
+                this.orders.splice(this.orders.findIndex(order => order.id === id), 1);
+            }
         },
         mounted() {
             this.getOrders();
         },
-        data(){
-            return{
-                orders: [],
-                perPage: ['5','10', '20', '30', '50'],
-                tableData: {
-                    draw: 0,
-                    length: 5,
-                },
-                pagination: {
-                    lastPage: '',
-                    currentPage: '',
-                    total: '',
-                    lastPageUrl: '',
-                    nextPageUrl: '',
-                    prevPageUrl: '',
-                    from: '',
-                    to: ''
-                },
-            }
-        },
-        methods:{
-            prepare(id, oldState, state){
-                axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
-                    .then(response=>{
-                        if (response.data.data.state === 'in preparation'){
-                            this.$socket.emit('orderInPreparation', response.data.data.id, response.data.data.waiter_id);//atualiza a lista e remove do waiter responsavel
-                        } else{
-                            if (oldState === 'confirmed'){
-                                this.$socket.emit('orderRemoved');
-                            } else{
-                                let url = this.pagination.lastPageUrl;//para manter na mesma página
-                                this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
-                            }
-                            this.$socket.emit('orderPrepared', response.data.data, response.data.data.waiter_id);
-                        }
-                    });
-            },
-            getOrders(url = 'api/users/cook/'+this.$store.state.user.id+'/orders') {
-                this.tableData.draw++;
-                axios.get(url, {params: this.tableData})
-                    .then(response => {
-                        this.orders = response.data.data.data;
-                        this.configPagination(response.data.data);
-                    })
-                    .catch(errors => {
-                        console.log(errors);
-                    });
-            },
-            configPagination(data) {
-                this.pagination.lastPage = data.last_page;
-                this.pagination.currentPage = data.current_page;
-                this.pagination.total = data.total;
-                this.pagination.lastPageUrl = data.last_page_url;
-                this.pagination.nextPageUrl = data.next_page_url;
-                this.pagination.prevPageUrl = data.prev_page_url;
-                this.pagination.from = data.from;
-                this.pagination.to = data.to;
-            },
-        },
         sockets: {
-            cookNewOrder() {
+            cookNewOrder(order) {
                 let toast = this.$toasted.show("new order", {
                     theme: "outline",
                     position: "top-right",
                     duration: 1500
                 });
-                let url = this.pagination.lastPageUrl;//para manter na mesma página
-                this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
+                this.orders.push(order);
             },
-            cookRemoveOrder() {
+            cookRemoveOrder(orderId) {
                 let toast = this.$toasted.show("removing order", {
                     theme: "outline",
                     position: "top-right",
                     duration: 1500
                 });
-                let url = this.pagination.lastPageUrl;//para manter na mesma página
-                this.getOrders(url.slice(0, -1) + this.pagination.currentPage);
+                this.getOrders();
             }
         }
     };

@@ -14,12 +14,13 @@ class Invoice extends Resource
     {
         return [
             'id' => $this->id,
-            'state' => $this->state,
             'meal_id' => $this->meal_id,
             'nif' => $this->nif,
             'name' => $this->name,
+            'table_number' => $this->meal->table->table_number,
             'date' => $this->date,
-            'total_price' => $this->total_price
+            'total_price' => $this->total_price,
+            'waiter' => $this->meal->waiter->name
         ];
     }
 }

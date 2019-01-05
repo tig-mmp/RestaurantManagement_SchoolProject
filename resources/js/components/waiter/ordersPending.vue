@@ -1,7 +1,9 @@
 <template>
     <div>
         <h3>Pending Orders</h3>
-        <table class="table">
+        <a class="btn btn-sm btn-success" v-show="!hide" v-on:click.prevent="setHide(true)">hide</a>
+        <a class="btn btn-sm btn-success" v-show="hide" v-on:click.prevent="setHide(false)">show</a>
+        <table class="table" v-show="!hide">
             <thead>
             <tr>
                 <th scope="col">image</th>
@@ -33,10 +35,14 @@
             return {
                 orders: [],
                 deleteButton: [],
-                meal_id: ''
+                meal_id: '',
+                hide: false
             }
         },
         methods: {
+            setHide(decisao){
+                this.hide = decisao;
+            },
             deleteOrder(id){
                 axios.delete('/api/orders/' + id)
                     .then(function (response) {})
@@ -60,7 +66,7 @@
             confirmOrder(id){
                 axios.put('/api/orders/'+id, {'state' : 'confirmed'})
                 .then(response=>{
-                    this.$socket.emit('orderConfirmed', response.data.data);
+                    this.$socket.emit('orderAddCook', response.data.data);
                     //envia pedido para o maneger para ele atualizar a lista de orders de uma especifica meal
                     //this.$socket.emit('orderCreated', this.meal_id);
                     this.$emit('order-confirmed');
@@ -99,7 +105,7 @@
             }
         },
         sockets: {
-            orderPreparing(orderId){
+            waiterRemovePending(orderId){
                 this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
                 let toast = this.$toasted.show("cook is preparing a order", {
                     theme: "outline",

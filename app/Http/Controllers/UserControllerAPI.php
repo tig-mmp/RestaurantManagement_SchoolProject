@@ -117,14 +117,9 @@ class UserControllerAPI extends Controller
     //waiter
     public function cookOrders(Request $request, $id)
     {
-        $query = Order::where('state', 'confirmed')
-            ->orWhere('responsible_cook_id', $id)
-            ->where('state', 'in preparation')
-            ->orderByRaw("FIELD(state, 'in preparation', 'confirmed')")
-            ->orderBy('start')
-            ->paginate($request->input('length'));
-        $orders = response()->json(OrderItemResource::collection($query)->resource)->original;
-        return ['data' => $orders, 'draw' => $request->input('draw')];
+        return OrderItemResource::collection(Order::where('state', 'confirmed')
+            ->orWhere('responsible_cook_id', $id)->where('state', 'in preparation')
+            ->orderByRaw("FIELD(state, 'in prepatation', 'confirmed')")->orderBy('start')->get());
     }
 
     public function meals(Request $request, $id)
@@ -134,18 +129,6 @@ class UserControllerAPI extends Controller
 
     public function waiterPendingOrders(Request $request, $id)
     {
-        return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
-            ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.start')->get());
-        return OrderItemResource::collection(Order::with('meal')
-        ->whereHas('meal', function($query) use($id){
-            return $query->with('waiter:id,name')
-                ->with('table:table_number')
-                ->select('id', 'responsible_waiter_id', 'table_number')
-                ->where('responsible_waiter_id', $id);
-        })->select('id', 'meal_id', 'start', 'state', 'item_id', 'responsible_cook_id')
-            ->whereIn('orders.state', ['pending', 'confirmed'])
-            ->orderBy('orders.start')->get());
         return OrderItemResource::collection(
             Order::with(['meal' => function($query) use($id){
                 return $query->with('table:table_number')
@@ -155,7 +138,7 @@ class UserControllerAPI extends Controller
                 ->select('id', 'meal_id', 'start', 'state', 'item_id', 'responsible_cook_id')
                 ->whereIn('orders.state', ['pending', 'confirmed'])
                 ->orderBy('orders.state')
-                ->orderBy('orders.start', 'desc')
+                ->orderBy('orders.start')
                 ->get());
     }
 

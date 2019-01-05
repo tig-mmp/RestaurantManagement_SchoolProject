@@ -19,7 +19,7 @@ class Meal extends Model
     ];
 
     public function table(){
-        return $this->hasOne(RestaurantTable::class, 'table_number', 'table_number');
+        return $this->hasOne(RestaurantTable::class, 'table_number', 'table_number')->withTrashed();
     }
 
     public function waiter(){

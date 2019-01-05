@@ -93,7 +93,7 @@
                             }
                         }
                     ).then(response=>{
-                    	
+
                     })
                     .catch(error =>{
                 		this.buildErrorMessage(error);
@@ -102,6 +102,7 @@
                 }
                 axios.put('/api/manager/editItem/'+this.editedItem.id, this.editedItem)
                 .then(response=>{
+					this.$socket.emit('updateItems');
                     this.$router.push('/manager/managerItemList');
                 }).catch(error =>{
                 		this.buildErrorMessage(error);

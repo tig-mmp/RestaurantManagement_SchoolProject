@@ -32,7 +32,7 @@ Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->post('users/{id}/uploadFile', 'UserControllerAPI@uploadFile');
 
 //US9
-Route::middleware('auth:api','cook')->get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
+Route::get('users/cook/{id}/orders', 'UserControllerAPI@cookOrders');
 //US11
 Route::middleware('auth:api')->put('orders/{id}', 'OrderControllerAPI@update');
 Route::middleware('auth:api')->put('meals/{id}', 'MealControllerAPI@update');

@@ -100,6 +100,7 @@
 	                    	}
 	                    })
         		.then(response=>{
+					this.$socket.emit('updateItems');
 					this.$router.push('/manager/managerItemList');
                 }).catch(error =>{
         				this.buildError(error);

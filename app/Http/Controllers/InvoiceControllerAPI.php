@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\InvoiceItem;
 use App\Invoice;
-use App\Http\Resources\Invoice as InoiceResource;
+use App\Http\Resources\Invoice as InvoiceResource;
 use App\Http\Resources\InvoiceItems as InvoiceItems;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class InvoiceControllerAPI extends Controller
     {
         $invoice = Invoice::findOrFail($id);
         $invoice->update($request->all());
-        return new InoiceResource($invoice);
+        return new InvoiceResource($invoice);
     }
 
     public function updateClient(Request $request, $id)
@@ -26,7 +26,7 @@ class InvoiceControllerAPI extends Controller
         ]);
         $invoice = Invoice::findOrFail($id);
         $invoice->update($request->all());
-        return new InoiceResource($invoice);
+        return new InvoiceResource($invoice);
     }
 
     public function store(Request $request)
@@ -43,7 +43,7 @@ class InvoiceControllerAPI extends Controller
             'total_price' => 0
         ]);
         $invoice->save();
-        return response()->json(new InoiceResource($invoice), 201);
+        return response()->json($invoice, 201);
     }
 
     public function totalPrice(Request $request, $id)
