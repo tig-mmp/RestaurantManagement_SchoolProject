@@ -42,6 +42,7 @@
             prepare(id, oldState, state){
                 axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
                 .then(response=>{
+                    this.$socket.emit('updateOrder', response.data.data.meal_id);
                     if (oldState === 'confirmed') {
                         this.$socket.emit('orderRemoveWaiterPendingAddAllCook', response.data.data.id, response.data.data.waiter_id);
                         if (state === 'prepared'){
@@ -83,7 +84,7 @@
                 let toast = this.$toasted.show("new order", {
                     theme: "outline",
                     position: "top-right",
-                    duration: 1500
+                    duration: 3000
                 });
                 this.orders.push(order);
             },
@@ -91,7 +92,15 @@
                 let toast = this.$toasted.show("removing order", {
                     theme: "outline",
                     position: "top-right",
-                    duration: 1500
+                    duration: 3000
+                });
+                this.getOrders();
+            },
+            mealTerminated() {
+                let toast = this.$toasted.show("meal terminated", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 3000
                 });
                 this.getOrders();
             }

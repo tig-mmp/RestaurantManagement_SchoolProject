@@ -46,7 +46,6 @@
             getInvoicesNotPaid(){
                 axios.get('api/cashier').
                 then(response=>{
-                    console.log(response.data.data);
                     this.invoices = response.data.data;
                 })
             },
@@ -64,26 +63,27 @@
                     .then(response=>{
                         this.invoices.splice(this.invoices.findIndex(x => x.id === invoice.id), 1);
                     });
-            },
-            getInvoicesAll(){
-                axios.get('api/cashier_all').
-                then(response=>{
-                    this.invoices_all = response.data.data;
-                })
             }
         },
         mounted() {
             this.getInvoicesNotPaid();
-            //this.getInvoicesAll();
         },
         sockets: {
-            newInvoice(invoice){
+            newInvoice(){
                 let toast = this.$toasted.show("new invoice", {
                     theme: "outline",
                     position: "top-right",
                     duration: 10000
                 });
-                this.invoices.push(invoice);
+                this.getInvoicesNotPaid();
+            },
+            updateInvoicesNotPaid(){
+                let toast = this.$toasted.show("a manager changed a invoice", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 5000
+                });
+                this.getInvoicesNotPaid();
             }
         },
 

@@ -43,6 +43,7 @@
             deliver(id){
                 axios.put('/api/orders/'+id, {'state' : 'delivered'})
                 .then(response=> {
+                    this.$socket.emit('updateOrder', response.data.data.meal_id);
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                 });
             },
@@ -74,6 +75,10 @@
                     position: "top-right",
                     duration: 1500
                 });
+            },
+            waiterUpdateOrders(){
+                this.orders = [];
+                this.getPreparedOrders();
             },
         }
     }

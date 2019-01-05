@@ -67,6 +67,7 @@
                 axios.put('/api/orders/'+id, {'state' : 'confirmed'})
                 .then(response=>{
                     this.$socket.emit('orderAddCook', response.data.data);
+                    this.$socket.emit('updateOrder', response.data.data.meal_id);
                     //envia pedido para o maneger para ele atualizar a lista de orders de uma especifica meal
                     //this.$socket.emit('orderCreated', this.meal_id);
                     this.$emit('order-confirmed');
@@ -112,6 +113,10 @@
                     position: "top-right",
                     duration: 1500
                 });
+            },
+            waiterUpdateOrders(){
+                this.orders = [];
+                this.getPendingOrders();
             },
         }
     }

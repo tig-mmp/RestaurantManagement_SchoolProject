@@ -389,7 +389,7 @@ class ManagerControllerAPI extends Controller
 
         $meal->save();
 
-        return response()->json(null, 204);
+        return $meal;
     }
 
     public function paidInvoicesItemsToPDF(Request $request)

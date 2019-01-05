@@ -70,6 +70,10 @@
                 this.mesasLivres = [];
                 this.getMesasLivres();
             },
+            waiterUpdateOrders(){
+                this.mesasLivres = [];
+                this.getMesasLivres();
+            },
         }
     }
 </script>
