@@ -392,8 +392,28 @@ class ManagerControllerAPI extends Controller
         return response()->json(null, 204);
     }
 
+    public function paidInvoicesItemsToPDF(Request $request)
+    {
+        $invoice_id = $request->input('id');
+        $query = DB::table('invoice_items')
+            ->join('items', 'invoice_items.item_id', '=', 'items.id')
+            ->select(
+                'items.type',
+                'items.name',
+                'invoice_items.quantity',
+                'invoice_items.unit_price',
+                'invoice_items.sub_total_price',
+                'invoice_items.invoice_id'
+            )
+            ->where('invoice_items.invoice_id', '=', $invoice_id);
+
+        $items = $query->paginate(9999999);
+        return ['data' => $items];
+    }
+
     public function paidInvoicesToPDF(Request $request)
     {
+        $invoice_id = $request->input('id');
         $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
@@ -405,9 +425,9 @@ class ManagerControllerAPI extends Controller
                 'invoices.state',
                 'invoices.total_price',
                 'invoices.created_at'
-        )->where('invoices.state', '=', 'paid');
+            )->where('invoices.id', '=', $invoice_id);
 
-        $invoices = $query->paginate(10);
-        return ['data' => $invoices];
+        $invoice = $query->paginate(1);
+        return ['data' => $invoice];
     }
 }

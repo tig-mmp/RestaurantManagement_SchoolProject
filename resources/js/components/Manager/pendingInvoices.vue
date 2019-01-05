@@ -1,5 +1,6 @@
 <template>
 	<div >
+		<invoiceToPdf :invoiceID="selectedInvoice"></invoiceToPdf>
 		<h3>Pending Invoices</h3>
         <div class="container-fluid">
         	<div class="row">
@@ -40,7 +41,8 @@
 						<td>{{invoice.total_price}}</td>
 						<td>{{invoice.created_at}}</td>
 						<td>
-							<a class="btn btn-primary" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportPdf(invoice)">
+
+							<a class="btn btn-primary" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportToPdf(invoice.id)">
 								<i class="fas fa-file-pdf"></i>
 							</a>
 							<a class="btn btn-sm btn-primary" title="See associated items" v-on:click.prevent="$emit('invoiceItems', invoice)"><i class="fas fa-th-list"></i></a>
@@ -68,7 +70,7 @@
 			datatable: Datatable, 
 			pagination: Pagination,
 			datepicker: Datepicker,
-			paidInvoicesPDF: PaidInvoicesPDF
+			invoiceToPdf: PaidInvoicesPDF
 		},
 		created() {
 	        this.getInvoices();
@@ -89,6 +91,7 @@
 	           sortOrders[column.name] = -1;
 	        });
 			return{
+				selectedInvoice:null,
 				alertSucces:{
 					show:false,
 					Message:'',
@@ -122,27 +125,13 @@
 		},
 
 		methods:{
-			exportPdf(invoice){
-        		var columns = [
-        			{title: 'ID', dataKey: 'id'},
-		            {title: 'Table', dataKey: 'table_number'},
-		            {title: 'Meal ID', dataKey: 'meal_id'},
-		            {title: 'Responsable waiter', dataKey: 'name' },
-		            {title: 'State', dataKey: 'state'},
-		            {title: 'Total Price', dataKey: 'total_price'},
-		            {title: 'Created at', dataKey: 'created_at'},
-        		];
-
-        		var invoices = [];
-        		invoices.push(invoice);
-
-        		var doc = new jsPDF('p', 'pt');
-                doc.text(40, 30, 'Invoice');
-        		doc.autoTable(columns, invoices, {
-				    margin: {top: 100},
-				});
-        		doc.save('table.pdf');
-        	},
+			exportToPdf(invoiceID){
+                this.selectedInvoice = null;
+				
+				setTimeout(() => {
+					this.selectedInvoice = invoiceID;
+                }, 1);
+			},
 			getInvoices(url = 'api/manager/invoiceDataTable') {
 	            this.tableData.draw++;
 	            axios.get(url, {params: this.tableData})
