@@ -21,6 +21,8 @@
 					<tr v-for="order in orders" :key="order.id">
 						<td>{{order.state}}</td>
 						<td>{{order.name}}</td>
+						<td>{{order.type}}</td>
+						<td>{{order.price}}</td>
 					</tr>
 				</tbody>
 			</datatable>
@@ -52,8 +54,10 @@
 		data(){
 			let sortOrders = {};
 	        let columns = [
-	            {width: '50%', label: 'State', name: 'state', order:false},
-	            {width: '50%', label: 'Name', name: 'name', order:true },
+	            {width: '25%', label: 'State', name: 'state', order:false},
+	            {width: '25%', label: 'Name', name: 'name', order:true },
+	            {width: '25%', label: 'Type', name: 'type', order:true },
+	            {width: '25%', label: 'Price', name: 'price', order:true },
 	        ];
 	        columns.forEach((column) => {
 	           sortOrders[column.name] = -1;

@@ -77,21 +77,51 @@ class ManagerControllerAPI extends Controller
 
     public function invoiceDataTable(Request $request)
     {
-        $columns = ['id','table_number','meal_id','name','state','total_price'];
+        $columns = ['id','table_number','meal_id','name','state','total_price','created_at'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
+        $filterByDate = $request->input('date');
+        $hasFilterStates = $request->input('filterState.0');
+        $filterStates = [];
+        if($hasFilterStates){
+            foreach ($request->input('filterState') as $value){
+                array_push($filterStates, $value);
+            }
+        }
+
         
         $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select('invoices.id','meals.table_number','meal_id', 'users.name','invoices.state','invoices.total_price')
-            ->where('invoices.state', '=', 'pending')->orderBy($columns[$column], $dir);
+            ->select(
+                'invoices.id',
+                'meals.table_number',
+                'meal_id', 
+                'users.name',
+                'invoices.state',
+                'invoices.total_price',
+                'invoices.created_at'
+            )->orderBy($columns[$column], $dir);
+
+        if($hasFilterStates){
+            $query->where(function($query) use ($filterStates) {
+                foreach ($filterStates as $state){
+                    $query->orWhere('invoices.state', '=', $state);
+                }
+            });
+        }
 
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('users.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        if ($filterByDate) {
+            $query->where(function($query) use ($filterByDate) {
+                $query->where('meals.created_at', 'like', date($filterByDate). '%');
             });
         }
 
@@ -101,25 +131,46 @@ class ManagerControllerAPI extends Controller
 
     public function mealDataTable(Request $request)
     {
-        $columns = ['id','table_number', 'name','state','total_price_preview'];
+        $columns = ['id','table_number', 'name','state','total_price_preview','created_at'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
-        
+        $filterByDate = $request->input('date');
+        $hasFilterStates = $request->input('filterState.0');
+        $filterStates = [];
+        if($hasFilterStates){
+            foreach ($request->input('filterState') as $value){
+                array_push($filterStates, $value);
+            }
+        }
         $query = DB::table('meals')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
-            ->select('meals.id','meals.state','meals.table_number', 'users.name','meals.total_price_preview');
-            
-
-        $query->where(function($query) {
-            $query->where('meals.state', '=', 'active')
-            ->orWhere('meals.state', '=', 'terminated');
-        })->orderBy($columns[$column], $dir);
+            ->select(
+                'meals.id',
+                'meals.state',
+                'meals.table_number', 
+                'users.name',
+                'meals.total_price_preview',
+                'meals.created_at')->orderBy($columns[$column], $dir);
+        
+        if($hasFilterStates){
+            $query->where(function($query) use ($filterStates) {
+                foreach ($filterStates as $state){
+                    $query->orWhere('meals.state', '=', $state);
+                }
+            });
+        }
 
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('users.name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        if ($filterByDate) {
+            $query->where(function($query) use ($filterByDate) {
+                $query->where('meals.created_at', 'like', date($filterByDate). '%');
             });
         }
         //return $this->getSql($query); 
@@ -129,7 +180,7 @@ class ManagerControllerAPI extends Controller
 
     public function orderDataTable(Request $request)
     {
-        $columns = ['meal_id', 'state','name'];
+        $columns = ['state','name','type','price','meal_id'];
         $length = $request->input('length');
         $column = $request->input('column');
         $dir = $request->input('dir');
@@ -138,7 +189,7 @@ class ManagerControllerAPI extends Controller
         
         $query = DB::table('orders')
             ->join('items', 'orders.item_id', '=', 'items.id')
-            ->select('orders.meal_id','orders.state','items.name')
+            ->select('orders.meal_id','orders.state','items.name','items.type','items.price')
             ->where('orders.meal_id', '=', $meal_id)->orderBy($columns[$column], $dir);
 
         if ($searchValue) {

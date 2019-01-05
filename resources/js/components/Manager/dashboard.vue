@@ -49,10 +49,9 @@
 			declaredNotPaid: function(meal_id){
 	        	axios.put('/api/manager/pendingInvoicesAsNotPaid/' + meal_id)
                 .then(response=>{
-                	this.updateNotPaid = null;
+                	this.$socket.emit('setAsNotPaid');
                 	this.buildSuccessMessage('Invoices and Meals updated successfully');
                 });
-                this.updateNotPaid = meal_id;
 	        },
 	        buildSuccessMessage(message){
         		this.alertSucces.show = true;

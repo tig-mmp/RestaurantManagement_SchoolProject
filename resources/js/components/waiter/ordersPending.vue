@@ -63,6 +63,7 @@
                     this.$socket.emit('orderConfirmed', response.data.data);
                     //envia pedido para o maneger para ele atualizar a lista de orders de uma especifica meal
                     //this.$socket.emit('orderCreated', this.meal_id);
+                    this.$emit('order-confirmed');
                     this.orders.splice(this.orders.findIndex(v => v.id === id), 1);
                     this.orders.unshift(response.data.data);
                     axios.put('/api/meals/'+response.data.data.meal_id, {'price' : this.newOrder.price}).
@@ -96,9 +97,15 @@
                     this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
                 });
             }
-        },sockets: {
+        },
+        sockets: {
             orderPreparing(orderId){
                 this.orders.splice(this.orders.findIndex(order => order.id === orderId), 1);
+                let toast = this.$toasted.show("cook is preparing a order", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 1500
+                });
             },
         }
     }

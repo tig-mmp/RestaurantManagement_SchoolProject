@@ -10724,6 +10724,10 @@ body {
   font-size: 20px;
 }
 
+.is-30 {
+  font-size: 30px;
+}
+
 .managerLeftMenu {
   min-height: 93vh;
 }
