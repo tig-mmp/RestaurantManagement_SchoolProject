@@ -149,19 +149,12 @@
                             if(i === this.invoiceItems[indice].length) {//espera que percorra tudo
                                 axios.put('api/invoices/'+response.data.id, {'total_price' : price})
                                     .then(response=>{
-                                        this.$socket.emit('newInvoice', response.data.data);
+                                        this.$socket.emit('newInvoice');
                                     });
                             }
                         });
                     });
             }
-        },
-        sockets: {
-            orderPreparedUpdate(order){
-                if (this.mealSummary === order.meal_id){
-                    this.summaryUpdate++;
-                }
-            },
         }
     }
 </script>

@@ -13,6 +13,8 @@ class InvoiceItems extends Resource
     public function toArray($request)
     {
         return [
+            "id" =>$this->id,
+            "state" =>$this->state,
             'date' => $this->date,
             'table' => $this->meal->table_number,
             'name' => $this->meal->waiter->name,

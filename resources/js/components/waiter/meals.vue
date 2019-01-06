@@ -69,6 +69,17 @@
                 this.meals.splice(this.meals.findIndex(meal => meal.id === mealId), 1);
                 this.$emit('show-summary', null);
             }
+        },
+        sockets: {
+            waiterUpdateOrders(){
+                let toast = this.$toasted.show("update", {
+                    theme: "outline",
+                    position: "top-right",
+                    duration: 10000
+                });
+                this.meals = [];
+                this.getMeals();
+            },
         }
     }
 </script>

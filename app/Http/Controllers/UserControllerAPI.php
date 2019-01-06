@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceItems as InvoiceItemResource;
+use App\Http\Resources\Invoice as InvoiceFilted;
 use App\Http\Resources\OrderItem as OrderItemResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\Meal as MealResource;
@@ -158,37 +159,39 @@ class UserControllerAPI extends Controller
 
     public function invoices(Request $request)
     {
-       /* $query = Meal::where('state', 'not paid')->get();*/
-        $query = DB::table('invoices')
+        $query1 = InvoiceFilted::collection(Invoice::with('meal.waiter')->where('state', 'pending')->paginate(3));
+        /*
+         * Igual a de cima se usar esta tem-se de alterar depois a paginação e tabela
+         * $query = DB::table('invoices')
             ->join('meals', 'invoices.meal_id', '=', 'meals.id')
             ->join('users', 'meals.responsible_waiter_id', '=', 'users.id')
             ->select( 'meals.table_number', 'users.name as waiter','invoices.total_price',
                 'invoices.id', 'invoices.name', 'invoices.nif', 'invoices.meal_id')
             ->where('invoices.state', '=', 'pending')
-            ->paginate(25);
-        return $query;
+            ->paginate(25);*/
+        return $query1;
     }
     public function invoices_all(Request $request)
     {
         /* $query = Meal::where('state', 'not paid')->get();*/
-        $query1 = DB::table('items')
+    /*    $query1 = DB::table('items')
             ->join('invoice_items', 'items.id', '=', 'invoice_items.item_id')
             ->select(DB::raw("CONCAT(items.name,' quantity:' , invoice_items.quantity, ' unit price:', 
                 invoice_items.unit_price, ' total price:', invoice_items.sub_total_price ) as item"))
             ->distinct('item')->get();
        // dd($query1);
         $query4 = DB::table('invoice_items')
-            ->select('invoice_id','item_id')->distinct('invoice_id')->get();
-
+            ->select('invoice_id','item_id')->distinct('invoice_id')->paginate(25);
+*/
 
 
     //$query2 = InvoiceItemResource::collection(InvoiceItem::with('item')->with('invoice.meal.waiter')->get());
-    $query3 = InvoiceItem::join('invoices','invoices.id','invoice_items.invoice_id')
+  /*  $query3 = InvoiceItem::join('invoices','invoices.id','invoice_items.invoice_id')
         ->join('meals','invoices.meal_id','meals.id')->join('users','users.id','meals.responsible_waiter_id')
         ->join('items','items.id','invoice_items.item_id')->select('invoices.date','meals.table_number','users.name','invoices.total_price',
             'invoice_items.quantity','items.name as item','invoice_items.unit_price','invoice_items.sub_total_price')->
         distinct('meals.table_number','users.name')->groupBy('invoice_id','invoice_items.item_id','users.name')->paginate(30);
-    $query5 = InvoiceItemResource::collection(Invoice::with('meal.waiter')->with('invoice_items')->with('invoice_items.item')->get());
+   */ $query5 = InvoiceItemResource::collection(Invoice::with('meal.waiter')->with('invoice_items')->with('invoice_items.item')->paginate(5));
 
        // ->distinct('users.name')
         return $query5;

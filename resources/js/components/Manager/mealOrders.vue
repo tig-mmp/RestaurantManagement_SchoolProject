@@ -144,6 +144,11 @@
             updateManagerOrders(mealId){
             	//só atualiza se estiver a ver as orders desta meal
             	if (mealId == this.selectedMeal.id) {
+					let toast = this.$toasted.show("updating orders of selected meal", {
+						theme: "outline",
+						position: "top-right",
+						duration: 1500
+					});
                 	this.getOrders();
             	}
                 let toast = this.$toasted.show(dataFromServer[0], {
