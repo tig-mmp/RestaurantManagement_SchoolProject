@@ -151,7 +151,7 @@
             }
         },
         mounted(){
-        	this.editedUser = this.$parent.editedUser;
+        	this.editedUser = this.$parent.selectedUser;
         },
         methods:{
         	save: function(){

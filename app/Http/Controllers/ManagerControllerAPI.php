@@ -407,7 +407,7 @@ class ManagerControllerAPI extends Controller
             )
             ->where('invoice_items.invoice_id', '=', $invoice_id);
 
-        $items = $query->paginate(9999999);
+        $items = $query->get();
         return ['data' => $items];
     }
 
@@ -427,7 +427,24 @@ class ManagerControllerAPI extends Controller
                 'invoices.created_at'
             )->where('invoices.id', '=', $invoice_id);
 
-        $invoice = $query->paginate(1);
+        $invoice = $query->get();
         return ['data' => $invoice];
+    }
+
+    public function statisticAvgOrdersByDayCook($id)
+    {
+        /*$query = DB::table('orders')
+            ->selectRaw('COUNT(orders.id) as orders, DATE(orders.created_at) day')
+            ->where('orders.responsible_cook_id', '=', $id)
+            ->groupBy('day')->get();*/
+
+        $query = DB::table('orders')
+            ->where('orders.responsible_cook_id', '=', $id)
+            ->selectRaw('COUNT(orders.created_at) as orders, DATE(orders.created_at) day, orders.responsible_cook_id as waiter')
+            ->groupBy('waiter','day')
+            ->get();
+
+        $items = $query;
+        return ['data' => $items];
     }
 }

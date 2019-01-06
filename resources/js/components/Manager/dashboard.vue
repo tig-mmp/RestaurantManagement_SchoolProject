@@ -6,6 +6,7 @@
 	    	<strong  alert.message>{{ alertSucces.message }}</strong>
 	    </div>
 
+	    <!-- Invoices + Invoice Items ---------------------------->
 	    <div class="row mt-5">
 			<div class="col-sm">
 				 <pendingInvoices @invoiceItems="fillInvoiceItems" @declaredNotPaid="declaredNotPaid" ></pendingInvoices>
@@ -14,7 +15,9 @@
 				<items :selectedInvoice="selectedInvoice" @closeItems="closeItems"></items>
 			</div>
 		</div>
+		<!--------------------------------------------------------->
 
+		<!-- Meals + Meals Orders --------------------------------->
 		<div class="row mt-5">
 			<div class="col-sm">
 				<meals @melOrders="fillOrders" @declaredNotPaid="declaredNotPaid"></meals>
@@ -23,6 +26,7 @@
 				<orders :selectedMeal="selectedMeal" @closeOrders="closeOrders"></orders>
 			</div>
 		</div>
+		<!--------------------------------------------------------->
 	</div>
 </template>
 

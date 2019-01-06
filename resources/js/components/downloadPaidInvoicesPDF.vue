@@ -24,10 +24,10 @@
         	getInvoiceItems(){
         		axios.get('api/invoice/paid/pdf', {params: this.invoice})
 	                .then(response => {
-	                    this.invoice = response.data.data.data[0];
+	                    this.invoice = response.data.data[0];
 	                    axios.get('api/invoice/paid/items/pdf', {params: this.invoice})
 		                .then(response => {
-		                    this.invoiceItems = response.data.data.data;
+		                    this.invoiceItems = response.data.data;
 		                    this.exportPdf();
 		                })
 		                .catch(errors => {
