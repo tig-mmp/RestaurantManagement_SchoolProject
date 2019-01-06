@@ -42,7 +42,7 @@
 						<td>{{invoice.created_at}}</td>
 						<td>
 
-							<a class="btn btn-warning" title="declare as not paid" v-if="invoice.state=='paid'" @click="exportToPdf(invoice.id)">
+							<a class="btn btn-warning" title="download invoice" v-if="invoice.state=='paid'" @click="exportToPdf(invoice.id)">
 								<i class="fas fa-file-pdf"></i>
 							</a>
 							<a class="btn btn-sm btn-primary" title="See associated items" v-on:click.prevent="$emit('invoiceItems', invoice)"><i class="fas fa-th-list"></i></a>

@@ -178,7 +178,7 @@ class UserControllerAPI extends Controller
             ->distinct('item')->get();
        // dd($query1);
         $query4 = DB::table('invoice_items')
-            ->select('invoice_id','item_id')->distinct('invoice_id')->get();
+            ->select('invoice_id','item_id')->distinct('invoice_id')->paginate(25);
 
 
 
@@ -188,7 +188,7 @@ class UserControllerAPI extends Controller
         ->join('items','items.id','invoice_items.item_id')->select('invoices.date','meals.table_number','users.name','invoices.total_price',
             'invoice_items.quantity','items.name as item','invoice_items.unit_price','invoice_items.sub_total_price')->
         distinct('meals.table_number','users.name')->groupBy('invoice_id','invoice_items.item_id','users.name')->paginate(30);
-    $query5 = InvoiceItemResource::collection(Invoice::with('meal.waiter')->with('invoice_items')->with('invoice_items.item')->get());
+    $query5 = InvoiceItemResource::collection(Invoice::with('meal.waiter')->with('invoice_items')->with('invoice_items.item')->paginate(5));
 
        // ->distinct('users.name')
         return $query5;

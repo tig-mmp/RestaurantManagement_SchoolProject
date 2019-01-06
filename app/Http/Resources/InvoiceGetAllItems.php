@@ -13,6 +13,7 @@ class InvoiceGetAllItems extends Resource
     public function toArray($request)
     {
         return [
+
              "quantity" => $this->quantity,
              "unit_price" => $this->unit_price,
              "sub_total_price" => $this->sub_total_price,
