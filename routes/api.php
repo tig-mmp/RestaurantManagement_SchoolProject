@@ -66,7 +66,7 @@ Route::middleware('auth:api', 'waiter')->get('invoices/{id}/totalPrice', 'Invoic
 Route::middleware('auth:api', 'cashier')->get('cashier','UserControllerAPI@invoices');
 
 //US24
-Route::get('cashier_all','UserControllerAPI@invoices_all');
+Route::middleware('auth:api', 'cashier')->get('cashier_all','UserControllerAPI@invoices_all');
 //US25
 Route::middleware('auth:api', 'cashier')->put('invoices/{id}/client', 'InvoiceControllerAPI@updateClient');
 
