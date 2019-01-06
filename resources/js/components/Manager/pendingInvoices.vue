@@ -185,9 +185,12 @@
             setAsNotPaid(){
                 this.getInvoices();
             },
-            mealRemoved(){
+			managerNewInvoice(){
                 this.getInvoices();
             },
+			setAsPaid(){
+				this.getInvoices();
+			}
         },
 	};
 </script>

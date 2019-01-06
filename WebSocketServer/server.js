@@ -94,6 +94,15 @@ io.on('connection', function (socket) {
             io.to(socket_id).emit('cookRemoveOrder', orderId);
         }
     });
+	socket.on('orderAddWaiterPreparedDireto', function (order, destUserId) {
+		let userInfo = loggedUsers.userInfoByID(destUserId);
+		let socket_id = userInfo !== undefined ? userInfo.socketID : null;
+		if (socket_id !== null) {
+			io.to(socket_id).emit('waiterRemovePendingWithoutToast', order.id);
+			io.to(socket_id).emit('orderPrepared', order);
+		}
+		io.sockets.to('cook').emit('cookRemoveOrder', order.id);
+	});
 
 	socket.on('mealCreated', function (table) {//os waiters so precisam de receber a table
 		io.sockets.to('waiter').emit('mealCreated', table);
@@ -102,7 +111,7 @@ io.on('connection', function (socket) {
 
 	socket.on('mealRemoved', function (table, mealId) {
 		io.sockets.to('waiter').emit('mealRemoved', table);
-		io.sockets.to('manager').emit('mealRemoved', mealId);
+		io.sockets.to('manager').emit('managerMealRemoved', mealId);
 	});
 
 	socket.on('setAsNotPaid', function (waiterId) {
@@ -117,8 +126,13 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('invoicePaid', function () {
+		io.sockets.to('manager').emit('setAsPaid');
+		io.sockets.to('cashier').emit('invoicePaid');
+	});
+
+	socket.on('newInvoice', function () {
 		io.sockets.to('cashier').emit('newInvoice');
-		io.sockets.to('manager').emit('invoicePaid');
+		io.sockets.to('manager').emit('managerNewInvoice');
 	});
 
 	socket.on('updateItems', function () {

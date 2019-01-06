@@ -147,15 +147,10 @@
 					let toast = this.$toasted.show("updating orders of selected meal", {
 						theme: "outline",
 						position: "top-right",
-						duration: 1500
+						duration: 2500
 					});
                 	this.getOrders();
             	}
-                let toast = this.$toasted.show(dataFromServer[0], {
-                    theme: "outline",
-                    position: "top-center",
-                    duration : null
-                });
             },
         },
 	};

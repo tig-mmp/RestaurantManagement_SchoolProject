@@ -127,6 +127,19 @@
 					let start = new Date(this.$store.state.user.last_shift_start);
 					this.differenceStart = this.differenceDate(atual, start);
 				}
+			},
+			toast(mensagem, duracao, redirect){
+				let toast = this.$toasted.show(mensagem, {
+					theme: "outline",
+					position: "top-right",
+					duration: duracao,
+					action : {
+						text : 'Show',
+						onClick : (e, toastObject) => {
+							this.$router.push(redirect);
+						}
+					},
+				});
 			}
 		},
 		mounted() {
@@ -139,7 +152,45 @@
 			});
 		},
 		sockets: {
-
+			newInvoice(){//cashier
+				this.toast("New invoice", 10000, "/shift");
+			},
+			updateInvoicesNotPaid(){
+				this.toast("A manager declared an invoice as not paid", 5000, "/shift");
+			},
+			invoicePaid(){
+				this.toast("An invoice was paid", 5000, "/shift");
+			},
+			cookNewOrder(order) {//cook
+				this.toast("New order", 3000, "/shift");
+			},
+			cookRemoveOrder(orderId) {
+				this.toast("Removing order", 3000, "/shift");
+			},
+			mealTerminated() {
+				this.toast("Meal terminated", 3000, "/shift");
+			},
+			orderPrepared(order){//waiter
+				this.toast("Order prepared", 10000, "/shift");
+			},
+			waiterRemovePending(orderId){
+				this.toast("Cook is preparing an order", 3000, "/shift");
+			},
+			waiterUpdateOrders(){
+				this.toast("Meal terminated by manager", 3000, "/shift");
+			},
+			setAsNotPaid(){//manager
+				this.toast("Meal was not paid", 10000, "/manager/dashboard");
+			},
+			managerMealRemoved(meal_id){
+				this.toast("Meal with id " + meal_id + " is terminated", 3000, "/manager/dashboard");
+			},
+			managerNewInvoice(){
+				this.toast("An invoice was created", 10000, "/manager/dashboard");
+			},
+			setAsPaid(){
+				this.toast("An invoice was paid", 10000, "/manager/dashboard");
+			}
 		}
 	}
 </script>

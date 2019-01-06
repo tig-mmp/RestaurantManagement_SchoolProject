@@ -146,13 +146,13 @@
             updateManagerInvoiceItems(invoiceId){
             	//só atualiza se estiver a ver as orders desta meal
             	if (invoiceId == this.selectedInvoice.id) {
+					let toast = this.$toasted.show("updating items of selected invoice", {
+						theme: "outline",
+						position: "top-right",
+						duration: 2500
+					});
                 	this.getItems();
             	}
-                let toast = this.$toasted.show(dataFromServer[0], {
-                    theme: "outline",
-                    position: "top-center",
-                    duration : null
-                });
             },
         },
 	};

@@ -180,13 +180,8 @@
             mealCreated(){
                 this.getMeals();
             },
-            mealRemoved(meal_id){
+			managerMealRemoved(meal_id){
                 this.getMeals();
-                let toast = this.$toasted.show("Meal with id " + meal_id[0] + " is terminated", {
-                    theme: "bubble", 
-					position: "top-right", 
-					duration : 5000
-                });
             },
         },
 	};

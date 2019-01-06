@@ -148,7 +148,15 @@
             this.getInvoicesAll();
         },
         sockets: {
+            newInvoice(){
+                this.getInvoicesAll();
             },
-
+            updateInvoicesNotPaid(){
+                this.getInvoicesAll();
+            },
+            invoicePaid(){
+                this.getInvoicesAll();
+            }
+        },
     }
 </script>

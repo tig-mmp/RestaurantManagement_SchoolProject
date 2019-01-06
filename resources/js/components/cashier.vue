@@ -105,10 +105,11 @@
             },
             close(invoice){
                 axios.put('api/meals/'+invoice.meal_id, {'state': 'paid'})
-                    .then(response=>{});
+                    .then(response=>{
+                    });
                 axios.put('api/invoices/'+invoice.id, {'state': 'paid'})
                     .then(response=>{
-                        this.invoices.splice(this.invoices.findIndex(x => x.id === invoice.id), 1);
+                        this.$socket.emit('invoicePaid');
                     });
             },
             configPagination(data) {
@@ -143,21 +144,14 @@
         mounted() {
             this.getInvoicesNotPaid();
         },
-        sockets: {
+        sockets: {//tem dois emits diferents por causa da mesnsagem que aparece no toast
             newInvoice(){
-                let toast = this.$toasted.show("new invoice", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 10000
-                });
                 this.getInvoicesNotPaid();
             },
             updateInvoicesNotPaid(){
-                let toast = this.$toasted.show("a manager changed a invoice", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 5000
-                });
+                this.getInvoicesNotPaid();
+            },
+            invoicePaid(){
                 this.getInvoicesNotPaid();
             }
         },

@@ -42,11 +42,12 @@
             prepare(id, oldState, state){
                 axios.put('/api/orders/'+id, {'state':state, 'responsible_cook_id' : this.$store.state.user.id})
                 .then(response=>{
-                    this.$socket.emit('updateOrder', response.data.data.meal_id);
+                    this.$socket.emit('updateOrder', response.data.data.meal_id);//manager
                     if (oldState === 'confirmed') {
-                        this.$socket.emit('orderRemoveWaiterPendingAddAllCook', response.data.data.id, response.data.data.waiter_id);
-                        if (state === 'prepared'){
-                            this.$socket.emit('orderAddWaiterPrepared', response.data.data, response.data.data.waiter_id);
+                        if (state === 'in preparation') {
+                            this.$socket.emit('orderRemoveWaiterPendingAddAllCook', response.data.data.id, response.data.data.waiter_id);
+                        } else{
+                            this.$socket.emit('orderAddWaiterPreparedDireto', response.data.data, response.data.data.waiter_id);
                         }
                     } else{
                         this.removeOrder(id);
@@ -81,27 +82,12 @@
         },
         sockets: {
             cookNewOrder(order) {
-                let toast = this.$toasted.show("new order", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 3000
-                });
                 this.orders.push(order);
             },
             cookRemoveOrder(orderId) {
-                let toast = this.$toasted.show("removing order", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 3000
-                });
                 this.getOrders();
             },
             mealTerminated() {
-                let toast = this.$toasted.show("meal terminated", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 3000
-                });
                 this.getOrders();
             }
         }

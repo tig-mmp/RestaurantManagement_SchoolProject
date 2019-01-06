@@ -72,11 +72,6 @@
         },
         sockets: {
             waiterUpdateOrders(){
-                let toast = this.$toasted.show("update", {
-                    theme: "outline",
-                    position: "top-right",
-                    duration: 10000
-                });
                 this.meals = [];
                 this.getMeals();
             },
