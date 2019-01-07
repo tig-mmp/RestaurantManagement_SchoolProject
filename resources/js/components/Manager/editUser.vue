@@ -74,7 +74,7 @@
 			                name="name" id="inputLast_shift_end"
 			                placeholder="last_shift_end"/>
 		        </div>
-	        </div>deleted_at
+	        </div>
 
 
 	        <div class="row">
@@ -155,31 +155,36 @@
         },
         methods:{
         	save: function(){
-        		if (this.file !== ''){
-                    let formData = new FormData();
-                    formData.append('file', this.file);
-                    axios.post( 'api/users/' + this.editedUser.id + '/uploadFile',
-                        formData,
-                        {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }
-                    ).then(response=>{
-                    	
-                    })
-                    .catch(error =>{
-                		this.buildErrorMessage(error);
-        				return;
-                	});
-                }
-                axios.put('/api/manager/editUser/'+this.editedUser.id, this.editedUser)
-                .then(response=>{
-                    this.$router.push('/manager/managerUserList');
-                }).catch(error =>{
-                		this.buildErrorMessage(error);
-        				return;
-                });
+        		if (this.editedUser.deleted_at == null) {
+	        		if (this.file !== ''){
+	                    let formData = new FormData();
+	                    formData.append('file', this.file);
+	                    axios.post( 'api/users/' + this.editedUser.id + '/uploadFile',
+	                        formData,
+	                        {
+	                            headers: {
+	                                'Content-Type': 'multipart/form-data'
+	                            }
+	                        }
+	                    ).then(response=>{
+	                    	
+	                    })
+	                    .catch(error =>{
+	                		this.buildErrorMessage(error);
+	        				return;
+	                	});
+	                }
+	                axios.put('/api/manager/editUser/'+this.editedUser.id, this.editedUser)
+	                .then(response=>{
+	                    this.$router.push('/manager/managerUserList');
+	                }).catch(error =>{
+	                		this.buildErrorMessage(error);
+	        				return;
+	                });
+	        	}else{
+	        		alert('You can not change information of user, because user is already deleted');
+	        	}
+        		
         	},
         	cancelEdit:function(){
         		this.$router.push('/manager/managerUserList');

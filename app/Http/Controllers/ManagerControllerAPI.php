@@ -61,14 +61,28 @@ class ManagerControllerAPI extends Controller
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
+        $blocked = $request->input('blocked');
+        $deleted = $request->input('deleted');
         
-        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')->orderBy($columns[$column], $dir);
+        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')
+        ->orderBy($columns[$column], $dir);
+        
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
                 ->orWhere('type', 'like', '%' . $searchValue . '%')
                 ->orWhere('username', 'like', '%' . $searchValue . '%')
                 ->orWhere('email', 'like', '%' . $searchValue . '%');
+            });
+        }
+        if ($blocked == 'true') {
+            $query->where(function($query){
+                $query->where('blocked', '=', '1');
+            });
+        }
+        if ($deleted == 'true') {
+            $query->where(function($query){
+                $query->where('deleted_at', '!=', 'null');
             });
         }
         $users = $query->paginate($length);
