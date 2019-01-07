@@ -431,18 +431,64 @@ class ManagerControllerAPI extends Controller
         return ['data' => $invoice];
     }
 
-    public function statisticAvgOrdersByDayCook($id)
-    {
-        /*$query = DB::table('orders')
-            ->selectRaw('COUNT(orders.id) as orders, DATE(orders.created_at) day')
-            ->where('orders.responsible_cook_id', '=', $id)
-            ->groupBy('day')->get();*/
+    // public function statisticAvgOrdersByDayCook($id)
+    // {
+    //     /*$query = DB::table('orders')
+    //         ->selectRaw('COUNT(orders.id) as orders, DATE(orders.created_at) day')
+    //         ->where('orders.responsible_cook_id', '=', $id)
+    //         ->groupBy('day')->get();*/
 
-        $query = DB::table('orders')
-            ->where('orders.responsible_cook_id', '=', $id)
-            ->selectRaw('COUNT(orders.created_at) as orders, DATE(orders.created_at) day, orders.responsible_cook_id as waiter')
-            ->groupBy('waiter','day')
-            ->get();
+    //     $query = DB::table('orders')
+    //         ->where('orders.responsible_cook_id', '=', $id)
+    //         ->selectRaw('COUNT(orders.created_at) as orders, DATE(orders.created_at) day, orders.responsible_cook_id as waiter')
+    //         ->groupBy('waiter','day')
+    //         ->get();
+
+    //     $items = $query;
+    //     return ['data' => $items];
+    // }
+
+    public function statisticAvgOrdersByDayCook()
+    {
+        $sub = DB::table('orders')
+        ->selectRaw('COUNT(orders.id) as orders, DATE(orders.created_at) day, responsible_cook_id')
+        ->groupBy('day','responsible_cook_id');
+
+        $query = DB::table(DB::raw("({$sub->toSql()}) as sub"))
+        ->join('users', 'sub.responsible_cook_id', '=', 'users.id')
+        ->selectRaw('users.name as name, sub.responsible_cook_id AS id, AVG(sub.orders) AS orders')
+        ->groupBy('users.name','id')->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
+
+    public function statisticAvgOrdersByDayWaiter()
+    {
+        $sub = DB::table('orders')
+        ->join('meals', 'orders.meal_id', '=', 'meals.id')
+        ->selectRaw('COUNT(orders.id) as orders, DATE(orders.created_at) day, meals.responsible_waiter_id AS waiter')
+        ->groupBy('day','waiter');
+
+        $query = DB::table(DB::raw("({$sub->toSql()}) as sub"))
+        ->join('users', 'sub.waiter', '=', 'users.id')
+        ->selectRaw('users.name as name, sub.waiter AS id, AVG(sub.orders) AS orders')
+        ->groupBy('users.name','id')->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
+
+    public function statisticAvgMealsByDayWaiter()
+    {
+        $sub = DB::table('meals')
+        ->selectRaw('COUNT(*) as meals, DATE(meals.created_at) day, responsible_waiter_id')
+        ->groupBy('day','responsible_waiter_id');
+
+        $query = DB::table(DB::raw("({$sub->toSql()}) as sub"))
+        ->join('users', 'sub.responsible_waiter_id', '=', 'users.id')
+        ->selectRaw('users.name as name, sub.responsible_waiter_id AS id, AVG(sub.meals) AS meals')
+        ->groupBy('users.name','id')->get();
 
         $items = $query;
         return ['data' => $items];

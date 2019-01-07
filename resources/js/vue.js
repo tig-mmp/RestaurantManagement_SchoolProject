@@ -44,7 +44,6 @@ const managerUserList = Vue.component('managerUserList', require('./components/M
 const editUser = Vue.component('editUser', require('./components/Manager/editUser.vue'));
 const dashboard = Vue.component('dashboard', require('./components/Manager/dashboard.vue'));
 const managersNotifications = Vue.component('managersNotifications', require('./components/Manager/managersNotifications.vue'));
-const userStatistics = Vue.component('userStatistics', require('./components/Manager/userStatistics.vue'));
 
 
 const routes = [
@@ -62,7 +61,6 @@ const routes = [
             { path: 'createUser', component: createUser, name: 'createUser'},
             { path: 'editUser', component: editUser, name: 'editUser'},
             { path: 'dashboard', component: dashboard, name: 'dashboard'},
-            { path: 'userStatistics', component: userStatistics, name: 'userStatistics'},
         ]
     },
 	{ path: '/profile', component: profile, name: 'profile'},

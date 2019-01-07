@@ -34,7 +34,6 @@
 						<td v-else >Yes</td>
 						<td><img :src="'/imgProfiles/' + user.photo_url" width="40" height="40" ></td>
 						<td>
-							<a class="btn btn-success" v-if="user.type=='cook'" title="Show Statistics" v-on:click.prevent="statistcsUser(user)"><i class="fas fa-chart-line is-20"></i></a>
 							<a class="btn btn-sm btn-primary" title="Edit" v-on:click.prevent="editUser(user)"><i class="fas fa-edit is-20"></i></a>
 							<a class="btn btn-sm btn-danger" :class="{'disabled':user.deleted_at!=null}" title="Remove" v-on:click.prevent="deleteUser(user)"><i class="fas fa-trash-alt is-20"></i></a>
 						</td>

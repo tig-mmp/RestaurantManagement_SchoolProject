@@ -6,6 +6,21 @@
 	    	<strong  alert.message>{{ alertSucces.message }}</strong>
 	    </div>
 
+	    <!-- Statistics ---------------------------->
+	    <h2 class="mt-5">Statistics</h2>
+	    <div class="row">
+			<div class="col-sm">
+				 <cookStatistics></cookStatistics>
+			</div>
+			<div class="col-sm">
+				 <waiterStatisticsOredrs></waiterStatisticsOredrs>
+			</div>
+			<div class="col-sm">
+				 <waiterStatisticsMeals></waiterStatisticsMeals>
+			</div>
+		</div>
+		<!--------------------------------------------------------->
+
 	    <!-- Invoices + Invoice Items ---------------------------->
 	    <div class="row mt-5">
 			<div class="col-sm">
@@ -35,12 +50,18 @@
 	import Meals from './activeTerminatedMeals.vue';
 	import MealOrders from './mealOrders.vue';
 	import InvoiceItems from './invoicesItems.vue';
+	import AvgOrdersPerDayCook from './avgOrdersPerDayCook.vue';
+	import AvgOrdersPerDayWaiter from './avgOrdersPerDayWaiter.vue';
+	import AvgMealsPerDayWaiter from './avgMealsPerDayWaiter.vue';
 	export default{
 		components:{
 			pendingInvoices: PendingInvoices,
 			meals: Meals,
 			orders: MealOrders,
 			items: InvoiceItems,
+			cookStatistics: AvgOrdersPerDayCook,
+			waiterStatisticsOredrs: AvgOrdersPerDayWaiter,
+			waiterStatisticsMeals: AvgMealsPerDayWaiter,
 		},
 		data(){
 			return{
