@@ -27,9 +27,20 @@ use App\Order;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use App\Mail\SendMailable;
 
 class UserControllerAPI extends Controller
 {
+
+    public function mail($email,$name)
+    {
+        //$name = 'Krunal';
+        $link = $_SERVER['SERVER_NAME'] . '/changePassword/' . $email;
+        Mail::to($email)->send(new SendMailable($name, $link));
+
+    }
+
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -88,6 +99,19 @@ class UserControllerAPI extends Controller
         return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
     }
 
+    public function updatePasswordToken(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->password != 'a'){
+            return response()->json('User already have a password',422);
+        }
+        $request->validate([
+            'password' => 'confirmed|min:3',
+        ]);
+        $user->update(['password' => Hash::make($request['password'])]);
+        return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
+    }
+
     public function store(Request $request){
         $request->validate([
             'name' => 'required|min:3',
@@ -98,13 +122,10 @@ class UserControllerAPI extends Controller
         $user->fill($request->all());
         $user->fill(['password' => 'a']);
         $user->save();
-        //send mail
-        /*
-        Mail::send('emails.reminder', ['user' => $user], function ($m) use ($user) {
-            $m->from('hello@app.com', 'Your Application');
 
-            $m->to($user->email)->subject('Your Reminder!');
-        });*/
+        //send mail
+
+        $this->mail($user->email,$user->name);
         return response()->json(new UserResource($user), 201);
     }
 

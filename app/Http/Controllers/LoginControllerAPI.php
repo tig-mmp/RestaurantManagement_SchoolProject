@@ -34,6 +34,12 @@ class LoginControllerAPI extends Controller
         }
     }
 
+    public function changePassword(){
+        return view('changePassword');
+
+    }
+
+
     public function logout()
     {
         \Auth::guard('api')->user()->token()->revoke();

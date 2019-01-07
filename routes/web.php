@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/changePassword/{token}','LoginControllerAPI@changePassword');
+Route::get('/send/email', 'UserControllerAPI@mail');
 Route::get('/','VueController@index');
 Route::get('{path}','VueController@index')->where('path', '([A-z\d-\/_.]+)?');
-Route::get('/changePassword','LoginControllerAPI@changePassword');
+

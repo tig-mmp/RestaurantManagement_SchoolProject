@@ -17,6 +17,9 @@ use Illuminate\Http\Request;
 Route::get('items', 'ItemsControllerAPI@index');
 Route::get('items/paginate', 'ItemsControllerAPI@paginate');
 
+
+Route::middleware('auth:api')->put('users/password/token', 'UserControllerAPI@updatePasswordToken');
+
 Auth::routes(['verify' => true]);
 
 

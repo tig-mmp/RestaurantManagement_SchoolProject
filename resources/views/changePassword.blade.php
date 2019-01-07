@@ -4,7 +4,8 @@
 @section('menu')
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<div class="container">
-		<form method="POST" action="{{ route('api/password') }}">
+		{{ $_SERVER['REQUEST_URI']}}
+		<form method="PUT">
 			<div class="form-group">
 				<label for="password">New password</label>
 				<input type="password" class="form-control"name="password" id="password"
