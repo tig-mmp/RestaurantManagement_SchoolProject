@@ -109,7 +109,7 @@ const app = new Vue({
     sockets: {
         connect(){
             console.log('socket connected (socket ID = '+this.$socket.id+')');
-            if(this.$store.state.user !== null){
+            if(this.$store.state.user !== null && this.$store.state.user.shift_active === 1){
               this.$socket.emit('user_enter', store.state.user);
             }
         },
