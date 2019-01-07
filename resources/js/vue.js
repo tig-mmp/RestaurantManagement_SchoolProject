@@ -83,9 +83,14 @@ router.beforeEach((to, from, next) => {
             return; 
         }       
     }
-    
-    if (store.state.user) {
-        if (to.name == 'login') {
+    if(to.name == 'manager'){
+        if(store.state.user.type != 'manager'){
+            next("/menu");
+            return;
+        }
+    }
+    if(to.name == 'login'){
+        if(store.state.user){
             next("/menu");
             return;
         }
