@@ -111,3 +111,6 @@ Route::middleware('auth:api')->get('invoice/paid/pdf', 'ManagerControllerAPI@pai
 Route::middleware(['auth:api', 'manager'])->get('cook/orders/statisticAvgOrdersByDayCook', 'ManagerControllerAPI@statisticAvgOrdersByDayCook');
 Route::middleware(['auth:api', 'manager'])->get('cook/orders/statisticAvgOrdersByDayWaiter', 'ManagerControllerAPI@statisticAvgOrdersByDayWaiter');
 Route::middleware(['auth:api', 'manager'])->get('cook/orders/statisticAvgMealsByDayWaiter', 'ManagerControllerAPI@statisticAvgMealsByDayWaiter');
+//US40
+Route::middleware(['auth:api', 'manager'])->get('cook/orders/statisticTotalOrdersPerMonth', 'ManagerControllerAPI@statisticTotalOrdersPerMonth');
+Route::middleware(['auth:api', 'manager'])->get('cook/orders/statisticTotalMealsPerMonth', 'ManagerControllerAPI@statisticTotalMealsPerMonth');

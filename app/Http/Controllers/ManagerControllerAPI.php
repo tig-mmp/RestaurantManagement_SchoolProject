@@ -507,4 +507,30 @@ class ManagerControllerAPI extends Controller
         $items = $query;
         return ['data' => $items];
     }
+
+    public function statisticTotalOrdersPerMonth()
+    {
+        $query = DB::table('orders')
+        ->selectRaw('YEAR(created_at) year, MONTH(created_at) month, COUNT(*) AS data')
+        ->groupBy('year','month')
+        ->orderBy('year', 'ASC')
+        ->orderBy('month', 'ASC')
+        ->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
+
+    public function statisticTotalMealsPerMonth()
+    {
+        $query = DB::table('meals')
+        ->selectRaw('YEAR(created_at) year, MONTH(created_at) month, COUNT(*) AS data')
+        ->groupBy('year','month')
+        ->orderBy('year', 'ASC')
+        ->orderBy('month', 'ASC')
+        ->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
 }
