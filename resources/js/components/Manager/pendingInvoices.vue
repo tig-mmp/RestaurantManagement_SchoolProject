@@ -21,10 +21,10 @@
 			        	<div id='example-3' @change="getInvoices()">
 							<input type="checkbox" id="checkPending" value="pending" v-model="tableData.filterState" >
 							<label for="checkPending">Pending</label>
-							<input type="checkbox" id="checkPaid" value="paid" v-model="tableData.filterState">
-							<label for="checkPaid">Paid</label>
-							<input type="checkbox" id="chekNotPaid" value="not paid" v-model="tableData.filterState">
-							<label for="chekNotPaid">Not paid</label>
+							<input type="checkbox" id="checkPaidInvoice" value="paid" v-model="tableData.filterState">
+							<label for="checkPaidInvoice">Paid</label>
+							<input type="checkbox" id="chekNotPaidInvoice" value="not paid" v-model="tableData.filterState">
+							<label for="chekNotPaidInvoice">Not paid</label>
 						</div>
 			        </div>
 			    </div>

@@ -1,7 +1,7 @@
 <template>
 	<div class="container-fluid">
 		<div v-if="chartData.labels">
-			<h5>The average number of meals handled by day for each waiter</h5>
+			<h5>The total number of meals handled per months</h5>
     		<testChart :chartData="chartData" ></testChart>
 	    </div>
         <div v-else>
@@ -35,15 +35,14 @@
         },
         methods:{
         	getCookStatistics(){
-                console.log('WAITER PROCESSING 2...');
-        		axios.get('api/cook/orders/statisticAvgMealsByDayWaiter')
+        		axios.get('api/cook/orders/statisticTotalMealsPerMonth')
                 .then(response=>{
                 	this.statistics = response.data.data;
                 	var arrayL = [];
                 	var arrayD = [];
                 	this.statistics.forEach( function(element, index) {
-                		arrayL.push(element.name);
-                		arrayD.push(element.meals);
+                		arrayL.push(element.year + "-" + element.month);
+                		arrayD.push(element.data);
                 	});
                 	this.chartData.labels = arrayL;
                 	this.chartData.datasets[0].data = arrayD;

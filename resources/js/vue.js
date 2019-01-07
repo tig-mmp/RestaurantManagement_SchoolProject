@@ -83,9 +83,14 @@ router.beforeEach((to, from, next) => {
             return; 
         }       
     }
-    
-    if (store.state.user) {
-        if (to.name == 'login') {
+    if(to.name == 'manager'){
+        if(store.state.user.type != 'manager'){
+            next("/menu");
+            return;
+        }
+    }
+    if(to.name == 'login'){
+        if(store.state.user){
             next("/menu");
             return;
         }
@@ -109,7 +114,7 @@ const app = new Vue({
     sockets: {
         connect(){
             console.log('socket connected (socket ID = '+this.$socket.id+')');
-            if(this.$store.state.user !== null){
+            if(this.$store.state.user !== null && this.$store.state.user.shift_active === 1){
               this.$socket.emit('user_enter', store.state.user);
             }
         },

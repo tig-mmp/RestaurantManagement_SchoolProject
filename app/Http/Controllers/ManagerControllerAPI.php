@@ -61,14 +61,28 @@ class ManagerControllerAPI extends Controller
         $column = $request->input('column');
         $dir = $request->input('dir');
         $searchValue = $request->input('search');
+        $blocked = $request->input('blocked');
+        $deleted = $request->input('deleted');
         
-        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')->orderBy($columns[$column], $dir);
+        $query = User::withTrashed()->select('id', 'name', 'username', 'email', 'type', 'blocked',  'photo_url', 'last_shift_start', 'last_shift_end', 'email_verified_at', 'shift_active', 'deleted_at')
+        ->orderBy($columns[$column], $dir);
+        
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
                 $query->where('name', 'like', '%' . $searchValue . '%')
                 ->orWhere('type', 'like', '%' . $searchValue . '%')
                 ->orWhere('username', 'like', '%' . $searchValue . '%')
                 ->orWhere('email', 'like', '%' . $searchValue . '%');
+            });
+        }
+        if ($blocked == 'true') {
+            $query->where(function($query){
+                $query->where('blocked', '=', '1');
+            });
+        }
+        if ($deleted == 'true') {
+            $query->where(function($query){
+                $query->where('deleted_at', '!=', 'null');
             });
         }
         $users = $query->paginate($length);
@@ -489,6 +503,32 @@ class ManagerControllerAPI extends Controller
         ->join('users', 'sub.responsible_waiter_id', '=', 'users.id')
         ->selectRaw('users.name as name, sub.responsible_waiter_id AS id, AVG(sub.meals) AS meals')
         ->groupBy('users.name','id')->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
+
+    public function statisticTotalOrdersPerMonth()
+    {
+        $query = DB::table('orders')
+        ->selectRaw('YEAR(created_at) year, MONTH(created_at) month, COUNT(*) AS data')
+        ->groupBy('year','month')
+        ->orderBy('year', 'ASC')
+        ->orderBy('month', 'ASC')
+        ->get();
+
+        $items = $query;
+        return ['data' => $items];
+    }
+
+    public function statisticTotalMealsPerMonth()
+    {
+        $query = DB::table('meals')
+        ->selectRaw('YEAR(created_at) year, MONTH(created_at) month, COUNT(*) AS data')
+        ->groupBy('year','month')
+        ->orderBy('year', 'ASC')
+        ->orderBy('month', 'ASC')
+        ->get();
 
         $items = $query;
         return ['data' => $items];

@@ -10,6 +10,14 @@
 	    <h2 class="mt-5">Statistics</h2>
 	    <div class="row">
 			<div class="col-sm">
+				 <totalOrdersPerMonth></totalOrdersPerMonth>
+			</div>
+			<div class="col-sm">
+				<totalMealsPerMonth></totalMealsPerMonth>
+			</div>
+		</div>
+	    <div class="row">
+			<div class="col-sm">
 				 <cookStatistics></cookStatistics>
 			</div>
 			<div class="col-sm">
@@ -53,6 +61,8 @@
 	import AvgOrdersPerDayCook from './avgOrdersPerDayCook.vue';
 	import AvgOrdersPerDayWaiter from './avgOrdersPerDayWaiter.vue';
 	import AvgMealsPerDayWaiter from './avgMealsPerDayWaiter.vue';
+	import TotalOrdersPerMonth from './totalOrdersPerMonth.vue';
+	import TotalMealsPerMonth from './totalMealsPerMonth.vue';
 	export default{
 		components:{
 			pendingInvoices: PendingInvoices,
@@ -62,6 +72,8 @@
 			cookStatistics: AvgOrdersPerDayCook,
 			waiterStatisticsOredrs: AvgOrdersPerDayWaiter,
 			waiterStatisticsMeals: AvgMealsPerDayWaiter,
+			totalOrdersPerMonth: TotalOrdersPerMonth,
+			totalMealsPerMonth: TotalMealsPerMonth,
 		},
 		data(){
 			return{

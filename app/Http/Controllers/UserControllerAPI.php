@@ -151,6 +151,11 @@ class UserControllerAPI extends Controller
 
     public function waiterPendingOrders(Request $request, $id)
     {
+        return OrderItemResource::collection(Order::join('meals', 'orders.meal_id', 'meals.id')
+            ->where('responsible_waiter_id', $id)->select('orders.*')->distinct('item_id')
+            ->whereIn('orders.state', ['pending', 'confirmed'])->orderBy('orders.state')
+            ->orderBy('orders.start')->get());
+        /*
         return OrderItemResource::collection(
             Order::with(['meal' => function($query) use($id){
                 return $query->with('table:table_number')
@@ -162,6 +167,7 @@ class UserControllerAPI extends Controller
                 ->orderBy('orders.state')
                 ->orderBy('orders.start')
                 ->get());
+        */
     }
 
     public function waiterPreparedOrders(Request $request, $id)

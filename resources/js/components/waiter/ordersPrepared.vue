@@ -53,7 +53,7 @@
                         this.orders = response.data.data;
                     }
                 }).catch(function (error) {
-                    this.getPreparedOrders();
+                    console.log(error);
                 });
             }
         },

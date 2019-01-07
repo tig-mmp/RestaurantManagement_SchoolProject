@@ -86,7 +86,7 @@
                         this.orders = response.data.data;
                     }
                 }).catch(function (error) {
-                    this.getPendingOrders();
+                    console.log(error);
                 });
             }
         },
