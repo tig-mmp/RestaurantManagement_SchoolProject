@@ -19,6 +19,12 @@
 			    <div class="col-sm-3" style="text-align: right;">
 			    	<a class="btn btn-sm btn-primary font-weight-bold" title="Edit" v-on:click.prevent="createUser()"><i class="fas fa-plus is-20"></i> Create User</a>
 			    </div>
+			    <div @change="getUsers()">
+					<input type="checkbox" id="chackBlocked" value="blocked" v-model="tableData.blocked" >
+					<label for="chackBlocked">Blocked</label>
+					<input type="checkbox" id="checkDeleted" value="terminated" v-model="tableData.deleted" >
+					<label for="checkDeleted">Deleted</label>
+				</div>
 		    </div>
 			<datatable :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" 
 			@sort="sortBy">
@@ -34,7 +40,7 @@
 						<td v-else >Yes</td>
 						<td><img :src="'/imgProfiles/' + user.photo_url" width="40" height="40" ></td>
 						<td>
-							<a class="btn btn-sm btn-primary" title="Edit" v-on:click.prevent="editUser(user)"><i class="fas fa-edit is-20"></i></a>
+							<a class="btn btn-sm btn-primary" title="Details/Edit" v-on:click.prevent="editUser(user)"><i class="fas fa-edit is-20"></i></a>
 							<a class="btn btn-sm btn-danger" :class="{'disabled':user.deleted_at!=null}" title="Remove" v-on:click.prevent="deleteUser(user)"><i class="fas fa-trash-alt is-20"></i></a>
 						</td>
 					</tr>
@@ -84,6 +90,8 @@
 	            sortOrders: sortOrders,
 	            perPage: ['5','10', '20', '30'],
 	            tableData: {
+	            	blocked: '',
+	            	deleted: '',
 	                draw: 0,
 	                length: 5,
 	                search: '',
