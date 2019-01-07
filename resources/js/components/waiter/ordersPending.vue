@@ -86,6 +86,7 @@
                         this.orders = response.data.data;
                     }
                 }).catch(function (error) {
+                    console.log(error);
                 });
             }
         },
