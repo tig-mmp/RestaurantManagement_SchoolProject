@@ -4,6 +4,9 @@
 			<h5>The average number of orders handled by day for each cook</h5>
     		<testChart :chartData="chartData" ></testChart>
 	    </div>
+        <div v-else>
+            <img src="loader.gif">
+        </div>
 	</div>
 </template>
 <script>
