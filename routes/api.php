@@ -18,7 +18,7 @@ Route::get('items', 'ItemsControllerAPI@index');
 Route::get('items/paginate', 'ItemsControllerAPI@paginate');
 
 
-Route::middleware('auth:api')->put('users/password/token', 'UserControllerAPI@updatePasswordToken');
+Route::put('users/{id}/password/firstTime', 'UserControllerAPI@updatePasswordFirstTime');
 
 Auth::routes(['verify' => true]);
 

@@ -13,6 +13,7 @@ use App\InvoiceItem;
 use App\Meal;
 use Carbon\Carbon;
 use function GuzzleHttp\Psr7\copy_to_string;
+use http\Client\Response;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
@@ -25,6 +26,7 @@ use App\User;
 use App\Item as Items;
 use App\Order;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use App\Mail\SendMailable;
@@ -32,12 +34,11 @@ use App\Mail\SendMailable;
 class UserControllerAPI extends Controller
 {
 
-    public function mail($email,$name)
+    public function mail($email)
     {
-        //$name = 'Krunal';
-        $link = $_SERVER['SERVER_NAME'] . '/changePassword/' . $email;
-        Mail::to($email)->send(new SendMailable($name, $link));
-
+        $user = User::where('email', $email)->select('id', 'email')->first();
+        $link = $_SERVER['SERVER_NAME'] . '/changePassword/' . $user->id;
+        Mail::to($user->email)->send(new SendMailable($user->name, $link));
     }
 
 
@@ -99,14 +100,14 @@ class UserControllerAPI extends Controller
         return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
     }
 
-    public function updatePasswordToken(Request $request, $id)
+    public function updatePasswordFirstTime(Request $request, $id)
     {
         $user = User::findOrFail($id);
         if ($user->password != 'a'){
             return response()->json('User already have a password',422);
         }
         $request->validate([
-            'password' => 'confirmed|min:3',
+            'password' => 'min:3',
         ]);
         $user->update(['password' => Hash::make($request['password'])]);
         return response()->json(array(new UserResource($user),$request['password'], Hash::make($request['password'])) , 201);
@@ -125,7 +126,7 @@ class UserControllerAPI extends Controller
 
         //send mail
 
-        $this->mail($user->email,$user->name);
+        $this->mail($user->email);
         return response()->json(new UserResource($user), 201);
     }
 
