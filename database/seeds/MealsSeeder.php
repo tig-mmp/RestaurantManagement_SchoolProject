@@ -19,8 +19,8 @@ class MealsSeeder extends Seeder
         $this->command->line("Creating Meals");
         $this->command->line("##################################################################################");
 
-        $totalDays = $this->command->ask('Create meals for how many days (prior to today)?', 400);
-        $averageMealsperDay = $this->command->ask('On average create how many meal per day?', 100);
+        $totalDays = $this->command->ask('Create meals for how many days (prior to today)?', 200);
+        $averageMealsperDay = $this->command->ask('On average create how many meal per day?', 50);
 
         $faker = Faker\Factory::create('pt_PT');
 
@@ -94,7 +94,7 @@ class MealsSeeder extends Seeder
             'end' => $active ? null : $endedAt,
             'responsible_waiter_id' => $this->getRandomWaiter(),
             'total_price_preview' => 0,
-            'created_at' => $createdAt,
+            'created_at' => $createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $createdAt->copy()->addSeconds(rand(300, 5600))
         ];
         $newId = DB::table('meals')->insertGetId($meal);
