@@ -19,10 +19,10 @@ import VueSocketio from "vue-socket.io";
 Vue.use(
     new VueSocketio({
         debug: true,
-        connection: process.env.VUE_APP_WEBSOCKET_URL
+        connection: process.env.MIX_PUSHER_APP_WEBSOCKET_URL
     })
 );
-console.log(process.env);
+
 import store from "./stores/global-store";
 
 const menu = Vue.component(

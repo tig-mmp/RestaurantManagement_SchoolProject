@@ -15,6 +15,8 @@ php artisan key:generate
 
 php artisan config:cache
 
+php artisan config:clear
+
 php artisan migrate
 
 php artisan db:seed
@@ -26,6 +28,12 @@ php artisan passport:install
 
 ```
 npm run watch
+```
+
+### Iniciar WebServer
+
+```
+npm run start
 ```
 
 ## Login credentials
