@@ -15,13 +15,26 @@ php artisan key:generate
 
 php artisan config:cache
 
-php artisan config:clear
-
 php artisan migrate
 
 php artisan db:seed
 
 php artisan passport:install
+```
+
+-   Atualizar o CLIENT_SECRET no ficheiro `.env`
+
+```
+mklink /D public\imgItems ..\storage\app\public\items
+mklink /D public\imgProfiles ..\storage\app\public\profiles
+```
+
+### Se der erro ao fazer login
+
+```
+php artisan config:cache
+
+php artisan config:clear
 ```
 
 ### Atualizar front-end
