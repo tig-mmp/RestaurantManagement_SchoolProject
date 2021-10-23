@@ -2,48 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client as HttpClient;
 use Illuminate\Http\Request;
-define('YOUR_SERVER_URL', 'http://restaurantmanagement.test');
-// Check "oauth_clients" table for next 2 values:
-define('CLIENT_ID', '2');
-define('CLIENT_SECRET', 'ojpZD33Lka3deJCasJ8ji5UPAsj4HPaJpiUPcaeZ');
-//define('CLIENT_SECRET', 'A6kh949Z2Vk5DcOo9Y9XfG4qCpYHUhFl71665rlI');
+use Illuminate\Support\Facades\Auth;
 
 class LoginControllerAPI extends Controller
 {
     public function login(Request $request)
     {
-        $http = new \GuzzleHttp\Client;
-        $response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
+        $http = new HttpClient;
+        $response = $http->post(env('CURRENT_URL') . '/oauth/token', [
             'form_params' => [
                 'grant_type' => 'password',
-                'client_id' => CLIENT_ID,
-                'client_secret' => CLIENT_SECRET,
+                'client_id' => env('CLIENT_ID'),
+                'client_secret' => env('CLIENT_SECRET'),
                 'username' => $request->email,
                 'password' => $request->password,
                 'scope' => ''
             ],
             'exceptions' => false,
         ]);
-        $errorCode= $response->getStatusCode();
-        if ($errorCode=='200') {
+        $errorCode = $response->getStatusCode();
+        if ($errorCode == '200') {
             return json_decode((string) $response->getBody(), true);
         } else {
             return response()->json(
-                ['msg'=>'User credentials are invalid'], $errorCode);
+                ['msg' => 'User credentials are invalid'],
+                $errorCode
+            );
         }
     }
 
-    public function changePassword(){
+    public function changePassword()
+    {
         return view('changePassword');
-
     }
-
 
     public function logout()
     {
-        \Auth::guard('api')->user()->token()->revoke();
-        \Auth::guard('api')->user()->token()->delete();
-        return response()->json(['msg'=>'Token revoked'], 200);
+        Auth::guard('api')->user()->token()->revoke();
+        Auth::guard('api')->user()->token()->delete();
+        return response()->json(['msg' => 'Token revoked'], 200);
     }
 }
