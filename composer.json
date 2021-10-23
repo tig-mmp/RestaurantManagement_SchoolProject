@@ -1,7 +1,12 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "tig-mmp/restaurant-management",
+    "description": "Restaurant Management",
+    "keywords": [
+        "restaurant",
+        "laravel",
+        "vue",
+        "socket.io"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -36,8 +41,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {

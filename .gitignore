@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/framwork
 /vendor
 /.idea
 /.vscode
@@ -15,8 +16,5 @@ yarn-error.log
 .phpunit.result.cache
 public/js/app.js
 public/js/vue.js
-package-lock.json
-package.json
 /public/css/app.css
-package-lock.json
-package.json
+storage/framework
